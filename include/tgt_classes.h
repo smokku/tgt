@@ -6,12 +6,7 @@ struct tgt_listnode
     struct tgt_object *next;
     struct tgt_object *prev;
     /* Pointery do polaczenia z innymi dziecmi rodzica */
-    struct tgt_object *first_child;
-    struct tgt_object *last_child;
-    /* Pointer na pierwszy i ostatni element listy
-    dzieci (lista obiektow polaczonych przez
-       prev i next (lista nielinkowana) */
-    struct tgt_object *active_child;	/* Aktywne dziecko, lub NULL */
+    struct tgt_object *child;	/* (Aktywne) dziecko, lub NULL */
 };
 
 struct tgt_object

@@ -22,9 +22,9 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	case TGT_OBJECT_CREATE:
 	    iw=(struct tgt_int_window*) malloc(sizeof(struct tgt_int_window));
 	    obj->class_data=iw;
-	    iw->title=(char*) tgt_gettag(b,TTGT_WINDOW_TITLE,(long) defaulttitle);
-	    iw->borderfg=tgt_gettag(b,TTGT_WINDOW_BORDERCOLOR,6);
-	    iw->titlefg=tgt_gettag(b,TTGT_WINDOW_TITLECOLOR,7);
+	    iw->title=(char*) tgt_gettag(b,TGTT_WINDOW_TITLE,(long) defaulttitle);
+	    iw->borderfg=tgt_gettag(b,TGTT_WINDOW_BORDERCOLOR,6);
+	    iw->titlefg=tgt_gettag(b,TGTT_WINDOW_TITLECOLOR,7);
             if(!(obj->next_keys)) obj->next_keys=wswitches_next;
 	    if(!(obj->prev_keys)) obj->prev_keys=wswitches_prev;		
 	    return(1);
@@ -32,7 +32,7 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	    free(obj->class_data);
 	    return(1);
 	case TGT_OBJECT_REFRESH:
-	    act=tgt_is_active(obj);
+	    act=tgt_isactive(obj);
 	    if(act==1) tgt_chattr(obj->term,TGT_TA_BOLD,0,0);
 	    iw=obj->class_data;
 	    tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,(void*) ((int) (obj->y+(int) b)));

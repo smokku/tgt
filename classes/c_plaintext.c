@@ -8,7 +8,7 @@ int tgt_builtin_label(struct tgt_object *obj,int type,int a,void *b)
     switch(type)
     {
 	case TGT_OBJECT_CREATE:
-	    title=(char*) tgt_gettag(b,TTGT_LABEL_TEXT,0);
+	    title=(char*) tgt_gettag(b,TGTT_LABEL_TEXT,0);
 	    if(title==NULL) return(0);
 	    obj->class_data=title;
 	    obj->objflags|=TGT_OBJFLAGS_NONSELECTABLE;
@@ -23,10 +23,10 @@ int tgt_builtin_label(struct tgt_object *obj,int type,int a,void *b)
 	    fflush(stdout);
 	    return(1);
 	case TGT_OBJECT_SETTAG:
-	    if(a==TTGT_LABEL_TEXT) { obj->class_data=b; return(1); }
+	    if(a==TGTT_LABEL_TEXT) { obj->class_data=b; return(1); }
 	    return(0);
 	case TGT_OBJECT_GETTAG:
-	    if(a==TTGT_LABEL_TEXT) { *(char **) b=obj->class_data; return(1); }
+	    if(a==TGTT_LABEL_TEXT) { *(char **) b=obj->class_data; return(1); }
 	    return(0);
 	default: return(0);
     }

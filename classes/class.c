@@ -28,22 +28,28 @@ int tgt_shalliswitch(struct tgt_object *obj,int key,int pri)
 
 int tgt_intrefresh(struct tgt_object *obj,int a,int b)
 {
-    struct tgt_object *children;
-    struct tgt_object *active;
+    struct tgt_object *firstch;
+    struct tgt_object *prevch;
+    struct tgt_object *tmpch;
+    /* funkcja przerysowuje aktualny obiekt i wszystkie dzieci */
     /* Wewnetrzna procedura odswierzania: odswierz obiekt obj,
        przeliczajac jego wspolrzedne wzgledem a i b (prosciej:
        po prostu dodajac je do nich :) po czym wywolaj siebie
-       dla dzieci obiektu*/
+       dla dzieci obiektu (wstecz listy)*/
     /* Oczywiscie 'brudna robote' wykonuje handler klasy... */
     obj->classf(obj,TGT_OBJECT_REFRESH,a,(void*) b);
-    active=obj->ln.active_child;
-    a+=obj->x; b+=obj->y;  /* Dodajemy nasze wspolrzedne-dzieci obiektu
-    (np przyciski w oknie) w koncu maja ustawione wspolrzedne wzgledem
-    naszych (czyli np . lewego gornego rogu okna) */
-    for(children=obj->ln.first_child;children!=NULL;children=children->ln.next)
-	if(active!=children) tgt_intrefresh(children,a,b);
 
-    if(active!=NULL) tgt_intrefresh(active,a,b); /* no i aktywny */
+    if(obj->ln.child)		/* Zapomniales (!!!!) */
+    {    
+	firstch=obj->ln.child->ln.prev;
+	a+=obj->x; b+=obj->y;   /* Zapomniales... czy raczej moze ja zapomnialem powiedziec... */
+	if((prevch=obj->ln.child->ln.prev)!=NULL)
+    	    do{
+		tmpch=prevch->ln.prev;
+		tgt_intrefresh(prevch,a, b);
+		prevch=tmpch;
+	    }while(prevch!=firstch);
+    }
 }
 int tgt_refresh(struct tgt_object *obj)
 {
@@ -59,20 +65,36 @@ int tgt_refresh(struct tgt_object *obj)
     }
     tgt_intrefresh(obj,x,y);
 }
-/* obiekt aktywny to ten ktory ma focus. */
-void tgt_activate(struct tgt_object *obj)
+int tgt_isactive(struct tgt_object *obj)
+{
+    if( ! obj->ln.parent) return(0);
+    if(obj->ln.parent->ln.child == obj) return(1); else return(0);
+}
+int tgt_hasfocus(struct tgt_object *obj)
 {
     struct tgt_object *parent;
-    struct tgt_object *old_active;
-    /* Aktywuj obiekt obj */
-    parent=obj->ln.parent;
-    if(parent!=NULL)
-    {
-	old_active=parent->ln.active_child;
-	parent->ln.active_child=obj;
-	if(old_active!=NULL) tgt_refresh(old_active);
-	tgt_refresh(obj);
+    struct tgt_object *current;
+    for(parent=obj->ln.parent,current=obj;parent!=NULL;){
+        if(parent->ln.child!=current) return(0);
+        current=parent;
+        parent=parent->ln.parent;
     }
+    return(1);
+}
+void tgt_setfocus(struct tgt_object *obj)
+{
+    struct tgt_object *parent;
+    struct tgt_object *current;
+    /* ustaw focus na obiekt obj */
+    for(parent=obj->ln.parent,current=obj;parent!=NULL;){
+	parent->ln.child=current;
+	current=parent;
+	parent=parent->ln.parent;
+    }
+    if(obj->ln.parent!=NULL)
+	tgt_refresh(obj->ln.parent);
+    else
+	tgt_refresh(obj);
 }
 
 struct tgt_object * tgt_findnext_selectable(struct tgt_object * obj)
@@ -83,7 +105,6 @@ struct tgt_object * tgt_findnext_selectable(struct tgt_object * obj)
     for(;;)
     {
 	next=next->ln.next;
-	if(next==NULL) next=obj->ln.parent->ln.first_child;
 	if(next==obj) return(obj);
 	if(!(next->objflags & TGT_OBJFLAGS_NONSELECTABLE)) return(next);
     }
@@ -96,7 +117,6 @@ struct tgt_object * tgt_findprev_selectable(struct tgt_object * obj)
     for(;;)
     {
 	next=next->ln.prev;
-	if(next==NULL) next=obj->ln.parent->ln.last_child;
 	if(next==obj) return(NULL);
 	if(!(next->objflags & TGT_OBJFLAGS_NONSELECTABLE)) return(next);
     }
@@ -107,66 +127,62 @@ void tgt_activatenext(struct tgt_object *obj)
     struct tgt_object *parent;
     /* Aktywuj nastepny obiekt po obj...*/
     if(!(parent=obj->ln.parent)) return;
-    parent->ln.active_child=tgt_findnext_selectable(obj);
+    parent->ln.child=tgt_findnext_selectable(obj);
     tgt_refresh(obj);
-    tgt_refresh(parent->ln.active_child);
+    if(parent->ln.child!=obj) tgt_refresh(parent->ln.child);
 }
 void tgt_activateprev(struct tgt_object *obj)
 {
     struct tgt_object *parent;
     /* Aktywuj poprzedni obiekt, przed obj...*/
     if(!(parent=obj->ln.parent)) return;
-    parent->ln.active_child=tgt_findprev_selectable(obj);
+    parent->ln.child=tgt_findprev_selectable(obj);
     tgt_refresh(obj);
-    tgt_refresh(parent->ln.active_child);
+    if(parent->ln.child!=obj) tgt_refresh(parent->ln.child);
 }
 
+// *** OBSOLETE ***
+//void tgt_activatenext_child(struct tgt_object *obj)
+//{
+//    struct tgt_object *active;
+//    struct tgt_object *old_active;
+//    /* Aktywuj nastepne dziecko obiektu obj...*/
+//    old_active=obj->ln.active_child;
+//    if(old_active==NULL)
+//	obj->ln.active_child=tgt_findnext_selectable(obj->ln.first_child);
+//    else
+//    {
+//	obj->ln.active_child=tgt_findnext_selectable(obj->ln.active_child);
+//	tgt_refresh(old_active);
+//    }
+//    if(obj->ln.active_child) tgt_refresh(obj->ln.active_child);
+//}
+//void tgt_activateprev_child(struct tgt_object *obj)
+//{
+//    struct tgt_object *active;
+//    struct tgt_object *old_active;
+//    /* Aktywuj poprzednie dziecko obiektu obj...*/
+//    old_active=obj->ln.active_child;
+//    if(old_active==NULL)
+//	obj->ln.active_child=tgt_findprev_selectable(obj->ln.last_child);
+//    else
+//    {
+//	obj->ln.active_child=tgt_findprev_selectable(obj->ln.active_child);
+//	tgt_refresh(old_active);
+//    }
+//    if(obj->ln.active_child) tgt_refresh(obj->ln.active_child);
+//}
 
-void tgt_activatenext_child(struct tgt_object *obj)
-{
-    struct tgt_object *active;
-    struct tgt_object *old_active;
-    /* Aktywuj nastepne dziecko obiektu obj...*/
-    old_active=obj->ln.active_child;
-    if(old_active==NULL)
-	obj->ln.active_child=tgt_findnext_selectable(obj->ln.first_child);
-    else
-    {
-	obj->ln.active_child=tgt_findnext_selectable(obj->ln.active_child);
-	tgt_refresh(old_active);
-    }
-    if(obj->ln.active_child) tgt_refresh(obj->ln.active_child);
-}
-void tgt_activateprev_child(struct tgt_object *obj)
-{
-    struct tgt_object *active;
-    struct tgt_object *old_active;
-    /* Aktywuj poprzednie dziecko obiektu obj...*/
-    old_active=obj->ln.active_child;
-    if(old_active==NULL)
-	obj->ln.active_child=tgt_findprev_selectable(obj->ln.last_child);
-    else
-    {
-	obj->ln.active_child=tgt_findprev_selectable(obj->ln.active_child);
-	tgt_refresh(old_active);
-    }
-    if(obj->ln.active_child) tgt_refresh(obj->ln.active_child);
-}
-
-int tgt_is_active(struct tgt_object *obj)
-{
-    if( ! obj->ln.parent) return(0);
-    if(obj->ln.parent->ln.active_child == obj) return(1); else return(0);
-}
 int tgt_deliver_msg(struct tgt_object *obj,int type,int param,char* param2)
 {
     struct tgt_object *active;
     /* dostarcz wiadomosc (type (w 99% bedzie to MSG_KEYHANDLE),param,param2)
        do ostatniego aktywnego dziecka obiektu obj. Jesli nie jest w stanie
        jej zrozumiec, dostarcz ja jego rodzicowi (wywolujac sama siebie) */
-    for(active=obj;active->ln.active_child!=NULL;active=active->ln.active_child);
-    while(active->classf(active,type,param,param2) != 1) {
-	if((active=active->ln.parent)==NULL) return(1);
-    }
+    for(active=obj;active->ln.child!=NULL;active=active->ln.child);
+
+    while(active->classf(active,type,param,param2) != 1)
+	if((active=active->ln.parent)==NULL) return(0);
+    return(1);
 }
 

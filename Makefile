@@ -17,14 +17,14 @@ all: shared test
 # compile and link
 
 shared: ${OBJECTS}
-	gcc -shared $(OBJECTS) -o libtgui.so -ltermcap -lpthread
+	gcc -shared $(OBJECTS) -o libtgt.so -ltermcap -lpthread
 
-test: ./libtgui.so
-	gcc test.c -o test -L./ -Iinclude/ -ltgui
+test: ./libtgt.so
+	gcc test.c -o test -L./ -Iinclude/ -ltgt
 	
 # make a clean source tree again
 clean: 
-	rm -r libtgui.so *.o *~ core test $(OBJECTS)
+	rm -r libtgt.so *.o *~ core test $(OBJECTS) >/dev/null
 
 
 distclean: clean

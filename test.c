@@ -33,23 +33,23 @@ void refresh(int a)
 void newwindow(int a)
 {
     cwindow=tgt_createandlink_int(desktop,myterm,TGT_CLASS_WINDOW,
-	(long[]) { TTGT_X,6,TTGT_Y,8,
-		    TTGT_XS,20,TTGT_YS,7,
-		    TTGT_WINDOW_TITLE,"New window",
-		    TTGT_PREV_KEYS,(int[]) {'w',0},
-		    TTGT_END,0});
+	(long[]) { TGTT_X,6,TGTT_Y,8,
+		    TGTT_XS,20,TGTT_YS,7,
+		    TGTT_WINDOW_TITLE,"New window",
+		    TGTT_PREV_KEYS,(int[]) {'w',0},
+		    TGTT_END,0});
     tgt_createandlink_int(cwindow,myterm,TGT_CLASS_LABEL,
-	(long[]) {TTGT_X,2,TTGT_Y,2,TTGT_LABEL_TEXT,"Strange color:",TTGT_END,0});
+	(long[]) {TGTT_X,2,TGTT_Y,2,TGTT_LABEL_TEXT,"Strange color:",TGTT_END,0});
 
     tgt_createandlink_int(cwindow,myterm,TGT_CLASS_BUTTON,
-	(long[]) { TTGT_X,2,TTGT_Y,3,TTGT_BUTTON_CAPTION,"Close",
-		    TTGT_ID,101,TTGT_CALLBACK,mkexit,TTGT_BG,1,TTGT_END,0});
+	(long[]) { TGTT_X,2,TGTT_Y,3,TGTT_BUTTON_CAPTION,"Close",
+		    TGTT_ID,101,TGTT_CALLBACK,mkexit,TGTT_BG,1,TGTT_END,0});
 
     tgt_createandlink_int(cwindow,myterm,TGT_CLASS_BUTTON,
-	(long[]) { TTGT_X,2,TTGT_Y,4,TTGT_BUTTON_CAPTION,"Freshen",
-		    TTGT_ID,101,TTGT_CALLBACK,refresh,TTGT_END,0});
+	(long[]) { TGTT_X,2,TGTT_Y,4,TGTT_BUTTON_CAPTION,"Freshen",
+		    TGTT_ID,101,TGTT_CALLBACK,refresh,TGTT_END,0});
 
-    tgt_activate(cwindow);
+    tgt_setfocus(cwindow);
 }
 
 main()
@@ -65,29 +65,29 @@ main()
     desktop=tgt_getdesktop(myterm);
 
 /* mozna linkowac od razu... */
-    window=tgt_createandlink_int(desktop,myterm,TGT_CLASS_WINDOW,(long[]) {TTGT_XS,20,TTGT_YS,10,TTGT_WINDOW_TITLE,"Test",TTGT_END,0});
+    window=tgt_createandlink_int(desktop,myterm,TGT_CLASS_WINDOW,(long[]) {TGTT_XS,20,TGTT_YS,10,TGTT_WINDOW_TITLE,"Test",TGTT_END,0});
 
 /* albo po stworzeniu obiektu ... */
-    button=tgt_createobject_int(myterm,TGT_CLASS_BUTTON,(long[]) {TTGT_X,3,TTGT_Y,3,TTGT_BUTTON_CAPTION,"[   Quit    ]",TTGT_CALLBACK,mkexit,TTGT_ID,100,TTGT_END,0});
+    button=tgt_createobject_int(myterm,TGT_CLASS_BUTTON,(long[]) {TGTT_X,3,TGTT_Y,3,TGTT_BUTTON_CAPTION,"[   Quit    ]",TGTT_CALLBACK,mkexit,TGTT_ID,100,TGTT_END,0});
     tgt_link(button,window);
 
-    button=tgt_createobject_int(myterm,TGT_CLASS_BUTTON,(long[]) {TTGT_X,3,TTGT_Y,4,TTGT_BUTTON_CAPTION,"[Open window]",TTGT_CALLBACK,newwindow,TTGT_END,0});
+    button=tgt_createobject_int(myterm,TGT_CLASS_BUTTON,(long[]) {TGTT_X,3,TGTT_Y,4,TGTT_BUTTON_CAPTION,"[Open window]",TGTT_CALLBACK,newwindow,TGTT_END,0});
     tgt_link(button,window);
 
 
-    astatus=tgt_createandlink_int(desktop,myterm,TGT_CLASS_LABEL,(long[]) {TTGT_X,0,TTGT_Y,24,TTGT_LABEL_TEXT,"",TTGT_END,0});
+    astatus=tgt_createandlink_int(desktop,myterm,TGT_CLASS_LABEL,(long[]) {TGTT_X,0,TGTT_Y,24,TGTT_LABEL_TEXT,"",TGTT_END,0});
 
     sprintf(sstring,"1..2...3... Start");
 
-    tgt_set(astatus,TTGT_LABEL_TEXT,sstring);
+
+    tgt_set(astatus,TGTT_LABEL_TEXT,sstring);
 
 /* obiekty nie refreshuja sie same od siebie... */
     tgt_refresh(desktop);
-
     mq=tgt_app_createqueue();
-    tgt_chtimes(0,100000);
     
     /* W tym miejscu w zasadzie uruchamiamy cala maszynerie GUI */
+    tgt_chtimes(0,100000);
     tgt_async_waitkeys(desktop);
     
     i=0;

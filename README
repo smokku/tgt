@@ -1,5 +1,86 @@
 
-mteg: 0.081 ZMIANY:
+
+mteg: Ok ... No to nadal czekam na sugestie... _Szczegolnie_ dotyczace
+szkieletu... Jesli nie masz juz zadnych pomyslow (chwilowo) to prosze,
+popatrz na TODO klas, sprobuj dorzucic wlasne sugestie (tak jakos
+chaotycznie tam od myslnikow) ew wlasne pomysly... No i zastanow
+sie co chcialbys zrobic :)
+  
+
+
+mteg: 0.082 od 0.08s i 0.081 ZMIANY
+
+- bugfixy: classes/class.c dodane sprawdzanie czy obiekt ma dzieci
+  przed ich odswiezaniem (powodowalo SIGSEGV przy jakimkolwiek wywolaniu
+  tgt_intrefresh()) classes/desktop.c dodane do TGT_OBJECT_CREATE:
+  obj->objectf=tgt_gettag(b,TTGT_CALLBACK,NULL); (bije sie w piersi...
+  SIGSEGV dla kazdego nierozpoznanego klawisza)
+
+- Zmiana konwencji nazwowych.. TTGT_ zmienia sie na TGTT_,
+  libtgui.so na libtgt.so
+
+
+
+
+mteg: OK. Przeczytalem. Przemyslalem. Zastosowalem sie do uwag :)
+
+//!     ^ a tu nie powinno byc czasem TTGT_END  ????   !!!!!!!!!!
+//!       w koncu kiedys mozemy dojsc do wniosku ze to wcale != 0
+racja poprawione :)
+
+//! a tu z kolei powinno byc TTGT_X,0, TTGT_Y,0   bo wspolzedne ekranowe liczymy od zera...
+tu juz mniej racja... tzn liczymy i CHCEMY liczyc w obiektach sobie
+wspolrzedne od zera... ale ekran dla termcapa i sekwencji ansi zaczyna sie
+od 1,1 ... Tak wiec aby uniknac sobie klopotow przy refreshu ustawiamy
+sobie wspolrzedne desktopa na 1,1 ... Te wartosci sa dodawane przy tgt_refresh()
+wiec nie musimy sie tym przejmowac i wlasnie dzieki temu mozemy liczyc od 0,0 :)
+
+
+
+
+
+
+smoku: zajrzyj do management.c, class.c i tgt_classes.h
+ jest tam kilka uwag w komentarzach "//!" (grep "//!" *.c)
+ co do ktorych wolalem sie upewnic..
+tagi powinny chyba zaczynac sie od TGTT - TGT-Tag, prawda?
+moze tez jednak libtgt.so zamiast libtgui.so
+(wiem, to detale, ale pozniej bedzie trzeba wiecej zmieniac)
+
+zmiana nazw funkcji:
+tgt_activate -> tgt_setfocus (poprawka test.c)
+tgt_is_active -> tgt_isactive
+nowa funkcja: tgt_hasfocus
+
+to funkcja realizujaca TGT_OBJECT_REFRESH powinna wywolac tgt_hasfocus(obj)
+aby sprawdzic, czy obiekt ma sie narysowac z focusem czy bez..
+ZOSTAWIAM TO TOBIE, bo to twoje klasy..
+w tej chwili uzywaja tgt_isactive, a to nie jest dokladne..
+tzn. dla klasy window jest akurat, ale dla button juz nie - trzeba sie zastanowic
+czy klasa ma uzywac isactive czy hasfocus..
+trzeba tez przekodowac handlery klas wg. nowego umiejscowienia shalliswitch()
+
+ale jak widac dobrze przemyslelismy szkielet, bo mimo zaimplementowania list
+cyrkulacyjnych nie robilem zadnej rewolucji w strukturach..
+czyli: JEST DOBRZE - oby tak dalej.. =]]]]
+
+pomysl z lookup-tables mi sie podoba...  bardzo..
+mozna zaimplementowac wlasciwie kazda kombinacje klawiszkow.. =]
+
+godz. 00:34  ./test rzuca: 1..2...3... StartNaruszenie ochrony pamieci
+ale o tej porze nie mam juz sily na debugging...
+spakuje to jeszcze, podesle ci i ide w kime, bo rano trzeba do pracy..
+
+
+
+
+
+
+
+
+
+
+mteg: 0.081 od 0.08 ZMIANY:
 - classes/keyboard.c : fgetc() zastapione nowa procedura tgt_fgetc(int sec,int usec),
   w efekcie teraz jesli przy czekaniu na nacisniecie klawisza przekroczony zostanie
   timeout (domyslnie 0.5 s ale mozne zmienic go aplikacja wywolujac
@@ -302,3 +383,5 @@ ZMIANY OD 0.05 i 0.075:
 
 - totalny rewrite kodu/struktur odpowiadajacych za liste dzieci obiektu
   i szukanie aktywnych obiektow
+  
+  

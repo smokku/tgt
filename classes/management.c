@@ -25,48 +25,49 @@ long tgt_gettag(long *taglist,long stag,long defaultvalue)
     for(;;)
     {
 	tag=*(taglist++); value=*(taglist++);
-	if(tag==0) return(defaultvalue); /* koniec taglisty */
+	if(tag==TGTT_END) return(defaultvalue); /* koniec taglisty */
 	if(stag==tag) return(value); /* tag ktorego szukamy */
     }
 }
 
 void tgt_link(struct tgt_object *obj,struct tgt_object *parent)
 {
-    struct tgt_object *oldch;
-    struct tgt_object *ach;
-    /* laczy podrzednie obiekt obj z obiektem parent */
+    /* wlacza obiekt obj do listy dzeci obiektu parent */
     obj->ln.parent=parent;
     /* naszym rodzicem jest od tej chwili parent ... */
-    oldch=parent->ln.last_child; /* stare dziecko bedace ostatnie na liscie */
-    obj->ln.prev=oldch; /* ... teraz bedzie przedostatnie :) */
-    obj->ln.next=NULL;  /* ... a my ostatni */
-    if(oldch!=NULL) oldch->ln.next=obj; 
-    
-    parent->ln.last_child=obj; /* no i wpisujemy sie na hamca jako koniec listy */
-    if(parent->ln.first_child==NULL) parent->ln.first_child=obj;
-    if(parent->ln.active_child==NULL && !(obj->objflags & TGT_OBJFLAGS_NONSELECTABLE)) parent->ln.active_child=obj;
+    if(parent->ln.child==NULL){
+	obj->ln.next=obj;
+	obj->ln.prev=obj;
+	parent->ln.child=obj;
+    }else{
+	obj->ln.prev=parent->ln.child->ln.prev;
+	obj->ln.next=parent->ln.child;
+	parent->ln.child->ln.prev->ln.next=obj;
+	parent->ln.child->ln.prev=obj;
+	/* wstawiamy sie w srodek listy */
+	if(parent->ln.child->objflags & TGT_OBJFLAGS_NONSELECTABLE)
+	    parent->ln.child=obj;
+	/* jesli obiekt nonselectable to wstawiamy sie w jego miejsce */
+    }
 }
 void tgt_unlink(struct tgt_object *obj)
 {
     struct tgt_object *next;
     struct tgt_object *parent;
     /* odlacza obiekt obj */
-    parent=obj->ln.parent;
-    if(parent!=NULL)
-    {
-	if(parent->ln.active_child==obj) tgt_activatenext(obj);
-	/* a moze jestesmy ostatnim mozliwym do zaktywizowania obiektem ?? */
-	if(parent->ln.active_child==obj) parent->ln.active_child=NULL;
-    }
-    next=obj->ln.next;
-    if(next!=NULL) next->ln.prev=obj->ln.prev;
-    if(obj->ln.prev!=NULL) obj->ln.prev->ln.next=obj->ln.next;
-    if(parent!=NULL)
-    {
-	if(parent->ln.first_child==obj) /* czy aby nie bylismy poczatkiem listy ?? */
-	    parent->ln.first_child=next;
-	if(parent->ln.last_child==obj)	/* albo koncem ??*/
-	    parent->ln.last_child=obj->ln.prev;
+    if(obj->ln.parent!=NULL){
+	if(obj->ln.parent->ln.child==obj) tgt_activatenext(obj);
+	/* jesli jestesmy aktywni przestawmy rodzica na nastepne SELECTABLE dziecko */
+	if(obj->ln.parent->ln.child==obj) obj->ln.parent->ln.child=obj->ln.next;
+	/* jesli to znow my, to przestawmy na nastepne DOWOLNE dziecko */
+	if(obj->ln.parent->ln.child==obj){
+	    obj->ln.parent->ln.child=NULL;
+	    /* jesli to znow my, to zamykamy liste dzieci */
+	}else{
+	    obj->ln.next->ln.prev=obj->ln.prev;
+	    obj->ln.prev->ln.next=obj->ln.next;
+	    /* jesli nie, to ja po prostu zwijamy */
+	}
     }
 }
 
@@ -85,17 +86,17 @@ struct tgt_object * tgt_createobject(struct tgt_terminal *term,
     ret->term=term; ret->classf=classf;
     /* Ustawiamy sobie pare najczesciej uzywanych i majacych wlasne pola w 
        strukturze tagow */
-    ret->x=tgt_gettag(taglist,TTGT_X,0); ret->y=tgt_gettag(taglist,TTGT_Y,0);
-    ret->xs=tgt_gettag(taglist,TTGT_XS,0); ret->ys=tgt_gettag(taglist,TTGT_YS,0);
-    ret->fg=tgt_gettag(taglist,TTGT_FG,term->color_fg); ret->bg=tgt_gettag(taglist,TTGT_BG,term->color_bg);
-    ret->id=tgt_gettag(taglist,TTGT_ID,0); 
-    ret->next_keys=(int*) tgt_gettag(taglist,TTGT_NEXT_KEYS,0);
-    ret->prev_keys=(int*) tgt_gettag(taglist,TTGT_PREV_KEYS,0);
+    ret->x=tgt_gettag(taglist,TGTT_X,0); ret->y=tgt_gettag(taglist,TGTT_Y,0);
+    ret->xs=tgt_gettag(taglist,TGTT_XS,0); ret->ys=tgt_gettag(taglist,TGTT_YS,0);
+    ret->fg=tgt_gettag(taglist,TGTT_FG,term->color_fg); ret->bg=tgt_gettag(taglist,TGTT_BG,term->color_bg);
+    ret->id=tgt_gettag(taglist,TGTT_ID,0); 
+    ret->next_keys=(int*) tgt_gettag(taglist,TGTT_NEXT_KEYS,0);
+    ret->prev_keys=(int*) tgt_gettag(taglist,TGTT_PREV_KEYS,0);
 /* W sumie to moglaby sobie to zalatwic klasa sama ale ze dazymy do maksymalnej
   idiotoodpornosci... ;)) */
 
-    ret->ln.parent=NULL; ret->ln.first_child=NULL; ret->ln.last_child=NULL;
-    ret->ln.next=NULL; ret->ln.prev=NULL; ret->ln.active_child=NULL;
+    ret->ln.parent=NULL; ret->ln.child=NULL;
+    ret->ln.next=NULL; ret->ln.prev=NULL;
     ret->objflags=0;
 
     /* no i teraz dajemy klasie mozliwosc stworzenia swoich wlasnych
@@ -109,22 +110,25 @@ struct tgt_object * tgt_createobject(struct tgt_terminal *term,
 struct tgt_object * tgt_getdesktop(struct tgt_terminal * term)
 {
     /* Front-end dla tgt_createobject() tworzacy nadrzedny obiekt desktopu dla terminala term */
-    return(tgt_createobject(term,tgt_builtin_desktop,(long[]) { TTGT_X,1, TTGT_Y,1, TTGT_END,0} ));
+    return(tgt_createobject(term,tgt_builtin_desktop,(long[]) { TGTT_X,1, TGTT_Y,1, TGTT_END,0} ));
+    //! a tu z kolei powinno byc TGTT_X,0, TGTT_Y,0   bo wspolzedne ekranowe liczymy od zera..
 }
 void tgt_destroyobject(struct tgt_object *obj)
 {
-    struct tgt_object *children;
-    struct tgt_object *newch;
+    struct tgt_object *firstch;
+    struct tgt_object *nextch;
+    struct tgt_object *tmpch;
     /* Likwiduje obiekt wywolujac odpowiednia metode z klasy po czym zwalniajac
        przeznaczona dla niego pamiec. Procedura wywoluje siebie rekursywnie w
        celu usuniecia rowniez dzieci obiektu*/
-       
-    for(children=obj->ln.first_child;children!=NULL;)
-    {
-	newch=children->ln.next;
-	tgt_destroyobject(children);
-	children=newch;
-    }
+    
+    firstch=obj->ln.child;
+    if((nextch=obj->ln.child)!=NULL)
+        do{
+	    tmpch=nextch->ln.next;
+	    tgt_destroyobject(nextch);
+	    nextch=tmpch;
+	}while(nextch!=firstch);
     obj->classf(obj,TGT_OBJECT_DESTROY,0,0);
     free(obj);
     return;

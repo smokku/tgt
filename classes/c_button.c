@@ -15,20 +15,20 @@ int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
     switch(type)
     {
 	case TGT_OBJECT_CREATE:
-	    title=(char*) tgt_gettag(b,TTGT_BUTTON_CAPTION,0);
+	    title=(char*) tgt_gettag(b,TGTT_BUTTON_CAPTION,0);
 	    if(title==NULL) return(0);
 	    iw=(struct tgt_int_button*) malloc(sizeof(struct tgt_int_button));
 	    obj->class_data=iw;
 	    iw->title=title;
-	    iw->activebg=tgt_gettag(b,TTGT_BUTTON_ACTIVEBG,6);
-	    obj->objectf=(int (*)()) tgt_gettag(b,TTGT_CALLBACK,0);
+	    iw->activebg=tgt_gettag(b,TGTT_BUTTON_ACTIVEBG,6);
+	    obj->objectf=(int (*)()) tgt_gettag(b,TGTT_CALLBACK,0);
 	    return(1);
 	case TGT_OBJECT_DESTROY:
 	    free(obj->class_data);
 	    return(1);
 	case TGT_OBJECT_REFRESH:
 	    iw=obj->class_data;
-	    act=tgt_is_active(obj);
+	    act=tgt_hasfocus(obj);
 	    tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b);
 	    if(act==1) 
 	    {	
