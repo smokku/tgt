@@ -7,7 +7,7 @@
 #include <signal.h>
 #include <sys/resource.h>
 #include <sys/wait.h>
-	
+#include <pthread.h>
 		     
 struct tgt_int_buffer
 {
@@ -32,8 +32,9 @@ void tgt_int_buffertask(void **param)
     int fh,ibp,mbp;
     char c;
 
-    signal(SIGCHLD,tgt_int_chldhandler);
-//    printf("Handler starting\n");
+//    signal(SIGCHLD,tgt_int_chldhandler);
+//    fprintf(stderr,"Handler starting\n");
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE,NULL);
 
     obj=(struct tgt_object*) param[0];
     fh=(int) param[1];
@@ -62,10 +63,12 @@ void tgt_int_buffertask(void **param)
     }
 }
 
-int tgt_buffer_system(struct tgt_object *obj,char *name)
+void * tgt_buffer_system(struct tgt_object *obj,char *name)
 {
-    int ret,fd,t;
+    long ret;
+    int fd,t;
     int b_pipe[2];
+    long *ptr;
     static void *param[2];
     if(pipe(b_pipe)==-1) return;
     signal(SIGCHLD,tgt_int_chldhandler);
@@ -73,7 +76,7 @@ int tgt_buffer_system(struct tgt_object *obj,char *name)
     switch(t)
     {
 	case 0:
-	    signal(SIGCHLD,tgt_int_chldhandler);
+//	    signal(SIGCHLD,tgt_int_chldhandler);
 	    fd=b_pipe[1];
 	    dup2(fd,1);
 //	    printf("Called child process \n");
@@ -84,11 +87,20 @@ int tgt_buffer_system(struct tgt_object *obj,char *name)
 	default:
 	    param[0]=obj; param[1]=(void*) b_pipe[0];
 	    pthread_create(&ret,NULL,tgt_int_buffertask,param);
-	    pthread_detach(ret);
-	    return(t);
+	    fprintf(stderr,"ppid %d\n",ret);
+	    ptr=(long*) malloc(sizeof(long)*2);
+	    ptr[0]=ret; ptr[1]=t;
+	    return((void*) ptr);
     }
 }
-
+void tgt_buffer_abort(long *ptr)
+{
+    kill(ptr[1],SIGKILL);
+    fprintf(stderr,"kpid %d childpid %d\n",ptr[0],ptr[1]);
+    pthread_cancel(ptr[0]);
+    perror("pthread_cancel");
+    free(ptr);
+}
 
 int tgt_builtin_buffer(struct tgt_object *obj,int type,int a,void *b)
 {
@@ -100,15 +112,15 @@ int tgt_builtin_buffer(struct tgt_object *obj,int type,int a,void *b)
     {
 	case TGT_OBJECT_CREATE:
 	    idata=(struct tgt_int_buffer*) malloc(sizeof(struct tgt_int_buffer));
-	    idata->borderc=(int) tgt_gettag(b,TGTT_BUFFER_BORDERCOLOR,-1);
+	    idata->borderc=(int) tgt_getnumtag(b,TGTT_BUFFER_BORDERCOLOR,-1);
 
 	    if(idata->borderc!=-1)
 		idata->sys=obj->ys-2;
 	    else
 		idata->sys=obj->ys;
 		
-	    ls=tgt_gettag(b,TGTT_BUFFER_LINESIZE,obj->xs+1); idata->linesize=ls;
-	    bfs=tgt_gettag(b,TGTT_BUFFER_BUFFERSIZE,8192);
+	    ls=tgt_getnumtag(b,TGTT_BUFFER_LINESIZE,obj->xs+1); idata->linesize=ls;
+	    bfs=tgt_getnumtag(b,TGTT_BUFFER_BUFFERSIZE,8192);
 	    ys=bfs/ls; idata->ysize=ys;
 	    ptr=(char*) malloc(bfs);
 	    index=(char**) malloc(sizeof(char*) * ys);

@@ -18,12 +18,12 @@ int tgt_builtin_label(struct tgt_object *obj,int type,int a,void *b)
     {
 	case TGT_OBJECT_CREATE:
 	    idata=(struct tgt_int_label*) malloc(sizeof(struct tgt_int_label));
-	    text=(char*) tgt_gettag(b,TGTT_LABEL_TEXT,0);
+	    text=(char*) tgt_getptrtag(b,TGTT_LABEL_TEXT,NULL);
 	    if(text==NULL) text="";
 	    l=strlen(text);
 	    if(obj->xs < l) obj->xs=l;
 	    idata->text=text;
-	    idata->type=tgt_gettag(b,TGTT_LABEL_TYPE,0);
+	    idata->type=tgt_getnumtag(b,TGTT_LABEL_TYPE,0);
 	    obj->class_data=idata;
 	    obj->objflags|=TGT_OBJFLAGS_NONSELECTABLE;
 	    return(1);
@@ -45,6 +45,7 @@ int tgt_builtin_label(struct tgt_object *obj,int type,int a,void *b)
 	case TGT_OBJECT_SETTAG:
 	    idata=obj->class_data;
 	    if(a==TGTT_LABEL_TEXT) { idata->text=b; return(1); }
+	    if(a==TGTT_LABEL_TYPE) { idata->type=(int) b; return(1); }
 	    return(0);
 	case TGT_OBJECT_GETTAG:
 	    idata=obj->class_data;

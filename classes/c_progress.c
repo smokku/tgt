@@ -18,16 +18,16 @@ int tgt_builtin_progress(struct tgt_object *obj,int type,int a,void *b)
     switch(type)
     {
 	case TGT_OBJECT_CREATE:
-	    title=(char*) tgt_gettag(b,TGTT_PROGRESS_CAPTION,0);
+	    title=(char*) tgt_getptrtag(b,TGTT_PROGRESS_CAPTION,NULL);
 	    if(title==NULL) title="";
 	    obj->objflags|=TGT_OBJFLAGS_NONSELECTABLE;
 	    idata=(struct tgt_int_progress*) malloc(sizeof(struct tgt_int_progress));
 	    idata->title=title;
-	    idata->endvalue=tgt_gettag(b,TGTT_PROGRESS_ENDVALUE,255);
-	    idata->value=tgt_gettag(b,TGTT_PROGRESS_VALUE,0);
+	    idata->endvalue=tgt_getnumtag(b,TGTT_PROGRESS_ENDVALUE,255);
+	    idata->value=tgt_getnumtag(b,TGTT_PROGRESS_VALUE,0);
 	    if(idata->value > idata->endvalue) idata->value=idata->endvalue;
-	    idata->type=tgt_gettag(b,TGTT_PROGRESS_TYPE,0);
-	    idata->activebg=tgt_gettag(b,TGTT_PROGRESS_ACTIVEBG,6);
+	    idata->type=tgt_getnumtag(b,TGTT_PROGRESS_TYPE,0);
+	    idata->activebg=tgt_getnumtag(b,TGTT_PROGRESS_ACTIVEBG,6);
 	    obj->class_data=idata;
 	    return(1);
 	case TGT_OBJECT_DESTROY:
@@ -72,6 +72,8 @@ int tgt_builtin_progress(struct tgt_object *obj,int type,int a,void *b)
 		    idata->endvalue=(int) b;
 		    if(idata->endvalue < 1) idata->endvalue=1;
 		    return(1);
+		case TGTT_PROGRESS_TYPE: idata->type=(int) b; return(1);
+		case TGTT_PROGRESS_ACTIVEBG: idata->activebg=(int) b; return(1);
 	    }
 	    return(0);
 	case TGT_OBJECT_GETTAG:

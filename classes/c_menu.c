@@ -19,13 +19,13 @@ int tgt_builtin_menu(struct tgt_object *obj,int type,int a,void *b)
     {
 	case TGT_OBJECT_CREATE:
 	    iw=(struct tgt_int_menu*) malloc(sizeof(struct tgt_int_menu));
-	    obj->objectf=(int(*)()) tgt_gettag(b,TGTT_CALLBACK,(long) NULL);
+	    obj->objectf=(int(*)()) tgt_getptrtag(b,TGTT_CALLBACK,NULL);
 	    obj->objflags=TGT_OBJFLAGS_NONSELECTABLE;
 	    obj->class_data=(void*) iw;
-	    iw->framecolor=tgt_gettag(b,TGTT_MENU_FRAMECOLOR,obj->fg);
-	    iw->selcolor=tgt_gettag(b,TGTT_MENU_SELCOLOR,6);
+	    iw->framecolor=tgt_getnumtag(b,TGTT_MENU_FRAMECOLOR,obj->fg);
+	    iw->selcolor=tgt_getnumtag(b,TGTT_MENU_SELCOLOR,6);
 	    iw->open=0;
-	    iw->mainmenu=(void*) tgt_gettag(b,TGTT_MENU_ITEMS,(long) NULL);
+	    iw->mainmenu=tgt_getptrtag(b,TGTT_MENU_ITEMS,NULL);
 	    iw->currentmenu=iw->mainmenu;
 	    return(1);
 	case TGT_OBJECT_DESTROY:
@@ -99,6 +99,8 @@ int tgt_builtin_menu(struct tgt_object *obj,int type,int a,void *b)
 		    iw->mainmenu = b;
 		    iw->currentmenu=iw->mainmenu;
 		    break;
+		case TGTT_MENU_FRAMECOLOR: iw->framecolor=(int) b; return(1);
+		case TGTT_MENU_SELCOLOR: iw->selcolor=(int) b; return(1);
 	    }
 	    return(0);
 	    default: return(0);

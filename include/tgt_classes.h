@@ -105,3 +105,5 @@ jest _po_ odpytaniu rodzicow o to czy rozumieja
 #define TGT_CLASS_CYCLE 30
 #define TGT_CLASS_MULTILINE 31
 #define TGT_CLASS_TEXTBUFFER 32
+
+#define TGT_CLASS_USERBASE 1000

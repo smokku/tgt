@@ -74,13 +74,13 @@ int main()
 
 
     desktop=tgt_start(NULL,&myterm);
-    window=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,(long[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE,(long) "Menu Class Test",TGTT_CALLBACK,hotkeys,TGTT_END,0});
-    tgt_createandlink(window,myterm,TGT_CLASS_BUTTON,(long[]) {TGTT_X,50,TGTT_Y,12,TGTT_BUTTON_CAPTION,(long) "[Exit]",TGTT_CALLBACK,(long) shutdown,TGTT_END,0});
-    menu1=tgt_createandlink(window,myterm,TGT_CLASS_MENU,(long[]) {TGTT_X,1,TGTT_Y,1,TGTT_XS,59,TGTT_CALLBACK,(long) menu,TGTT_END,0});
-    tgt_createandlink(window,myterm,TGT_CLASS_BUTTON,(long[]) {TGTT_X,5,TGTT_Y,6,TGTT_BUTTON_CAPTION,(long) "[Context Menu]",TGTT_CALLBACK,(long) newmenu,TGTT_END,0});
-    menu2=tgt_createandlink(window,myterm,TGT_CLASS_MENU,(long[]) {TGTT_X,1,TGTT_Y,1,TGTT_XS,59,TGTT_CALLBACK,(long) menu,TGTT_END,0});
-    tgt_createandlink(window,myterm,TGT_CLASS_CYCLE,(long[]) {TGTT_X,5,TGTT_Y,5,TGTT_CYCLE_ITEMS,(char*[]) { "Item One","Item Two","Item Three",NULL },TGTT_CALLBACK,cyclechange,TGTT_END,0});
-    status=tgt_createandlink(window,myterm,TGT_CLASS_LABEL,(long[]) {TGTT_X,5,TGTT_Y,12,TGTT_LABEL_TEXT,"Press <ESC> to enter the menu",TGTT_END,0});
+    window=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE,"Menu Class Test",TGTT_CALLBACK,hotkeys,TGTT_END,0});
+    tgt_createandlink(window,myterm,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,50,TGTT_Y,12,TGTT_BUTTON_CAPTION,"[Exit]",TGTT_CALLBACK, shutdown,TGTT_END,0});
+    menu1=tgt_createandlink(window,myterm,TGT_CLASS_MENU,(tagitem[]) {TGTT_X,1,TGTT_Y,1,TGTT_XS,59,TGTT_CALLBACK,menu,TGTT_END,0});
+    tgt_createandlink(window,myterm,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,5,TGTT_Y,6,TGTT_BUTTON_CAPTION,"[Context Menu]",TGTT_CALLBACK,newmenu,TGTT_END,0});
+    menu2=tgt_createandlink(window,myterm,TGT_CLASS_MENU,(tagitem[]) {TGTT_X,1,TGTT_Y,1,TGTT_XS,59,TGTT_CALLBACK, menu,TGTT_END,0});
+    tgt_createandlink(window,myterm,TGT_CLASS_CYCLE,(tagitem[]) {TGTT_X,5,TGTT_Y,5,TGTT_CYCLE_ITEMS,(char*[]) { "Item One","Item Two","Item Three",NULL },TGTT_CALLBACK,cyclechange,TGTT_END,0});
+    status=tgt_createandlink(window,myterm,TGT_CLASS_LABEL,(tagitem[]) {TGTT_X,5,TGTT_Y,12,TGTT_LABEL_TEXT,"Press <ESC> to enter the menu",TGTT_END,0});
     
     tgt_set(menu1,TGTT_MENU_ITEMS,pdmptr);
     tgt_set(menu2,TGTT_MENU_ITEMS,cxmptr);

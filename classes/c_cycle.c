@@ -27,20 +27,18 @@ int tgt_builtin_cycle(struct tgt_object *obj,int type,int a,void *b)
     switch(type)
     {
 	case TGT_OBJECT_CREATE:
-	    items=(char**) tgt_gettag(b,TGTT_CYCLE_ITEMS,(long) NULL);
-	    if(items==NULL) return(0);
+	    items=(char**) tgt_getptrtag(b,TGTT_CYCLE_ITEMS,NULL);
 	    iw=(struct tgt_int_cycle*) malloc(sizeof(struct tgt_int_cycle));
-	    obj->objectf=(int(*)()) tgt_gettag(b,TGTT_CALLBACK,(long) NULL);
+	    obj->objectf=(int(*)()) tgt_getptrtag(b,TGTT_CALLBACK,NULL);
 	    obj->class_data=(void*) iw;
-	    iw->framecolor=tgt_gettag(b,TGTT_CYCLE_POPFRAMECOLOR,obj->fg);
-	    iw->selcolor=tgt_gettag(b,TGTT_CYCLE_POPSELCOLOR,6);
-	    iw->ds=(char*) tgt_gettag(b,TGTT_CYCLE_MARK1,(long) defs);
-	    iw->de=(char*) tgt_gettag(b,TGTT_CYCLE_MARK2,(long) defe);
-	    
+	    iw->framecolor=tgt_getnumtag(b,TGTT_CYCLE_POPFRAMECOLOR,obj->fg);
+	    iw->selcolor=tgt_getnumtag(b,TGTT_CYCLE_POPSELCOLOR,6);
+	    iw->ds=(char*) tgt_getnumtag(b,TGTT_CYCLE_MARK1,(long) defs);
+	    iw->de=(char*) tgt_getnumtag(b,TGTT_CYCLE_MARK2,(long) defe);
 	    iw->open=0; iw->items=items;
 	    iw->menuobj=tgt_menu_context(0);
 	    iw->current=0;
-	    for(i=0;items[i]!=NULL;i++) tgt_menu_add(iw->menuobj,items[i],i,0,NULL);
+	    if(items) for(i=0;items[i]!=NULL;i++) tgt_menu_add(iw->menuobj,items[i],i,0,NULL);
 	    iw->mx=tgt_menu_getmaxsize(iw->menuobj);
 	    return(1);
 	case TGT_OBJECT_DESTROY:
@@ -50,6 +48,7 @@ int tgt_builtin_cycle(struct tgt_object *obj,int type,int a,void *b)
 	    return(1);
 	case TGT_OBJECT_REFRESH:
 	    iw=obj->class_data;
+	    if(!iw->items) return(0);
 	    act=tgt_hasfocus(obj);
 	    if(iw->open)
 		tgt_menu_draw(obj->term,iw->menuobj,obj->fg,obj->bg,iw->framecolor,iw->selcolor,a+obj->x,(int) b+obj->y,0);
@@ -128,8 +127,16 @@ int tgt_builtin_cycle(struct tgt_object *obj,int type,int a,void *b)
 		    iw->current=(int) b;
 		    tgt_menu_setactive(iw->menuobj,(int) b);
 		    return(1);
-		case TGTT_CYCLE_MARK1: iw->ds=b; break;
-		case TGTT_CYCLE_MARK2: iw->de=b; break;	
+		case TGTT_CYCLE_MARK1: iw->ds=b; return(1);
+		case TGTT_CYCLE_MARK2: iw->de=b; return(1);	
+		case TGTT_CYCLE_ITEMS: 
+		    tgt_menu_destroycontext(iw->menuobj);
+		    iw->menuobj=tgt_menu_context(0);
+		    items=b; iw->items=items;
+		    if(items) for(i=0;items[i]!=NULL;i++) tgt_menu_add(iw->menuobj,items[i],i,0,NULL);
+		    return(1);
+		case TGTT_CYCLE_POPFRAMECOLOR: iw->framecolor=(int) b; return(1);
+		case TGTT_CYCLE_POPSELCOLOR: iw->selcolor=(int) b; return(1);	
 	    }
 	    return(0);
 	case TGT_OBJECT_SETDEFAULTS:

@@ -19,18 +19,18 @@ int tgt_builtin_slider(struct tgt_object *obj,int type,int a,void *b)
     switch(type)
     {
 	case TGT_OBJECT_CREATE:
-	    title=(char*) tgt_gettag(b,TGTT_SLIDER_CAPTION,0);
+	    title=(char*) tgt_getptrtag(b,TGTT_SLIDER_CAPTION,NULL);
 	    if(title==NULL) title="";
 	    idata=(struct tgt_int_slider*) malloc(sizeof(struct tgt_int_slider));
 	    idata->title=title;
-	    idata->minvalue=tgt_gettag(b,TGTT_SLIDER_MINVALUE,0);
-	    idata->maxvalue=tgt_gettag(b,TGTT_SLIDER_MAXVALUE,100);
-	    idata->value=tgt_gettag(b,TGTT_SLIDER_VALUE,0);
+	    idata->minvalue=tgt_getnumtag(b,TGTT_SLIDER_MINVALUE,0);
+	    idata->maxvalue=tgt_getnumtag(b,TGTT_SLIDER_MAXVALUE,100);
+	    idata->value=tgt_getnumtag(b,TGTT_SLIDER_VALUE,0);
 	    if(idata->value > idata->maxvalue) idata->value=idata->maxvalue;
 	    if(idata->value < idata->minvalue) idata->value=idata->minvalue;
-	    idata->type=tgt_gettag(b,TGTT_SLIDER_TYPE,0);
-	    idata->activebg=tgt_gettag(b,TGTT_SLIDER_ACTIVEBG,6);
-	    obj->objectf=(int (*)()) tgt_gettag(b,TGTT_CALLBACK,0);
+	    idata->type=tgt_getnumtag(b,TGTT_SLIDER_TYPE,0);
+	    idata->activebg=tgt_getnumtag(b,TGTT_SLIDER_ACTIVEBG,6);
+	    obj->objectf=(int (*)()) tgt_getptrtag(b,TGTT_CALLBACK,NULL);
 	    obj->class_data=idata;
 	    return(1);
 	case TGT_OBJECT_DESTROY:
@@ -113,6 +113,9 @@ int tgt_builtin_slider(struct tgt_object *obj,int type,int a,void *b)
 		    idata->maxvalue=(int) b;
 		    if(idata->maxvalue < idata->minvalue+1) idata->maxvalue=idata->minvalue+1;
 		    return(1);
+		case TGTT_SLIDER_TYPE: idata->type=(int) b; return(1);
+		case TGTT_SLIDER_ACTIVEBG: idata->activebg=(int) b; return(1);
+
             }
 	    return(0);
 	case TGT_OBJECT_GETTAG:

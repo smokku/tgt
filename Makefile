@@ -17,7 +17,7 @@ LDFLAGS =
 LIBS = 
 
 #default target: compile
-all: shared 
+all: shared fbclass
 	for i in $(SUBDIRS); \
 	do $(MAKE) -C $$i; done
 
@@ -29,6 +29,9 @@ all: shared
 shared: ${OBJECTS}
 	gcc -shared $(OBJECTS) -o libtgt.so -ldl -lpthread
 
+fbclass: classes_so/c_fbpic.c
+	gcc -shared classes_so/c_fbpic.c classes_so/fb_display.c -o fbpic.class $(CFLAGS)
+	
 # make a clean source tree again
 clean: 
 	for i in $(SUBDIRS); \

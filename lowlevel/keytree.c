@@ -31,10 +31,13 @@ struct tgt_keynode * tgt_initroottable(void)
 void tgt_destroylookuptable(struct tgt_keynode * lt)
 {
     int i;
+    
     for(i=0;i<256;i++)
 	if(lt[i].type==TGT_KEYN_LOOKUPTABLE) tgt_destroylookuptable(lt[i].value);
 
+//    fprintf(stderr,"ltfree\n");
     free(lt);
+//    fprintf(stderr,"done\n");
 }
 
 /* Dopisuje sekwencje seq jako c do struktur key-lookup, ktorych najwyzsza

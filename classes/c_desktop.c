@@ -10,7 +10,7 @@ int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void* b)
     {
 	case TGT_OBJECT_CREATE:
 	    tgt_initconswitch();
-	    obj->objectf=(int (*)()) tgt_gettag(b,TGTT_CALLBACK,0);
+	    obj->objectf=(int (*)()) tgt_getptrtag(b,TGTT_CALLBACK,NULL);
 	    if(!(obj->next_keys)) obj->next_keys=switches_next;
 	    if(!(obj->prev_keys)) obj->prev_keys=switches_prev;
 	    return(1);

@@ -18,13 +18,10 @@ na koniec linii przed przekazaniem danych programowi
 */
     conswitch_active=1;
     /* Tworzymy wlasny termios (struktura opisujaca atrybuty konsoli w linuxie)... */
-    ourtermios.c_iflag=0;
-    ourtermios.c_oflag=0;
-    ourtermios.c_cflag=0;
-    ourtermios.c_lflag=0;
-    cfmakeraw(&ourtermios);
     /* ... oraz zapisujemy ten oryginalny (normalny) */
     tcgetattr(0,&oldtermios);
+    memcpy(&ourtermios,&oldtermios,sizeof(struct termios));
+    ourtermios.c_lflag&=!(ECHO|ICANON);
 }
 
 long tgt_rawcon(int raw)

@@ -27,16 +27,16 @@ int tgt_builtin_string(struct tgt_object *obj,int type,int a,void *b)
     {
 	case TGT_OBJECT_CREATE:
 	    iw=(struct tgt_int_string*) malloc(sizeof(struct tgt_int_string));
-	    obj->objectf=(int(*)()) tgt_gettag(b,TGTT_CALLBACK,(long) NULL);
-	    iw->maxsize=tgt_gettag(b,TGTT_STRING_MAX,20);
-	    iw->passwd=(unsigned char) tgt_gettag(b,TGTT_STRING_HASHED,0);
-	    iw->ccolor=(unsigned char) tgt_gettag(b,TGTT_STRING_CURSORCOLOR,3);
-	    iw->echar=(char) tgt_gettag(b,TGTT_STRING_EMPTYCHAR,(long) emptych);
-	    iw->accept=(char*) tgt_gettag(b,TGTT_STRING_ACCEPT,(long) NULL);
+	    obj->objectf=(int(*)()) tgt_getptrtag(b,TGTT_CALLBACK,NULL);
+	    iw->maxsize=tgt_getnumtag(b,TGTT_STRING_MAX,20);
+	    iw->passwd=(unsigned char) tgt_getnumtag(b,TGTT_STRING_HASHED,0);
+	    iw->ccolor=(unsigned char) tgt_getnumtag(b,TGTT_STRING_CURSORCOLOR,3);
+	    iw->echar=(char) tgt_getnumtag(b,TGTT_STRING_EMPTYCHAR,emptych);
+	    iw->accept=(char*) tgt_getptrtag(b,TGTT_STRING_ACCEPT,NULL);
 	    iw->curpos=0; iw->cursor=0; iw->insmode=1;
 	    iw->buffer=(char*) malloc(iw->maxsize+1);
 	    bzero(iw->buffer,iw->maxsize+1);
-	    rd=(char*) tgt_gettag(b,TGTT_STRING_STRING,0);
+	    rd=(char*) tgt_getptrtag(b,TGTT_STRING_STRING,NULL);
 	    if(rd) snprintf(iw->buffer,iw->maxsize,"%s",rd);
 	    obj->class_data=iw;
 	    return(1);
@@ -181,6 +181,11 @@ int tgt_builtin_string(struct tgt_object *obj,int type,int a,void *b)
 		    iw->curpos=0;
 		    tgt_refresh(obj);
 		    return(1);
+		case TGTT_STRING_MAX: iw->maxsize=(int) b; iw->buffer=(char*) realloc(iw->buffer,iw->maxsize); return(1);
+		case TGTT_STRING_HASHED: iw->passwd=(unsigned char) b; return(1);
+		case TGTT_STRING_CURSORCOLOR: iw->ccolor=(unsigned char) b; return(1);
+		case TGTT_STRING_EMPTYCHAR: iw->echar=(char) b; return(1);
+		case TGTT_STRING_ACCEPT: iw->accept=(char*) b; return(1);
 	    }
 	    return(0);
 	case TGT_OBJECT_GETTAG:

@@ -32,15 +32,15 @@ int main()
     int i;
 
     desktop=tgt_start(NULL,&myterm);
-    window=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,(long[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE,(long) "String Class Test",TGTT_END,0});
-    tgt_createandlink(window,myterm,TGT_CLASS_BUTTON,(long[]) {TGTT_X,50,TGTT_Y,12,TGTT_BUTTON_CAPTION,(long) "[Exit]",TGTT_CALLBACK,(long) shutdown,TGTT_END,0});
-    str=tgt_createandlink(window,myterm,TGT_CLASS_STRING,(long[]) {TGTT_X,2,TGTT_Y,3,TGTT_XS,30,TGTT_STRING_STRING,(long)"Type something here",TGTT_STRING_MAX,250,TGTT_END,0});
-    tgt_createandlink(window,myterm,TGT_CLASS_LABEL,(long[]) {TGTT_X,2,TGTT_Y,4,TGTT_LABEL_TEXT,(long) "Password:",TGTT_END,0});
-    tgt_createandlink(window,myterm,TGT_CLASS_STRING,(long[]) {TGTT_X,12,TGTT_Y,4,TGTT_XS,20,TGTT_STRING_MAX,30,TGTT_CALLBACK,(long) passwd,TGTT_STRING_HASHED,'*',TGTT_END,0});
-    tgt_createandlink(window,myterm,TGT_CLASS_STRING,(long[]) {TGTT_X,2,TGTT_Y,5,TGTT_XS,20,TGTT_STRING_STRING,(long)"Hit enter over here",TGTT_STRING_MAX,30,TGTT_CALLBACK,(long) clearstr,TGTT_END,0});
-    tgt_createandlink(window,myterm,TGT_CLASS_STRING,(long[]) {TGTT_X,2,TGTT_Y,6,TGTT_XS,20,TGTT_STRING_MAX,50,TGTT_STRING_STRING,(long) "Nicer colours and empty char", TGTT_STRING_EMPTYCHAR,'.',TGTT_FG,6,TGTT_END,0});
-    tgt_createandlink(window,myterm,TGT_CLASS_LABEL,(long[]) {TGTT_X,2,TGTT_Y,7,TGTT_LABEL_TEXT,(long) "Numeric :",TGTT_END,0});
-    tgt_createandlink(window,myterm,TGT_CLASS_STRING,(long[]) {TGTT_X,12,TGTT_Y,7,TGTT_XS,20,TGTT_STRING_MAX,30,TGTT_STRING_ACCEPT,(long) "0123456789.-",TGTT_END,0});
+    window=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE, "String Class Test",TGTT_END,0});
+    tgt_createandlink(window,myterm,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,50,TGTT_Y,12,TGTT_BUTTON_CAPTION, "[Exit]",TGTT_CALLBACK, shutdown,TGTT_END,0});
+    str=tgt_createandlink(window,myterm,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,2,TGTT_Y,3,TGTT_XS,30,TGTT_STRING_STRING,"Type something here",TGTT_STRING_MAX,250,TGTT_END,0});
+    tgt_createandlink(window,myterm,TGT_CLASS_LABEL,(tagitem[]) {TGTT_X,2,TGTT_Y,4,TGTT_LABEL_TEXT, "Password:",TGTT_END,0});
+    tgt_createandlink(window,myterm,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,12,TGTT_Y,4,TGTT_XS,20,TGTT_STRING_MAX,30,TGTT_CALLBACK, passwd,TGTT_STRING_HASHED,'*',TGTT_END,0});
+    tgt_createandlink(window,myterm,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,2,TGTT_Y,5,TGTT_XS,20,TGTT_STRING_STRING,"Hit enter over here",TGTT_STRING_MAX,30,TGTT_CALLBACK, clearstr,TGTT_END,0});
+    tgt_createandlink(window,myterm,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,2,TGTT_Y,6,TGTT_XS,20,TGTT_STRING_MAX,50,TGTT_STRING_STRING, "Nicer colours and empty char", TGTT_STRING_EMPTYCHAR,'.',TGTT_FG,6,TGTT_END,0});
+    tgt_createandlink(window,myterm,TGT_CLASS_LABEL,(tagitem[]) {TGTT_X,2,TGTT_Y,7,TGTT_LABEL_TEXT, "Numeric :",TGTT_END,0});
+    tgt_createandlink(window,myterm,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,12,TGTT_Y,7,TGTT_XS,20,TGTT_STRING_MAX,30,TGTT_STRING_ACCEPT, "0123456789.-",TGTT_END,0});
     tgt_refresh(desktop);
     tgt_chtimes(0,100000);
     tgt_waitkeys(desktop);

@@ -35,20 +35,20 @@ void newwindow(struct tgt_object *obj)
     if(!tgt_haschild(desktop,11121))
     {
 	cwindow=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,
-	(long[]) { TGTT_X,6,TGTT_Y,8,
+	(tagitem[]) { TGTT_X,6,TGTT_Y,8,
 		    TGTT_XS,20,TGTT_YS,7,
 		    TGTT_ID,11121,
 		    TGTT_WINDOW_TITLE,"New window",
 		    TGTT_PREV_KEYS,(int[]) {'w',0},
 		    TGTT_END,0});
 	tgt_createandlink(cwindow,myterm,TGT_CLASS_LABEL,
-	(long[]) {TGTT_X,2,TGTT_Y,2,TGTT_LABEL_TEXT,"Strange color:",TGTT_END,0});
+	(tagitem[]) {TGTT_X,2,TGTT_Y,2,TGTT_LABEL_TEXT,"Strange color:",TGTT_END,0});
 
 	tgt_createandlink(cwindow,myterm,TGT_CLASS_STRING,
-	(long[]) { TGTT_X,2,TGTT_Y,3,TGTT_XS,10,TGTT_ID,101,TGTT_END,0});
+	(tagitem[]) { TGTT_X,2,TGTT_Y,3,TGTT_XS,10,TGTT_ID,101,TGTT_END,0});
 
 	tgt_createandlink(cwindow,myterm,TGT_CLASS_BUTTON,
-	(long[]) { TGTT_X,2,TGTT_Y,4,TGTT_BUTTON_CAPTION,"Freshen",
+	(tagitem[]) { TGTT_X,2,TGTT_Y,4,TGTT_BUTTON_CAPTION,"Freshen",
 		    TGTT_ID,101,TGTT_CALLBACK,refresh,TGTT_END,0});
 
 	tgt_setfocus(cwindow);
@@ -66,17 +66,17 @@ main()
     desktop=tgt_start(NULL,&myterm);
 
 /* mozna linkowac od razu... */
-    window=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,(long[]) {TGTT_XS,20,TGTT_YS,10,TGTT_WINDOW_TITLE,"Test",TGTT_END,0});
+    window=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_XS,20,TGTT_YS,10,TGTT_WINDOW_TITLE,"Test",TGTT_END,0});
 
 /* albo po stworzeniu obiektu ... */
-    button=tgt_createobject(myterm,TGT_CLASS_BUTTON,(long[]) {TGTT_X,3,TGTT_Y,3,TGTT_BUTTON_CAPTION,"[   Quit    ]",TGTT_CALLBACK,mkexit,TGTT_ID,100,TGTT_END,0});
+    button=tgt_createobject(myterm,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,3,TGTT_Y,3,TGTT_BUTTON_CAPTION,"[   Quit    ]",TGTT_CALLBACK,mkexit,TGTT_ID,100,TGTT_END,0});
     tgt_link(button,window);
 
-    button=tgt_createobject(myterm,TGT_CLASS_BUTTON,(long[]) {TGTT_X,3,TGTT_Y,4,TGTT_BUTTON_CAPTION,"[Open window]",TGTT_CALLBACK,newwindow,TGTT_END,0});
+    button=tgt_createobject(myterm,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,3,TGTT_Y,4,TGTT_BUTTON_CAPTION,"[Open window]",TGTT_CALLBACK,newwindow,TGTT_END,0});
     tgt_link(button,window);
 
 
-    astatus=tgt_createandlink(desktop,myterm,TGT_CLASS_LABEL,(long[]) {TGTT_X,0,TGTT_Y,24,TGTT_LABEL_TEXT,"",TGTT_END,0});
+    astatus=tgt_createandlink(desktop,myterm,TGT_CLASS_LABEL,(tagitem[]) {TGTT_X,0,TGTT_Y,24,TGTT_LABEL_TEXT,"",TGTT_END,0});
 
     sprintf(sstring,"1..2...3... Start");
 

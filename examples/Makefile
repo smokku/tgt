@@ -1,5 +1,5 @@
 
-OBJECTS = csp list string menu status test simplest buffer
+OBJECTS = csp list string menu status test simplest buffer fb
 
 SUBDIRS=examples
 
@@ -10,7 +10,7 @@ LIBS = -L../ -ltgt
 #default target: compile
 all: tests
 
-tests: csp list string menu status test simplest buffer
+tests: csp list string menu status test simplest buffer fb
 csp: csp.c
 	gcc csp.c -o csp -L../ -ltgt -I../include/
 list: list.c
@@ -27,6 +27,8 @@ simplest: simplest.c
 	gcc simplest.c -o simplest -L../ -ltgt -I../include/
 buffer: buffer.c
 	gcc buffer.c -o buffer -L../ -ltgt -I../include/
+fb: fb.c
+	gcc fb.c -o fb -L../ -ltgt -I../include/
 
 # make a clean source tree again
 clean: 

@@ -76,17 +76,19 @@ void tgt_init_intclasses(void)
 
 	    
 
-long tgt_gettag(long *taglist,long stag,long defaultvalue)
+tagdata tgt_gettag(tagitem *taglist,codetype stag,tagdata defaultvalue)
 {
-    long tag,value;
+    long tag;
+    tagdata value;
     /* Przeszukuje tagliste taglist w poszukiwaniu tagu stag i zwraca
       jego wartosc. Jesli tag nie zostanie znaleziony, funkcja zwraca
       defaultvalue */
       
     if(taglist==NULL) return(defaultvalue);
+    printf("lookup\n");
     for(;;)
     {
-	tag=*(taglist++); value=*(taglist++);
+	tag=taglist->tcode; value=taglist->tdata; taglist++;
 	if(tag==TGTT_END) return(defaultvalue); /* koniec taglisty */
 	if(stag==tag) return(value); /* tag ktorego szukamy */
     }
@@ -136,7 +138,7 @@ void tgt_unlink(struct tgt_object *obj)
 
 struct tgt_object * tgt_createobject_int(struct tgt_terminal *term,
 				 int (*classf)(struct tgt_object*,int,int,void*),
-				 long *taglist)
+				 tagitem *taglist)
 {
     struct tgt_object *ret;
     /* Tworzy obiekt dla klasy o handlerze classf istniejacy w terminalu term,
@@ -148,12 +150,12 @@ struct tgt_object * tgt_createobject_int(struct tgt_terminal *term,
     ret->term=term; ret->classf=classf;
     /* Ustawiamy sobie pare najczesciej uzywanych i majacych wlasne pola w 
        strukturze tagow */
-    ret->x=tgt_gettag(taglist,TGTT_X,0); ret->y=tgt_gettag(taglist,TGTT_Y,0);
-    ret->xs=tgt_gettag(taglist,TGTT_XS,1); ret->ys=tgt_gettag(taglist,TGTT_YS,1);
-    ret->fg=tgt_gettag(taglist,TGTT_FG,term->color_fg); ret->bg=tgt_gettag(taglist,TGTT_BG,term->color_bg);
-    ret->id=tgt_gettag(taglist,TGTT_ID,0); 
-    ret->next_keys=(int*) tgt_gettag(taglist,TGTT_NEXT_KEYS,0);
-    ret->prev_keys=(int*) tgt_gettag(taglist,TGTT_PREV_KEYS,0);
+    ret->x=tgt_getnumtag(taglist,TGTT_X,0); ret->y=tgt_getnumtag(taglist,TGTT_Y,0);
+    ret->xs=tgt_getnumtag(taglist,TGTT_XS,1); ret->ys=tgt_getnumtag(taglist,TGTT_YS,1);
+    ret->fg=tgt_getnumtag(taglist,TGTT_FG,term->color_fg); ret->bg=tgt_getnumtag(taglist,TGTT_BG,term->color_bg);
+    ret->id=tgt_getnumtag(taglist,TGTT_ID,0); 
+    ret->next_keys=(int*) tgt_getptrtag(taglist,TGTT_NEXT_KEYS,0);
+    ret->prev_keys=(int*) tgt_getptrtag(taglist,TGTT_PREV_KEYS,0);
 /* W sumie to moglaby sobie to zalatwic klasa sama ale ze dazymy do maksymalnej
   idiotoodpornosci... ;)) */
 
@@ -173,7 +175,7 @@ struct tgt_object * tgt_getdesktop(struct tgt_terminal * term)
 {
     struct tgt_object *desk;
     /* Front-end dla tgt_createobject() tworzacy nadrzedny obiekt desktopu dla terminala term */
-    desk=tgt_createobject_int(term,tgt_builtin_desktop,(long[]) { TGTT_X,1, TGTT_Y,1, TGTT_END,0} );
+    desk=tgt_createobject_int(term,tgt_builtin_desktop,(tagitem[]) { TGTT_X,1, TGTT_Y,1, TGTT_END,0} );
     //! a tu z kolei powinno byc TGTT_X,0, TGTT_Y,0   bo wspolzedne ekranowe liczymy od zera..
     desk->xs = term->x_size;
     desk->ys = term->y_size;
@@ -195,15 +197,13 @@ void tgt_destroyobject(struct tgt_object *obj)
 	    tgt_destroyobject(nextch);
 	    nextch=tmpch;
 	}while(nextch!=firstch);
-						    
     obj->classf(obj,TGT_OBJECT_DESTROY,0,0);
-
     free(obj);
     return;
 }
 struct tgt_object * tgt_createobject(struct tgt_terminal *term,
 				 int classid,
-				 long *taglist)
+				 tagitem *taglist)
 {
     /* jw, front-end, tworzy obiekt wykorzystujac jako handler klasy
        jedna z wbudowanych w system klas */
@@ -214,7 +214,7 @@ struct tgt_object * tgt_createobject(struct tgt_terminal *term,
 
 struct tgt_object * tgt_createandlink(struct tgt_object *parent,struct tgt_terminal *term,
 				 int classid,
-				 long *taglist)
+				 tagitem *taglist)
 {
     /* Kombinacja obu powyzszych */
     struct tgt_object *ret;

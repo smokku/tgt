@@ -16,13 +16,13 @@ int tgt_builtin_checkbox(struct tgt_object *obj,int type,int a,void *b)
     switch(type)
     {
 	case TGT_OBJECT_CREATE:
-	    title=(char*) tgt_gettag(b,TGTT_CHECKBOX_CAPTION,0);
-	    if(title==NULL) title="";
+	    title=(char*) tgt_getptrtag(b,TGTT_CHECKBOX_CAPTION,NULL);
 	    idata=(struct tgt_int_checkbox*) malloc(sizeof(struct tgt_int_checkbox));
+	    if(title==NULL) title="";
 	    idata->title=(char *) title;
-	    idata->active=tgt_gettag(b,TGTT_CHECKBOX_ACTIVE,0);
-	    idata->activebg=tgt_gettag(b,TGTT_CHECKBOX_ACTIVEBG,6);
-	    obj->objectf=(int (*)()) tgt_gettag(b,TGTT_CALLBACK,0);
+	    idata->active=tgt_getnumtag(b,TGTT_CHECKBOX_ACTIVE,0);
+	    idata->activebg=tgt_getnumtag(b,TGTT_CHECKBOX_ACTIVEBG,6);
+	    obj->objectf=(int (*)()) tgt_getptrtag(b,TGTT_CALLBACK,NULL);
 	    obj->class_data=idata;
 	    return(1);
 	case TGT_OBJECT_DESTROY:
@@ -59,11 +59,19 @@ int tgt_builtin_checkbox(struct tgt_object *obj,int type,int a,void *b)
 	    return(0);
 	case TGT_OBJECT_GETTAG:
 	    idata=obj->class_data;
-	    if(a==TGTT_CHECKBOX_ACTIVE) { *((int*) b)=idata->active; return(1); }
+	    switch(a)
+	    {
+		case TGTT_CHECKBOX_ACTIVE: *((int*) b)=idata->active; return(1); 
+	    }
 	    return(0);
 	case TGT_OBJECT_SETTAG:
 	    idata=obj->class_data;
-	    if(a==TGTT_CHECKBOX_ACTIVE) { idata->active=(int) b; return(1); }
+	    switch(a)
+	    {
+		case TGTT_CHECKBOX_ACTIVE: idata->active=(int) b; return(1);
+		case TGTT_CHECKBOX_ACTIVEBG: idata->activebg=(int) b; return(1); 
+		case TGTT_CHECKBOX_CAPTION: idata->title=(char*) b; return(1);
+	    }
 	    return(0);
 	default: return(0);
     }

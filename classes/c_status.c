@@ -17,10 +17,10 @@ int tgt_builtin_status(struct tgt_object *obj,int type,int a,void *b)
     {
 	case TGT_OBJECT_CREATE:
 	    idata=(struct tgt_int_status*) malloc(sizeof(struct tgt_int_status));
-	    text=(char*) tgt_gettag(b,TGTT_STATUS_TEXT,0);
+	    text=(char*) tgt_getptrtag(b,TGTT_STATUS_TEXT,NULL);
 	    if(text==NULL) text="";
 	    idata->text=text;
-	    idata->type=tgt_gettag(b,TGTT_STATUS_TYPE,0);
+	    idata->type=tgt_getnumtag(b,TGTT_STATUS_TYPE,0);
 	    idata->yshift=obj->y;
 	    obj->class_data=idata;
 	    obj->objflags|=TGT_OBJFLAGS_NONSELECTABLE;
@@ -46,7 +46,11 @@ int tgt_builtin_status(struct tgt_object *obj,int type,int a,void *b)
 	    return(1);
 	case TGT_OBJECT_SETTAG:
 	    idata=obj->class_data;
-	    if(a==TGTT_STATUS_TEXT) { idata->text=b; return(1); }
+	    switch(a)
+	    {
+		case TGTT_STATUS_TEXT: idata->text=b; return(1); 
+		case TGTT_STATUS_TYPE: idata->type=(int) b; return(1);
+	    }
 	    return(0);
 	case TGT_OBJECT_GETTAG:
 	    idata=obj->class_data;

@@ -44,18 +44,18 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
     {
 	case TGT_OBJECT_CREATE:
 	    iw=(struct tgt_int_list*) malloc(sizeof(struct tgt_int_list));
-	    obj->objectf=(int(*)()) tgt_gettag(b,TGTT_CALLBACK,(long) NULL);
+	    obj->objectf=(int(*)()) tgt_getptrtag(b,TGTT_CALLBACK,NULL);
 	    obj->class_data=(void*) iw;
 	    iw->current=0; iw->top=0;
-	    iw->data=(void*) tgt_gettag(b,TGTT_LIST_ITEMS,(long) NULL);
-	    iw->dataf=(int(*)(void*,int,int,void*,int,int)) tgt_gettag(b,TGTT_LIST_DATACALLBACK,(long) tgt_int_listdataf);
-	    if(iw->framecolor=tgt_gettag(b,TGTT_LIST_FRAMECOLOR,0))
+	    iw->data=(void*) tgt_getptrtag(b,TGTT_LIST_ITEMS,NULL);
+	    iw->dataf=(int(*)(void*,int,int,void*,int,int)) tgt_getptrtag(b,TGTT_LIST_DATACALLBACK,(long) tgt_int_listdataf);
+	    if(iw->framecolor=tgt_getnumtag(b,TGTT_LIST_FRAMECOLOR,0))
 		iw->realys=obj->ys-2;
 	    else
 		iw->realys=obj->ys;
 		
-	    iw->activebg=tgt_gettag(b,TGTT_LIST_ACTIVEBG,defactbg);
-	    iw->activefg=tgt_gettag(b,TGTT_LIST_ACTIVEFG,obj->fg);
+	    iw->activebg=tgt_getnumtag(b,TGTT_LIST_ACTIVEBG,defactbg);
+	    iw->activefg=tgt_getnumtag(b,TGTT_LIST_ACTIVEFG,obj->fg);
 
 	    iw->outbuffer=(char*) malloc(obj->xs+1);
 	    return(1);
@@ -178,6 +178,14 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	    {
 		case TGTT_LIST_SELECTED: iw->current=(int) b; return(1);
 		case TGTT_LIST_ITEMS: iw->data=b; return(1);
+		case TGTT_LIST_FRAMECOLOR:
+		    if(iw->framecolor=(int) b)
+			iw->realys=obj->ys-2;
+		    else
+			iw->realys=obj->ys;
+		    return(1);
+		case TGTT_LIST_ACTIVEBG: iw->activebg=(int) b; return(1);
+		case TGTT_LIST_ACTIVEFG: iw->activefg=(int) b; return(1);
 	    }
 	case TGT_OBJECT_SETDEFAULTS:
 	    defactbg=atoi(tgt_getprefs(b,"list","activebg","6"));    

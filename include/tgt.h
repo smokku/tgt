@@ -1,3 +1,4 @@
+#include "tgt_config.h"
 #include "tgt_classes.h"
 #include "tgt_terminal.h"
 #include "tgt_keyboard.h"
@@ -13,3 +14,4 @@
 #include "tgt_slider.h"
 #include "tgt_status.h"
 #include "tgt_buffer.h"
+#include "tgt_fbpic.h"

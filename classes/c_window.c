@@ -70,10 +70,10 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	case TGT_OBJECT_CREATE:
 	    iw=(struct tgt_int_window*) malloc(sizeof(struct tgt_int_window));
 	    obj->class_data=iw;
-	    obj->objectf=(int(*)()) tgt_gettag(b,TGTT_CALLBACK,(long) NULL);
-	    iw->title=(char*) tgt_gettag(b,TGTT_WINDOW_TITLE,(long) defaulttitle);
-	    iw->borderfg=tgt_gettag(b,TGTT_WINDOW_BORDERCOLOR,defb);
-	    iw->titlefg=tgt_gettag(b,TGTT_WINDOW_TITLECOLOR,deftit);
+	    obj->objectf=(int(*)()) tgt_getptrtag(b,TGTT_CALLBACK,NULL);
+	    iw->title=(char*) tgt_getptrtag(b,TGTT_WINDOW_TITLE,defaulttitle);
+	    iw->borderfg=tgt_getnumtag(b,TGTT_WINDOW_BORDERCOLOR,defb);
+	    iw->titlefg=tgt_getnumtag(b,TGTT_WINDOW_TITLECOLOR,deftit);
             if(!(obj->next_keys)) obj->next_keys=wswitches_next;
 	    if(!(obj->prev_keys)) obj->prev_keys=wswitches_prev;		
 	    return(1);
@@ -103,6 +103,15 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
             if(obj->objectf) return(obj->objectf(obj,a));
 	    return(0);
 	    break;
+	case TGT_OBJECT_SETTAG:
+	    iw=obj->class_data;
+	    switch(a)
+	    {
+		case TGTT_WINDOW_TITLE:	iw->title=(char*) b; return(1);
+		case TGTT_WINDOW_BORDERCOLOR: iw->borderfg=(int) b; return(1);
+		case TGTT_WINDOW_TITLECOLOR: iw->titlefg=(int) b; return(1);
+	    }
+	    return(0);
 	case TGT_OBJECT_SETDEFAULTS:
 	    defb=atoi(tgt_getprefs(b,"window","framecolor","6"));
 	    deftit=atoi(tgt_getprefs(b,"window","titlecolor","7"));

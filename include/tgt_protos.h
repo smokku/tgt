@@ -31,21 +31,21 @@ int tgt_waitkeys(struct tgt_object *obj);
 
 // management.c
 
-long tgt_gettag(long *taglist,long stag,long defaultvalue);
+tagdata tgt_gettag(tagitem *taglist,codetype stag,tagdata defaultvalue);
 void tgt_link(struct tgt_object *obj,struct tgt_object *parent);
 void tgt_unlink(struct tgt_object *obj);
 struct tgt_object * tgt_createobject_int(struct tgt_terminal *term,
                     int (*classf)(struct tgt_object*,int,int,void*),
-		    long *taglist);
+		    tagitem *taglist);
 
 struct tgt_object * tgt_getdesktop(struct tgt_terminal * term);
 void tgt_destroyobject(struct tgt_object *obj);
 struct tgt_object * tgt_createobject(struct tgt_terminal *term,
                                  int classid,
-				 long *taglist);
+				 tagitem *taglist);
 								  
 struct tgt_object * tgt_createandlink(struct tgt_object *parent,struct tgt_terminal *term,
-                                 int classid,long *taglist);
+                                 int classid,tagitem *taglist);
 								  
 								  
 
