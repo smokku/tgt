@@ -32,24 +32,28 @@ void refresh(int a)
 /* Callback dla przycisku otwarcia dodatkowegookna */
 void newwindow(struct tgt_object *obj)
 {
-    cwindow=tgt_createandlink_int(desktop,myterm,TGT_CLASS_WINDOW,
+    if(!tgt_haschild(desktop,11121))
+    {
+	cwindow=tgt_createandlink_int(desktop,myterm,TGT_CLASS_WINDOW,
 	(long[]) { TGTT_X,6,TGTT_Y,8,
 		    TGTT_XS,20,TGTT_YS,7,
+		    TGTT_ID,11121,
 		    TGTT_WINDOW_TITLE,"New window",
 		    TGTT_PREV_KEYS,(int[]) {'w',0},
 		    TGTT_END,0});
-    tgt_createandlink_int(cwindow,myterm,TGT_CLASS_LABEL,
+	tgt_createandlink_int(cwindow,myterm,TGT_CLASS_LABEL,
 	(long[]) {TGTT_X,2,TGTT_Y,2,TGTT_LABEL_TEXT,"Strange color:",TGTT_END,0});
 
-    tgt_createandlink_int(cwindow,myterm,TGT_CLASS_BUTTON,
+	tgt_createandlink_int(cwindow,myterm,TGT_CLASS_BUTTON,
 	(long[]) { TGTT_X,2,TGTT_Y,3,TGTT_BUTTON_CAPTION,"Close",
 		    TGTT_ID,101,TGTT_CALLBACK,mkexit,TGTT_BG,1,TGTT_END,0});
 
-    tgt_createandlink_int(cwindow,myterm,TGT_CLASS_BUTTON,
+	tgt_createandlink_int(cwindow,myterm,TGT_CLASS_BUTTON,
 	(long[]) { TGTT_X,2,TGTT_Y,4,TGTT_BUTTON_CAPTION,"Freshen",
 		    TGTT_ID,101,TGTT_CALLBACK,refresh,TGTT_END,0});
 
-    tgt_setfocus(cwindow);
+	tgt_setfocus(cwindow);
+    }
 }
 
 main()

@@ -1,6 +1,19 @@
 #include <stdio.h>
 #include "tgt.h"
 
+struct tgt_object * tgt_haschild(struct tgt_object *obj,int id)
+{
+    struct tgt_object *children;
+    struct tgt_object *cc;
+    struct tgt_object *ret;
+    cc=obj->ln.child;
+    if(!cc) return(NULL);
+    for(children=cc->ln.next;children!=cc;children=children->ln.next)
+	if(children->id==id) return(children);
+
+    return(NULL);
+}
+
 int tgt_shalliswitch(struct tgt_object *obj,int key,int pri)
 {
     struct tgt_object *parent;
