@@ -1,0 +1,27 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_isactive 
+tgt_hasfocus - check if the object is marked as active
+
+SYNOPSIS
+
+int tgt_isactive(struct tgt_object *obj);
+int tgt_hasfocus(struct tgt_object *obj);
+
+DESCRIPTION
+
+This functions determine whether specified object is currently marked active
+in its parent list. The active object in TGT is the one that is receiving
+keystrokes when its parent is active, or, when it's a parent for >= 1 
+object(s), the one whose active child does receive them.
+
+The difference between those two functions is that tgt_hasfocus also checks
+iterative whether object's parent, the parent of object's parent ... etc.
+is active, thus returning true only when the object is *really* receiving
+keyboard messages.
+
+EXAMPLE
+
+if(tgt_isactive(window)) tgt_setfocus(window2);

@@ -6,8 +6,11 @@ OLDDIR="`pwd`"
 make clean
 
 cd ..
+mv tgt $TGTNAME
 
-tar -zcvf $TGTNAME.tar.gz tgt/
+tar -zcvf $TGTNAME.tar.gz $TGTNAME/
+
+mv $TGTNAME tgt
 
 cd $OLDDIR
 

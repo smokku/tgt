@@ -1,0 +1,58 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_load_conf
+tgt_save_conf
+tgt_unload_conf  - Manipulate on configuration files.
+
+SYNOPSIS
+
+void * tgt_load_conf(char *name);
+int tgt_save_conf(void * prefs,char *filename);
+void tgt_unload_conf(void * prefs);
+
+DESCRIPTION
+
+Those functions are not related to TGT GUI system, however an application
+may use it for handling simple configuration files (eg. rcfiles).
+
+tgt_load_conf tries to read configuration from 1) 'name' 2) ~user/'name'
+3) /etc/'name' and encapsulates read data in an internal structure, returning
+a 'pointer to a black box' given to any functions related with manipulation
+on rcfiles. For file format - see below. If no file of given name is found,
+an appropiate pointer is still returned, however the structure that it points
+to contains no data - but it can be used in tgt_set_conf(), tgt_get_conf()
+or tgt_save_conf() ...
+
+tgt_save_conf, as the name says, just saves data encapsulated in 'prefs' to
+'filename' using TGT config file format (see below)
+
+tgt_unload_conf frees all memory areas allocated by tgt_load_conf in order
+to store 'prefs'.
+
+FILE FORMAT
+
+--------- example: cut here -----------
+
+# Comment
+
+test = "This is a test value for key called \"test\""
+
+[section]
+alpha  =And this value is without quotes 
+
+[blah]
+
+--------- example: cut here -----------
+
+A TGT configuration file consists of sections (beginning with '[section_name]')
+containing parameter_name = value fields. The section in the top of
+configuration file (before any []'s) is called 'main'. An application specifies
+section name and parameter key in order to fetch a string describing concrete
+parameter. It's possible to use some magic sequences (precisely: \\ , \" , \xNN
+(NN - ascii code in hex) in the value field.
+
+EXAMPLE
+
+see examples/

@@ -1,5 +1,6 @@
 #include "tgt_keyboard.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 /* Przydziela miejsce na lookup-table i zeruje ja, ustawiajac wszystkie
    klawisze na niepoprawne... Patrz include/tgt_keyboard.h */
@@ -10,6 +11,7 @@ struct tgt_keynode * tgt_allockeylookuptable(void)
     int i;
     ret=(struct tgt_keynode*) malloc(sizeof(struct tgt_keynode)*256);
     for(i=0;i<256;i++) ret[i].type=TGT_KEYN_NONE;
+    return(ret);
 }
 
 /* Inicjuje glowna lookup-table, w ktorej type(i)=TGT_KEYN_KEY a value(i)=i */

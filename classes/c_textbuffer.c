@@ -8,6 +8,9 @@
 #include <sys/resource.h>
 #include <sys/wait.h>
 #include <pthread.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 		     
 struct tgt_int_buffer
 {
@@ -18,90 +21,6 @@ struct tgt_int_buffer
     int borderc;
 };
 
-void tgt_int_chldhandler(int i)
-{
-    while(wait3(NULL,WNOHANG,(struct rusage * ) 0)>0);
-}
-    
-
-void tgt_int_buffertask(void **param)
-{
-    struct tgt_object *obj;
-    struct tgt_int_buffer *id;
-    char *inbuffer;
-    int fh,ibp,mbp;
-    char c;
-
-//    signal(SIGCHLD,tgt_int_chldhandler);
-//    fprintf(stderr,"Handler starting\n");
-    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE,NULL);
-
-    obj=(struct tgt_object*) param[0];
-    fh=(int) param[1];
-    ibp=0; mbp=obj->xs;
-    inbuffer=(char*) malloc(mbp+1);
-    id=obj->class_data;
-    if(id->borderc!=-1) mbp-=2;
-    
-    for(;;)
-    {
-	    if(read(fh,&c,1)!=1) { close(fh); return; }
-	    if(c=='\n') 
-	    { 
-		inbuffer[ibp]=0; ibp=0;
-		tgt_builtin_buffer(obj,TGT_OBJECT_SETTAG,TGTA_BUFFER_ADD,inbuffer);
-	    }
-	    else
-	    {
-		inbuffer[ibp++]=c;
-		if(ibp>=mbp) 
-		{
-		    inbuffer[ibp]=0; ibp=0;
-		    tgt_builtin_buffer(obj,TGT_OBJECT_SETTAG,TGTA_BUFFER_ADD,inbuffer);
-		}
-	    }	    
-    }
-}
-
-void * tgt_buffer_system(struct tgt_object *obj,char *name)
-{
-    long ret;
-    int fd,t;
-    int b_pipe[2];
-    long *ptr;
-    static void *param[2];
-    if(pipe(b_pipe)==-1) return;
-    signal(SIGCHLD,tgt_int_chldhandler);
-    t=fork();
-    switch(t)
-    {
-	case 0:
-//	    signal(SIGCHLD,tgt_int_chldhandler);
-	    fd=b_pipe[1];
-	    dup2(fd,1);
-//	    printf("Called child process \n");
-	    execlp("ping","ping","213.25.115.1",NULL);
-	    _exit(0);
-	    break;
-	case -1: return;
-	default:
-	    param[0]=obj; param[1]=(void*) b_pipe[0];
-	    pthread_create(&ret,NULL,tgt_int_buffertask,param);
-	    fprintf(stderr,"ppid %d\n",ret);
-	    ptr=(long*) malloc(sizeof(long)*2);
-	    ptr[0]=ret; ptr[1]=t;
-	    return((void*) ptr);
-    }
-}
-void tgt_buffer_abort(long *ptr)
-{
-    kill(ptr[1],SIGKILL);
-    fprintf(stderr,"kpid %d childpid %d\n",ptr[0],ptr[1]);
-    pthread_cancel(ptr[0]);
-    perror("pthread_cancel");
-    free(ptr);
-}
-
 int tgt_builtin_buffer(struct tgt_object *obj,int type,int a,void *b)
 {
     struct tgt_int_buffer *idata;
@@ -110,6 +29,14 @@ int tgt_builtin_buffer(struct tgt_object *obj,int type,int a,void *b)
     char fstr[20];
     switch(type)
     {
+	case TGT_OBJECT_GETSIZES:
+            if(tgt_getnumtag((tagitem*)(((struct tgt_ac_objectinfo*) b)->ctl),TGTT_BUFFER_BORDERCOLOR,-1)==-1)
+                n=2;
+            else
+                n=4;
+            ((struct tgt_ac_objectinfo*) b)->xsize=tgt_getsizetag((tagitem*)(((struct tgt_ac_objectinfo*) b)->ctl),TGTT_XS,n,((struct tgt_ac_objectinfo*) b)->term);
+            ((struct tgt_ac_objectinfo*) b)->ysize=tgt_getsizetag((tagitem*)(((struct tgt_ac_objectinfo*) b)->ctl),TGTT_YS,n,((struct tgt_ac_objectinfo*) b)->term);
+            return(1);
 	case TGT_OBJECT_CREATE:
 	    idata=(struct tgt_int_buffer*) malloc(sizeof(struct tgt_int_buffer));
 	    idata->borderc=(int) tgt_getnumtag(b,TGTT_BUFFER_BORDERCOLOR,-1);
@@ -141,52 +68,50 @@ int tgt_builtin_buffer(struct tgt_object *obj,int type,int a,void *b)
     
 	    if(idata->borderc!=-1)
 	    {
-	        tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b);
-	        tgt_chattr(obj->term,TGT_TA_COLORS,idata->borderc,obj->bg);
-	        tgt_int_upperb(obj->term,obj->xs);
-	        yp=(int) b+1+obj->y; xp=a+obj->x;
-		sprintf(fstr,"%%-%ds",obj->xs-2);
-		tgt_chattr(obj->term,TGT_TA_GFX,0,0);
+		tgt_cell attr=TGT_T_BUILDCELL(obj->fg,obj->bg,0,0,0);
+		tgt_cell *buff=obj->visual_buffer;
+		
+	        tgt_int_upperb(buff,obj->xs,TGT_T_FG(attr,idata->borderc));
+		buff+=obj->xs;
 		for(i=0;i<ys;i++,f++,yp++)
 		{
-		    tgt_chattr(obj->term,TGT_TA_CURSOR,xp,yp);
-		    tgt_chattr(obj->term,TGT_TA_FGCOLOR,idata->borderc,0);
-		    putchar(obj->term->gfx_set[TGT_TC_VL]);
-		    tgt_chattr(obj->term,TGT_TA_TXT,0,0);
-		    tgt_chattr(obj->term,TGT_TA_FGCOLOR,obj->fg,0);
-		    if(f<l) printf(fstr,index[f%ls]); else printf(fstr,"");
-		    tgt_chattr(obj->term,TGT_TA_FGCOLOR,idata->borderc,0);
-		    tgt_chattr(obj->term,TGT_TA_GFX,0,0);
-		    putchar(obj->term->gfx_set[TGT_TC_VL]);
+		    *(buff++)=TGT_T_FG(TGT_T_FCHAR(attr,TGT_TC_VL),idata->borderc);
+		    if(f<l)
+			tgt_flprintf(buff,obj->xs-2,attr,"%s",index[f%ls]);
+		    else
+			tgt_flprintf(buff,obj->xs-2,attr,"");
+		    buff+=obj->xs-2;
+		    *(buff++)=TGT_T_FG(TGT_T_FCHAR(attr,TGT_TC_VL),idata->borderc);
 		}
-		tgt_chattr(obj->term,TGT_TA_CURSOR,xp,yp);
-	        tgt_chattr(obj->term,TGT_TA_COLORS,idata->borderc,obj->bg);
-	        tgt_int_lowerb(obj->term,obj->xs);
+	        tgt_int_lowerb(buff,obj->xs,TGT_T_FG(attr,idata->borderc));
 		
 	    }
 	    else
 	    {
-	        tgt_chattr(obj->term,TGT_TA_COLORS,obj->fg,obj->bg);
-		yp=(int) b+obj->y; xp=a+obj->x;
-		sprintf(fstr,"%%-%ds",obj->xs);
+		tgt_cell attr=TGT_T_BUILDCELL(obj->fg,obj->bg,0,0,0);
+		tgt_cell *buff=obj->visual_buffer;
+
 		for(i=0;i<ys;i++,f++,yp++)
 		{
-		    tgt_chattr(obj->term,TGT_TA_CURSOR,xp,yp);
-		    if(f<l) printf(fstr,index[f%ls]); else printf(fstr,"");
+		    if(f<l)
+			tgt_flprintf(buff,obj->xs,attr,"%s",index[f%ls]);
+		    else
+			tgt_flprintf(buff,obj->xs,attr,"");
+		    buff+=obj->xs;
 		}
 	    }
-	    fflush(stdout);												
 	    return(1);
 	case TGT_OBJECT_SETTAG:
 	    idata=obj->class_data;
-	    if(a==TGTA_BUFFER_ADD)
+	    switch(a)
 	    {
-		strncpy(idata->lines[idata->last%idata->ysize],b,idata->linesize);
-		idata->lines[idata->last%idata->ysize][idata->linesize-1]=0;
-		if((idata->top+idata->sys)==idata->last) idata->top++;
-		for(idata->last++;(idata->last-idata->first)>idata->ysize;idata->first++);
-		tgt_refresh(obj);
-		return(1);
+	        case TGTA_BUFFER_ADD:
+		    strncpy(idata->lines[idata->last%idata->ysize],b,idata->linesize);
+		    idata->lines[idata->last%idata->ysize][idata->linesize-1]=0;
+		    if((idata->top+idata->sys)==idata->last) idata->top++;
+		    for(idata->last++;(idata->last-idata->first)>idata->ysize;idata->first++);
+		    tgt_refresh(obj);
+		    return(1);
 	    }
 	    return(0);
 	case TGT_OBJECT_GETTAG:
@@ -235,7 +160,11 @@ int tgt_builtin_buffer(struct tgt_object *obj,int type,int a,void *b)
 	    if(n<0) { tgt_activateprev(obj); return(1); }
 	    if(n>0) { tgt_activatenext(obj); return(1); }
 	    if(obj->objectf) return(obj->objectf(obj,a));
-	    return(0);						    
+	    return(0);
+	case TGT_OBJECT_MOUSEDRAG:
+	    if((int) b < 0) tgt_builtin_buffer(obj,TGT_OBJECT_HANDLE,TGT_KEY_UP,NULL);
+	    if((int) b > 0) tgt_builtin_buffer(obj,TGT_OBJECT_HANDLE,TGT_KEY_DOWN,NULL);
+	    return(1);
 	default: return(0);
     }
 }

@@ -1,0 +1,20 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_getclass - find a class object
+
+SYNOPSIS
+
+int (*tgt_int_getclass(int classid))(struct tgt_object*,int,int,void*);
+
+DESCRIPTION
+
+This function returns a pointer to the class function assiciated with specified
+classid. It's designed for internal TGT usage.
+
+EXAMPLE
+
+int (*classf)(struct tgt_object*,int,int,void*);
+
+classf=tgt_int_getclass(TGT_OBJECT_BUTTON);

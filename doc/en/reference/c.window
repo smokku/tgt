@@ -1,0 +1,57 @@
+
+NAME
+
+TGT_CLASS_WINDOW - window class
+
+DESCRIPTION
+
+A window is simply a filled, framed rectangular area. It's natural for windows
+to have children, so all GUI controls might be grouped in windows and then
+each group might be displayed or made invisible by linking/unlinking the
+object to a parent. An usuall parent for window objects is the desktop object.
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_WINDOW_TITLE                                                      CS-
+
+  Requires char * as an argument : this tag specifies the text visible in the
+  upper part of window's border - the so-called window title.
+
+TGTT_WINDOW_TITLECOLOR                                                 CS-
+
+  Required an integer containing ANSI color code (preferably specified by
+  using constants : TGT_COLOR_...) which will specify the color used to 
+  print window title out.
+  
+TGTT_WINDOW_BORDERCOLOR                                                CS-
+
+  Similarily to TGTT_WINDOW_TITLECOLOR, but this one specifies the window 
+  border color.
+  
+TGTT_CALLBACK                                                          C--
+
+  Requires a pointer to a function taking struct tgt_object * and integer
+  and returning integer. This function is called when an unknown for 
+  window class keystroke arrives to a window object - the keystroke code
+  (ASCII or special values like TGT_KEY_BKSPC) is passed as the second
+  argument. The function has to return 1 if it recognized the key, and
+  0 if it should be up to further processing.
+
+CONFIGURATION
+
+Section: window
+Key:     framecolor
+         Default value for TGTT_WINDOW_FRAMECOLOR tag
+Value:   Integer, ANSI color code
+Default: 6 (cyan)
+
+Section: window
+Key:     titlecolor
+         Default value for TGTT_WINDOW_TITLECOLOR tag
+Value:   Integer, ANSI color code
+Default: 7 (white)

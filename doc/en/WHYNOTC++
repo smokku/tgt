@@ -1,0 +1,45 @@
+
+This is just a scratch from a flame-war about relations between
+object oriented and non-OO languages that was started on argante
+developement mailing list.
+
+------------------------------------------------------------------------
+
+And as to OO/non OO languages...
+It's not how you call it, it's what you do with it...
+I've seen examples of OO coding in Windows 3.11 with controls and buttons
+and all nasty beautifiers like that using assembler... Yes assembler,
+extremly non OO language...
+
+--------------------------------------------------------------------------
+Bulba , Argante Virtual Operating System Developer
+
+Date: Wed, 11 Apr 2001 21:42:50 +0200 (CEST)
+From: Bulba <bulba@intelcom.pl>
+--------------------------------------------------------------------------
+
+
+Try compiling a C hello world program using gcc. It should be about 3000
+bytes. Try it with g++. It will be 30,000.
+
+I call that overhead.
+
+Not being able to see what's going on behind the scenes is a recipe for
+disaster; what with ME, weak binding, private data... (I'm using Mozilla
+as I write this. Here's your disaster)
+I'll say: you should always write OO. Not writing OO is writing bad
+code. Structs are a sort of object in my view.
+
+(...)
+
+I might be contradicting myself but I don't care; libraries should be
+easy to use from programmer's view; but after that programmer should be
+trying for every inch of efficiency within the application's bounds...
+
+--------------------------------------------------------------------------
+James Kehl , Argante Virtual Operating System Developer
+
+Date: Fri, 13 Apr 2001 23:46:44 +1000
+From: James Kehl <ecks@optusnet.com.au>
+--------------------------------------------------------------------------
+

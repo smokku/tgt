@@ -1,0 +1,147 @@
+
+
+TGT Autocreate/autolayouting engine is based on a concept taken from
+MagicUserInterface for AmigaOS (well, I don't know whether they took
+it from someone else, or invented by themselves) which assumes dividing 
+the available for objects space into vertical/horizontal groups
+
+
+Let's assume we want to get the following layout:
+
+
++-[ Window ]-----------------------------------+
+|                                              |
+| Name: __________  City: __________   [  Add] |
+| Surname: _______  Street: ________   [ Load] |
+| Phone: _________  [   Clear All  ]   [ Save] |
+|                                              |
+|                      [OK]                    |
++----------------------------------------------+
+
+The whole window contens can be threated as a group which children
+are organized vertically :
+
++-[ Window ] ---------------------------------------+
+| . . . . . . . . . . . . . . . . . . . . . . . . . |
+| . Name: __________  City: __________   [  Add]  . |
+| . Surname: _______  Street: ________   [ Load]  . |
+| . Phone: _________  [   Clear All  ]   [ Save]  . |
+| . . . . . . . . . . . . . . . . . . . . . . . . . |
+| o o o o o o o o o o o o o o o o o o o o o o o o o |
+| o                    [OK]                       o |
+| o o o o o o o o o o o o o o o o o o o o o o o o o |
++---------------------------------------------------+
+
+This group has two children:
+   1) The whole stuff in area sorrounded with dots
+   2) A button labelled "[OK]" in area sorrounded by "o"'s
+In the language of autocreat we'll write that:
+
+win=tgt_ac_mkwindow( term, /* Terminal structure, straigth from tgt_start() */
+		    TGT_AC_VERTICALGROUP, /* Window contens type, in our example
+		                             - a vertical group */
+		    (tgtt[])		       /* Window contents */
+                     {TGT_AC_CHILD, (...)      /* The . . stuff, see below */
+		          TGT_AC_END, 0,
+		      TGT_AC_ALIGNMENT, TGT_AC_HCENTER,  /*We want our button to 
+		                                      be horizontally centered */
+		      TGT_AC_CHILD, TGT_CLASS_BUTTON,	 /* Our button */
+			    TGT_BUTTON_CAPTION, (tgtt) "[OK]",  /* It's data ... */
+			    TGTT_END,0,
+		      TGT_AC_END,0}, /* End of taglist */
+		      "Window", /* Window title */
+		      TGT_AC_LEFT|TGT_AC_BOTTOM); /* Window position on terminal,
+		                                  in our case - lower left corner*/
+
+However, we notice ofcourse, that the  . . . area is a horizontal group of:
+
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+ . a a a a a a a a a a b b b b b b b b b b b c c c c c c .
+ . a Name: __________a b City: __________  b c [  Add] c . 
+ . a Surname: _______a b Street: ________  b c [ Load] c . 
+ . a Phone: _________a b [   Clear All  ]  b c [ Save] c . 
+ . a a a a a a a a a a b b b b b b b b b b b c c c c c c .
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+... three vertical groups , a , b and c ... so our taglist is now:
+
+{TGT_AC_CHILD, TGT_AC_HORIZONTALGROUP,  /* We are a horizontal group */
+    TGT_AC_CHILD, (...)		/* 'a' stuff */
+	TGT_AC_END,
+    TGT_AC_CHILD, (...)		/* 'b' stuff */
+	TGT_AC_END,
+    TGT_AC_CHILD, (...)		/* 'c' stuff */
+	TGT_AC_END,
+    TGT_AC_END, 0,
+ TGT_AC_ALIGNMENT, TGT_AC_HCENTER,
+ TGT_AC_CHILD, TGT_CLASS_BUTTON,
+	TGT_BUTTON_CAPTION, (tgtt) "[OK]", 
+	TGTT_END,0,
+ TGT_AC_END,0}
+
+Of course the area marked with "a"'s is a vertical group of ....
+
+a a a a a a a a a a a a a
+a - - - - - - - - - - - a
+a - Name: __________  - a
+a - - - - - - - - - - - a
+a + + + + + + + + + + + a
+a + Surname: _______  + a
+a + + + + + + + + + + + a
+a * * * * * * * * * * * a
+a * Phone: _________  * a
+a * * * * * * * * * * * a
+a a a a a a a a a a a a a
+
+... three horizontal groups, marked here with +, * and - containing
+a label and a string ... so ... :
+
+{TGT_AC_CHILD, TGT_AC_HORIZONTALGROUP,  /* We are a horizontal group */
+    TGT_AC_CHILD, TGT_AC_VERTICALGROUP,
+    
+	TGT_AC_CHILD, TGT_AC_HORIZONTALGROUP,
+	
+	    TGT_AC_CHILD, TGT_CLASS_LABEL,
+		TGTT_LABEL_CAPTION, (tgtt) "Name:",
+		TGTT_END, 0,	
+	    TGT_AC_CHILD, TGT_CLASS_STRING,
+		TGTT_END, 0,
+	    TGT_AC_END,
+
+	TGT_AC_CHILD, TGT_AC_HORIZONTALGROUP,
+	
+	    TGT_AC_CHILD, TGT_CLASS_LABEL,
+		TGTT_LABEL_CAPTION, (tgtt) "Surname:",
+		TGTT_END, 0,	
+	    TGT_AC_CHILD, TGT_CLASS_STRING,
+		TGTT_END, 0,
+	    TGT_AC_END,
+
+	TGT_AC_CHILD, TGT_AC_HORIZONTALGROUP,
+	
+	    TGT_AC_CHILD, TGT_CLASS_LABEL,
+		TGTT_LABEL_CAPTION, (tgtt) "Phone:",
+		TGTT_END, 0,	
+	    TGT_AC_CHILD, TGT_CLASS_STRING,
+		TGTT_STRING_ACCEPT, (tgtt) "1234567890-+()",
+		TGTT_END, 0,
+	    TGT_AC_END,
+
+	TGT_AC_END,
+    TGT_AC_CHILD, (...)		/* 'b' stuff */
+	TGT_AC_END,
+    TGT_AC_CHILD, (...)		/* 'c' stuff */
+	TGT_AC_END,
+    TGT_AC_END, 0,
+ TGT_AC_ALIGNMENT, TGT_AC_HCENTER,
+ TGT_AC_CHILD, TGT_CLASS_BUTTON,
+	TGT_BUTTON_CAPTION, (tgtt) "[OK]", 
+	TGTT_END,0,
+ TGT_AC_END,0}
+
+b and c can be analised the same way ... It's very nice, because you don't
+have to specify object dimensions or positions .. And , what is the most
+important thing, your program becomes independent on terminal size!
+
+This document shows only ideas... For concrete solutions when using autocreate
+engine , see examples.

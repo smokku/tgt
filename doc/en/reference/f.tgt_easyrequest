@@ -1,0 +1,28 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_easyrequest - ask the user a question in the simplest way
+
+SYNOPSIS
+
+int tgt_easyrequest(struct tgt_object *ref,char *title,char *body,char *buttons);
+
+DESCRIPTION
+
+This function displays a simple dialog box with specified text, title and
+button set, then allows user to choose between those buttons, and returns
+the number of button that was pressed. It locks object switching, so it's
+impossible to 'get out' from that dialog box (eg. with `) before selecting
+one of the buttons. 
+
+'ref' is the reference object, some important information (terminal,
+alignment options) are taken from it - it should preferrably be a desktop
+object. 'title' is the dialog box title, 'body' is the message to be displayed;
+it is splitted to separate lines if it contains '\n' characters. The 'buttons'
+string specifies possible options - they're separated with '|' character.
+
+EXAMPLE
+
+tgt_easyrequest(desk,"Question","Tell me:\nIs 2+2 equal 4?","Sure|Hmm...|I don't think so|I have no idea");
+

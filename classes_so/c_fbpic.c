@@ -1,5 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "tgt.h"
+
+extern void fb_display(char *rgbbuff, int x_size, int y_size, int x_pan, int y_pan, int x_offs, int y_offs);
+extern void getCurrentRes(int *x,int *y);
 
 struct imgdata
 {
@@ -27,8 +31,8 @@ void fb_simpleresize(unsigned char * src,int sx,int sy,unsigned char * dest,int 
 
 int classmain(struct tgt_object *obj,int type,int a,void *b)
 {
-    int i,act,n;
     struct imgdata *iw;
+    int x,y;
 
     switch(type)
     {
@@ -39,7 +43,8 @@ int classmain(struct tgt_object *obj,int type,int a,void *b)
 	    iw->pixmap=(unsigned char *) tgt_getptrtag(b,TGTT_FBPIXMAP_BUFFER,NULL);
 	    iw->x_size=tgt_getnumtag(b,TGTT_FBPIXMAP_XSIZE,0);
 	    iw->y_size=tgt_getnumtag(b,TGTT_FBPIXMAP_YSIZE,0);
-	    getCurrentRes(&iw->fbxr,&iw->fbyr);
+	    getCurrentRes(&x,&y);
+	    iw->fbxr=x;iw->fbyr=y;
 	    iw->cxs=iw->fbxr/obj->term->x_size;
 	    iw->cys=iw->fbyr/obj->term->y_size;
 	    iw->rbx=iw->cxs*obj->xs;
@@ -51,12 +56,14 @@ int classmain(struct tgt_object *obj,int type,int a,void *b)
 		iw->resizebuff=NULL;
 	    return(1);
 	case TGT_OBJECT_DESTROY:
-	    free(obj->class_data);
+	    iw=obj->class_data;
 	    if(iw->resizebuff) free(iw->resizebuff);
+	    free(obj->class_data);
 	    return(1);
 	case TGT_OBJECT_REFRESH:
-	    iw=obj->class_data;	    
+	    iw=obj->class_data;
 	    if(iw->pixmap)
+	    {
 		if(iw->resizebuff)
 		{
 		    fb_simpleresize(iw->pixmap,iw->x_size,iw->y_size,iw->resizebuff,iw->rbx,iw->rby);
@@ -64,7 +71,7 @@ int classmain(struct tgt_object *obj,int type,int a,void *b)
 		}
 		else
 		    fb_display(iw->pixmap,iw->x_size,iw->y_size,0,0,iw->cxs*(obj->x+a),iw->cys*(obj->y+(int) b));
-	    fflush(stdout);
+	    }
 	    return(1);
 	case TGT_OBJECT_SETTAG:
 	    iw=obj->class_data;	    

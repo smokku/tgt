@@ -2,7 +2,7 @@ TGT Reference Manual: Functions
 
 NAME
 
-tgt_waitkeys - Start keyboard input
+tgt_waitkeys - Start processing keyboard input
 
 SYNOPSIS
 

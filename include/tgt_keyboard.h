@@ -1,5 +1,5 @@
 
-/* Kody "klawiszy specjalnych" */
+/* Special keyboard sequences */
 
 #define TGT_KEY_UP -1
 #define TGT_KEY_DOWN -2
@@ -12,7 +12,17 @@
 #define TGT_KEY_END -9
 #define TGT_KEY_PGUP -10
 #define TGT_KEY_PGDN -11
+#define TGT_KEY_MOUSEDOWN -12
+#define TGT_KEY_MOUSEUP -13
+#define TGT_KEY_WINDOWMOVE -14
 
+#define TGT_WINDOW_KEY_UP -101
+#define TGT_WINDOW_KEY_DOWN -102
+#define TGT_WINDOW_KEY_LEFT -103
+#define TGT_WINDOW_KEY_RIGHT -104
+
+
+#define TGT_KEY_ESC 0x1b
 
 /* hihi magiczna liczba ;)) */
 #define TGT_KEY_NONE -65536
@@ -40,3 +50,6 @@ struct tgt_keynode
 #define TGT_KEYN_NONE 2
 
 #define TGT_MAX_SEQ 20
+
+#define TGT_MOUSE_LMB 1
+#define TGT_MOUSE_RMB 2

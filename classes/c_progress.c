@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "tgt.h"
 
 struct tgt_int_progress
@@ -11,12 +12,24 @@ struct tgt_int_progress
 
 int tgt_builtin_progress(struct tgt_object *obj,int type,int a,void *b)
 {
-    int n,i;
+    int n,i,k;
     float m;
     struct tgt_int_progress *idata;
     char *title;
+    char atb[20];
+    tgt_cell attr;
+    tgt_cell * buff;
+    
     switch(type)
     {
+	case TGT_OBJECT_GETSIZES:
+            n=8;
+            if( (i=snprintf(atb,19,"%d",tgt_getnumtag((tagitem*)(((struct tgt_ac_objectinfo*) b)->ctl),TGTT_PROGRESS_ENDVALUE,0))) > n) n=i;
+            n+=strlen(tgt_getptrtag((tagitem*)(((struct tgt_ac_objectinfo*) b)->ctl),TGTT_PROGRESS_CAPTION,""));
+            ((struct tgt_ac_objectinfo*) b)->xsize=tgt_getsizetag((tagitem*)(((struct tgt_ac_objectinfo*) b)->ctl),TGTT_XS,n,((struct tgt_ac_objectinfo*) b)->term);
+            ((struct tgt_ac_objectinfo*) b)->ysize=1;
+            ((struct tgt_ac_objectinfo*) b)->sizeflags|=TGT_AC_SF_YFIXED;
+            return(1);
 	case TGT_OBJECT_CREATE:
 	    title=(char*) tgt_getptrtag(b,TGTT_PROGRESS_CAPTION,NULL);
 	    if(title==NULL) title="";
@@ -35,29 +48,30 @@ int tgt_builtin_progress(struct tgt_object *obj,int type,int a,void *b)
 	    return(1);
 	case TGT_OBJECT_REFRESH:
 	    idata=obj->class_data;
-	    tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b);
-	    if(tgt_hasfocus(obj))
-	    {	
-		tgt_chattr(obj->term,TGT_TA_BOLD,0,0);
-		tgt_chattr(obj->term,TGT_TA_BGCOLOR,idata->activebg);
-	    }
-	    else
-		tgt_chattr(obj->term,TGT_TA_BGCOLOR,obj->bg);
+	    attr=tgt_hasfocus(obj) ? 
+		TGT_T_BUILDCELL(obj->fg,idata->activebg,1,0,0) :
+		TGT_T_BUILDCELL(obj->fg,obj->bg,0,0,0);
 
-	    m=(obj->xs - 2) * idata->value / idata->endvalue;
-	    tgt_chattr(obj->term,TGT_TA_FGCOLOR,obj->fg);
-	    printf("%s[", idata->title);
-	    for(i=0,n=(int)m;i<n;i++) putchar('#');
-	    for(i=0,n=obj->xs-(int)m-2;i<n;i++) putchar('.');
+
             if(idata->type & TGT_PROGRESSF_SHOWVALUE)
                 if(idata->type & TGT_PROGRESSF_PERCENT)
-                    printf("]%3d%%", idata->value / idata->endvalue * 100);
+                    snprintf(atb,19,"]%3d%%", idata->value / idata->endvalue * 100);
                 else
-                    printf("] %d ", idata->value);
+                    snprintf(atb,19,"] %d ", idata->value);
             else
-                putchar(']');
-	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
-	    fflush(stdout);
+                snprintf(atb,19,"]");
+
+	    buff=obj->visual_buffer;
+	    buff+=(n=tgt_printf(buff,obj->xs,attr,"%s[", idata->title));
+
+	    k=obj->xs-n-strlen(atb);
+
+	    m=k * idata->value / idata->endvalue;
+	    
+	    
+	    for(i=0,n=(int)m;i<n;i++) *(buff++)=TGT_T_FCHAR(attr,'#');
+	    for(i=0,n=k-(int)m;i<n;i++) *(buff++)=TGT_T_FCHAR(attr,'.');
+	    tgt_printf(buff,obj->xs,attr,atb);
 	    return(1);
 	case TGT_OBJECT_SETTAG:
 	    idata=obj->class_data;

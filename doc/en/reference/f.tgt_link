@@ -19,7 +19,7 @@ struct tgt_object *desk;
 struct tgt_object *window;
 
 if(!desk=tgt_start(NULL,&term)) return;
-window=tgt_createobject(term,TGT_CLASS_WINDOW,{...});
+window=tgt_createobject(term,TGT_CLASS_WINDOW,(tgtt[]) {...});
 tgt_link(window,desk);
 tgt_refresh(desk);
 

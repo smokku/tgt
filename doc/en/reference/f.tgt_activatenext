@@ -1,0 +1,26 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_activatenext, tgt_activateprev - pass the activation flag.
+
+SYNOPSIS
+
+void tgt_activatenext(struct tgt_object *obj);
+void tgt_activateprev(struct tgt_object *obj);
+
+DESCRIPTION
+
+Those two functions are used in class functions by code responsible for 
+keyboard input. Their goal is to deactivate an object and make active 
+the child successing or preceding in children list in the upper level of
+the object tree.
+
+EXAMPLE
+
+Standart object switching code from builtin class files:
+
+n=tgt_shalliswitch(obj,a,0);
+if(n<0) { tgt_activateprev(obj); return(1); }
+if(n>0) { tgt_activatenext(obj); return(1); }
+				   

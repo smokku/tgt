@@ -1,51 +1,43 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "tgt.h"
 
-void tgt_wint_drawtitleb(struct tgt_terminal *term,int a,char *b,int fg,int bg,int tit)
+void tgt_wint_drawtitleb(tgt_cell * buff,int a,unsigned char *b,tgt_cell attr,int titlecolor)
 {
-    int i,n,p;
+    int i,n;
+    tgt_cell p,tattr;
+    int tc;
     /* Rysuje 'belke tytulowa' okna */
-    printf(term->c_graphics); /* Tryb graficzny ... */
-    printf(term->c_fgcolor,fg); printf(term->c_bgcolor,bg); /* Kolorki ... */
-    putchar(term->gfx_set[TGT_TC_UL]); p=term->gfx_set[TGT_TC_HL]; 
-    /* naroznik i znaczek "przekreconego T" do rozpoczecia tytulu... */
     
-    putchar(term->gfx_set[TGT_TC_TS]); printf(term->c_text);
-    printf(term->c_fgcolor,tit);
-    printf(" %s ",b);
-    /* Tytul... */
-    
-    printf(term->c_fgcolor,fg);
-    printf(term->c_graphics); putchar(term->gfx_set[TGT_TC_TE]); /* znak "przekreconego w druga strone T :)) */
-    for(i=0,n=a-6-strlen(b);i<n;i++) putchar(p); /* cala reszta oprocz 2 znakow na narozniki + 2 na 'T' + 2 na odstepy i dlugosci
+    *(buff++)=TGT_T_FCHAR(attr,TGT_TC_UL);
+    *(buff++)=TGT_T_FCHAR(attr,TGT_TC_TS);
+    *(buff++)=TGT_T_FCHAR(attr,' ');
+
+    tattr=TGT_T_FG(attr,titlecolor); tc=strlen(b);
+    for(i=0;i<tc;i++) *(buff++)=TGT_T_FCHAR(tattr,*(b++));
+
+    *(buff++)=TGT_T_FCHAR(attr,' ');
+    *(buff++)=TGT_T_FCHAR(attr,TGT_TC_TE);
+
+    p=TGT_T_FCHAR(attr,TGT_TC_HL);
+    for(i=0,n=a-6-tc;i<n;i++) *(buff++)=p;
+    /* cala reszta oprocz 2 znakow na narozniki + 2 na 'T' + 2 na odstepy i dlugosci
     stringa tytulowego to poziome kreski */
-    putchar(term->gfx_set[TGT_TC_UR]); /* naroznik */
-    term->fg=fg; term->bg=bg;
+    *(buff++)=TGT_T_FCHAR(attr,TGT_TC_UR);
     return;
 }
-void tgt_wint_drawsideb(struct tgt_terminal *term,int x,int y,int l,int lxs)
+void tgt_wint_drawsideb(tgt_cell * buffer,int xs,int ys,tgt_cell attr)
 {
-    char *tmpbuff;
-    int i;
-    /* Rysuje boczna ramke okna poczynajac od pozycji x,y o ilosci
-       kolumn lxs i wierszy l */
-    tmpbuff=(char*) malloc(term->x_size+1);
-    memset(tmpbuff,' ',term->x_size);
-    tmpbuff[0]=term->gfx_set[TGT_TC_VL];  /* pionowa linia */
-    tmpbuff[lxs-1]=term->gfx_set[TGT_TC_VL];
-    tmpbuff[lxs]=0;
-    /* Tworzymy sobie string pomocniczy , cos a'la "|         |" */
+    register int i,j;
+    tgt_cell p=TGT_T_FCHAR(attr,' ');
     
-    
-    for(i=0;i<l;i++)
+    xs-=2;
+    for(i=0;i<ys;i++)
     {
-	/* No i teraz przemieszczamy kursor corazto nizej i wypluwamy
-	   nasz string */
-	printf(term->c_move,0,y+i,x);
-	printf(tmpbuff);
+	*(buffer++)=TGT_T_FCHAR(attr,TGT_TC_VL);
+	for(j=0;j<xs;j++) *(buffer++)=p;
+	*(buffer++)=TGT_T_FCHAR(attr,TGT_TC_VL);
     }
-    /* Zwalniamy pomocniczy string */
-    free(tmpbuff);
 }
 
     static char defaulttitle[]="Window";
@@ -56,15 +48,15 @@ struct tgt_int_window
 {
     int borderfg;
     int titlefg;
-    char *title;
+    unsigned char *title;
 };
 
     static char defb=6,deftit=7;
 
 int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 {
-    int i,n;
-    int act;
+    int n;
+    int act,attr;
     struct tgt_int_window *iw;
     switch(type)
     {
@@ -83,27 +75,63 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	    return(1);
 	case TGT_OBJECT_REFRESH:
 	    act=tgt_isactive(obj);
-	    if(act==1) tgt_chattr(obj->term,TGT_TA_BOLD,0,0);
 	    iw=obj->class_data;
-	    tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,(void*) ((int) (obj->y+(int) b)));
-	    tgt_wint_drawtitleb(obj->term,obj->xs,iw->title,iw->borderfg,obj->bg,iw->titlefg);
-	    
-	    tgt_wint_drawsideb(obj->term,obj->x+a,obj->y+1+(int) b,obj->ys-2,obj->xs);
-	    tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b+obj->ys-1);
-	    tgt_int_lowerb(obj->term,obj->xs);
-	    if(act==1) tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
-	    tgt_chattr(obj->term,TGT_TA_TXT,0,0);
-	    fflush(stdout);
+	    attr=TGT_T_BUILDCELL(iw->borderfg,obj->bg,(act ? 1 : 0),0,0);
+	    tgt_wint_drawtitleb(obj->visual_buffer,obj->xs,iw->title,attr,iw->titlefg);
+	    tgt_wint_drawsideb(obj->visual_buffer+obj->xs,obj->xs,obj->ys-2,attr);
+	    tgt_int_lowerb(obj->visual_buffer+(obj->xs*(obj->ys-1)),obj->xs,attr);
 	    return(1);
 	case TGT_OBJECT_HANDLE:
+	    iw=obj->class_data;
 	    n=tgt_shalliswitch(obj,a,0);
 	    if(n<0) { tgt_activateprev(obj); return(1); }
 	    if(n>0) { tgt_activatenext(obj); return(1); }
 // in future eventually window moving (for instance) functions by keys
 // like alt + -> 
-            if(obj->objectf) return(obj->objectf(obj,a));
+
+/* Here comes the Future ... */
+	    switch(a)
+	    {
+		case TGT_KEY_MOUSEUP:
+		case TGT_KEY_MOUSEDOWN:
+		    return(1);
+		case 'd':
+		case TGT_WINDOW_KEY_RIGHT:
+		    if(obj->ln.parent)
+		    {
+	    	        if( (obj->x+obj->xs) < (obj->ln.parent->xs) ) obj->x++;
+			tgt_single_refresh(obj->ln.parent);
+		    }
+		    return(1);
+		case 'a':
+		case TGT_WINDOW_KEY_LEFT:
+		    if(obj->ln.parent)
+		    {
+			if( obj->x > 0 ) obj->x--;
+			tgt_single_refresh(obj->ln.parent);
+		    }
+		    return(1);
+		case 'x':
+		case TGT_WINDOW_KEY_DOWN:
+		    if(obj->ln.parent)
+		    {
+			if( (obj->y+obj->ys) < (obj->ln.parent->ys) ) obj->y++;
+			tgt_single_refresh(obj->ln.parent);
+		    }
+		    return(1);
+		case 'w':
+		case TGT_WINDOW_KEY_UP:
+		    if(obj->ln.parent)
+		    {
+			if( obj->y > 0) obj->y--;
+			tgt_single_refresh(obj->ln.parent);
+		    }
+		    return(1);
+		default:
+		    if(obj->objectf) return(obj->objectf(obj,a));
+		    return(0);
+	    }
 	    return(0);
-	    break;
 	case TGT_OBJECT_SETTAG:
 	    iw=obj->class_data;
 	    switch(a)
@@ -116,6 +144,18 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	case TGT_OBJECT_SETDEFAULTS:
 	    defb=atoi(tgt_getprefs(b,"window","framecolor","6"));
 	    deftit=atoi(tgt_getprefs(b,"window","titlecolor","7"));
+	    return(1);
+	case TGT_OBJECT_MOUSEDRAG:
+	    if(obj->ln.parent)
+	    {
+		obj->x += a;
+		obj->y += (int) b;
+		if(obj->x < 0) obj->x = 0;
+		if(obj->y < 0) obj->y = 0;
+		if((obj->x + obj->xs) > obj->ln.parent->xs) obj->x = obj->ln.parent->xs - obj->xs;
+		if((obj->y + obj->ys) > obj->ln.parent->ys) obj->y = obj->ln.parent->ys - obj->ys;
+		tgt_single_refresh(obj->ln.parent);
+	    }
 	    return(1);
 	default: return(0);
     }

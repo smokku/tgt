@@ -1,0 +1,22 @@
+
+1. My mouse in TGT does not work ! It acts just like on a normal console,
+   all I can do is copy and paste text!
+    
+   Ensure that:
+      - your gpm is running ;)
+      - you are running TGT applications on a REAL tty (check it with tty
+        command) - ie. there're no other applications that catch mouse events
+	from that console. I personally often run TGT tests 'under' Midnight
+	Commander - and you can imagine the first tries with mouse support
+	"Butbutbut ! It worked a while ago ! I didn't touched the source tree!"
+        ;)
+      - /dev/gpmctl has proper permissions (it has to be readable and writable
+        by you)
+      - you do not use devfs - because as for version 1.19.3 , libgpm assumes
+        that your tty devices are named *exactly* /dev/tty<vt_number>
+
+2. When I press backspace, strange things happen ...
+
+   This often is caused by a bad backspace entry in /etc/termcap - do a
+   showkey -a , press backspace , and compare returned values with bc entry
+   for terminal 'linux' in /etc/termcap file ....

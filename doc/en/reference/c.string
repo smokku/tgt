@@ -1,0 +1,66 @@
+
+NAME
+
+TGT_CLASS_STRING - text input class
+
+DESCRIPTION
+
+String is an one-line text input field, like:
+
+Here is a string____________
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_STRING_STRING                                                     CSG
+
+  This tag specifies input buffer contens - this buffer is statically 
+  allocated.
+
+TGTT_STRING_MAX                                                        CS-
+
+  Maximal buffer length - ie. amount of memory that is allocated
+  for keeping input.
+
+TGTT_STRING_HASHED                                                     CS-
+
+  Requires char (casted to tgtt) as an argument. If this tag is specified,
+  given character will appear instead of the right one while displaying
+  the string, thus allowing to make password inputs etc.
+
+TGTT_STRING_EMPTYCHAR                                                  CS-
+
+  Requires char (casted to tgtt) as an argument. Specifies the character
+  that is displayed in places outside the input buffer; typically an
+  underscore ('_')
+
+TGTT_STRING_ACCEPT                                                     CS-
+
+  Requires char* (casted to tgtt) as an argument. Specifies a set of
+  characters that can be typed into string. When a keypress arrives,
+  it's checked (using strstr()) whether it is contained in the argument
+  of this tag - if not - it's rejected. This feature can be easily used for
+  creating numeric inputs (TGTT_STRING_ACCEPT,"1234567890-")
+
+TGTT_STRING_CURSORCOLOR                                                CS-
+
+  Specifies a color that is set for the character under cursor - useful
+  if the application turns the cursor off.
+
+TGTT_CALLBACK                                                          CS-
+
+  Specifies a function to be called (int objectf(struct tgt_object *,int))
+  whenever user hits enter while the string is active.
+
+CONFIGURATION
+
+Section: string
+Key:     empty
+         Default value for TGTT_STRING_EMPTYCHAR tag
+Value:   Single character, if a whole string is specified, the first character
+         is taken.
+Default: "_"

@@ -1,6 +1,9 @@
 #include "tgt.h"
 #include <string.h>
 #include <setjmp.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #ifndef max
 #define max(a,b) ((a) > (b) ? (a) : (b))
 #define min(a,b) ((a) > (b) ? (b) : (a))
@@ -19,12 +22,13 @@ int util_req_btc(struct tgt_object *obj)
     longjmp(jb,obj->id+1);
 }
 
+
 int tgt_easyrequest(struct tgt_object *ref,char *title,char *body,char *buttons)
 {
     int xs,ys,xc,yc;
     char **linepointers;
     char *str,*stra;
-    int k,i,ml,mll,len,b;
+    int k,i,ml,b;
     struct tgt_object *req;
     struct tgt_object *bt;
     void *kn,*kp;
@@ -45,45 +49,46 @@ int tgt_easyrequest(struct tgt_object *ref,char *title,char *body,char *buttons)
     ys=k+5; if(ys>ref->ys) return(-1);
     xc=(ref->xs-xs)/2; yc=(ref->ys-ys)/2;
 
-    req=tgt_createobject(ref->term,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_CALLBACK,(valuetype) tgt_stopper,TGTT_END,0});
+    req=tgt_createobject(ref->term,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_CALLBACK,(tgtt) &tgt_stopper,TGTT_END,0});
+
     tgt_set(req,TGTT_X,xc); tgt_set(req,TGTT_Y,yc);
     tgt_set(req,TGTT_XS,xs); tgt_set(req,TGTT_YS,ys);
-    tgt_set(req,TGTT_WINDOW_TITLE,title);
+    tgt_set(req,TGTT_WINDOW_TITLE,(tgtt) title);
     
     buttons=strdup(buttons);
-    for(b=1,str=buttons;str=index(str+1,'|');b++);   
-    xc=2;
+    for(b=1,str=buttons;(str=index(str+1,'|'));b++);
+    xc=2+(xs-4-strlen(buttons))/2;
     for(str=buttons,i=0;i<b;i++)
     {
-	if(stra=index(str,'|')) *stra=0;
-	bt=tgt_createandlink(req,ref->term,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_CALLBACK,util_req_btc,TGTT_END,0});
+	if((stra=index(str,'|'))) *stra=0;
+	bt=tgt_createandlink(req,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_CALLBACK,(tgtt) util_req_btc,TGTT_END,0});
 	tgt_set(bt,TGTT_X,xc); xc+=strlen(str)+1;
 	tgt_set(bt,TGTT_Y,ys-3);
-	tgt_set(bt,TGTT_BUTTON_CAPTION,str);
+	tgt_set(bt,TGTT_BUTTON_CAPTION,(tgtt) str);
 	tgt_set(bt,TGTT_ID,i);
 	if(stra) str=stra+1; else break;
     }
     for(i=0;i<k;i++)
     {
-	bt=tgt_createandlink(req,ref->term,TGT_CLASS_LABEL,(tagitem[]) {TGTT_X,2,TGTT_END,0});
+	bt=tgt_createandlink(req,TGT_CLASS_LABEL,(tagitem[]) {TGTT_X,2,TGTT_END,0});
 	tgt_set(bt,TGTT_Y,2+i);
 	tgt_set(bt,TGTT_XS,xs-4);
-	tgt_set(bt,TGTT_LABEL_TEXT,linepointers[i]);
+	tgt_set(bt,TGTT_LABEL_TEXT,(tgtt) linepointers[i]);
     }
 
     kn=ref->next_keys; ref->next_keys=NULL;
     kp=ref->prev_keys; ref->prev_keys=NULL;
     
-    if(id=setjmp(jb))
+    if((id=setjmp(jb)))
     {
 	tgt_unlink(req);
 	ref->next_keys=kn; ref->prev_keys=kp;
 	tgt_destroyobject(req);
 	free(body); free(linepointers); free(buttons);
 	async_semaphore=1;
+	tgt_refresh(ref);
 	return(id-1);
     }
-    
     
     tgt_link(req,ref);
     tgt_setfocus(req);
@@ -98,7 +103,7 @@ int tgt_askstring(struct tgt_object *ref,char *title,char *body,char *buttons,ch
     int xs,ys,xc,yc;
     char **linepointers;
     char *str,*stra;
-    int k,i,ml,mll,len,b;
+    int k,i,ml,b;
     struct tgt_object *req;
     struct tgt_object *bt;
     struct tgt_object *strb;
@@ -120,27 +125,27 @@ int tgt_askstring(struct tgt_object *ref,char *title,char *body,char *buttons,ch
     ys=k+8; if(ys>ref->ys) return(-1);
     xc=(ref->xs-xs)/2; yc=(ref->ys-ys)/2;
 
-    req=tgt_createobject(ref->term,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_CALLBACK,(valuetype) tgt_stopper,TGTT_END,0});
+    req=tgt_createobject(ref->term,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_CALLBACK,(tgtt) &tgt_stopper,TGTT_END,0});
     tgt_set(req,TGTT_X,xc); tgt_set(req,TGTT_Y,yc);
     tgt_set(req,TGTT_XS,xs); tgt_set(req,TGTT_YS,ys);
-    tgt_set(req,TGTT_WINDOW_TITLE,title);
+    tgt_set(req,TGTT_WINDOW_TITLE,(tgtt) title);
 
-    strb=tgt_createandlink(req,ref->term,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,2,TGTT_END,0});
+    strb=tgt_createandlink(req,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,2,TGTT_END,0});
     tgt_set(strb,TGTT_Y,ys-5);
     tgt_set(strb,TGTT_XS,xs-4);
     tgt_set(strb,TGTT_STRING_MAX,maxlen);
-    tgt_set(strb,TGTT_STRING_STRING,buffer);
+    tgt_set(strb,TGTT_STRING_STRING,(tgtt) buffer);
     
     buttons=strdup(buttons);
-    for(b=1,str=buttons;str=index(str+1,'|');b++);   
-    xc=2;
+    for(b=1,str=buttons;(str=index(str+1,'|'));b++);   
+    xc=2+(xs-4-strlen(buttons))/2;
     for(str=buttons,i=0;i<b;i++)
     {
-	if(stra=index(str,'|')) *stra=0;
-	bt=tgt_createandlink(req,ref->term,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_CALLBACK,util_req_btc,TGTT_END,0});
+	if((stra=index(str,'|'))) *stra=0;
+	bt=tgt_createandlink(req,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_CALLBACK,(tgtt) util_req_btc,TGTT_END,0});
 	tgt_set(bt,TGTT_X,xc); xc+=strlen(str)+1;
 	tgt_set(bt,TGTT_Y,ys-3);
-	tgt_set(bt,TGTT_BUTTON_CAPTION,str);
+	tgt_set(bt,TGTT_BUTTON_CAPTION,(tgtt) str);
 	tgt_set(bt,TGTT_ID,i);
 	if(stra) str=stra+1; else break;
     }
@@ -148,24 +153,25 @@ int tgt_askstring(struct tgt_object *ref,char *title,char *body,char *buttons,ch
 
     for(i=0;i<k;i++)
     {
-	bt=tgt_createandlink(req,ref->term,TGT_CLASS_LABEL,(tagitem[]) {TGTT_X,2,TGTT_END,0});
+	bt=tgt_createandlink(req,TGT_CLASS_LABEL,(tagitem[]) {TGTT_X,2,TGTT_END,0});
 	tgt_set(bt,TGTT_Y,2+i);
 	tgt_set(bt,TGTT_XS,xs-4);
-	tgt_set(bt,TGTT_LABEL_TEXT,linepointers[i]);
+	tgt_set(bt,TGTT_LABEL_TEXT,(tgtt) linepointers[i]);
     }
 
     kn=ref->next_keys; ref->next_keys=NULL;
     kp=ref->prev_keys; ref->prev_keys=NULL;
     
-    if(id=setjmp(jb))
+    if((id=setjmp(jb)))
     {
-	tgt_get(strb,TGTT_STRING_STRING,&str);
+	tgt_get(strb,TGTT_STRING_STRING,(tgtt*) (&str));
 	snprintf(buffer,maxlen,"%s",str);
 	tgt_unlink(req);
 	ref->next_keys=kn; ref->prev_keys=kp;
 	tgt_destroyobject(req);
 	free(body); free(linepointers); free(buttons);
 	async_semaphore=1;
+	tgt_refresh(ref);
 	return(id-1);
     }
     

@@ -15,10 +15,10 @@ tgt_destroyobject frees all memory which was allocated when the object
 'obj' was created and then calls itself recursively  for that object's
 children.
 
-Warning: this function DOES NOT unlink the object from (for instance)
+Warning: this function DOES NOT unlink the object from 
 its parent. If _any_ existing object is reffering to 'obj', you MUST
 call tgt_unlink(obj); before destroying it, otherwise you will
-propably get SIGSEGV.
+propably sooner or later get SIGSEGV.
 
 EXAMPLE
 

@@ -23,9 +23,9 @@ if something went wrong.
 instance necessary for creating new objects) by specyfing 't'-a pointer to 
 a pointer variable which will be filled with the terminal description
 object address. 't' might be also NULL (the applicaton might then
-get that pointer from appropiate field in tgt_terminal structure) 
+get that pointer from appropiate field in desktop's tgt_object structure) 
 
-tgt_start is equivalent to:
+tgt_start is functionally equivalent (as for TGT 0.0c2) to:
 
 tgt_init();
 *t=tgt_setterminal(terminal);
@@ -37,7 +37,7 @@ int main(int argc,char **argv);
 {
     struct tgt_object *desktop;
     struct tgt_terminal *myterm;
-    (...) /* own initialisation commands */
+    (...) /* own initialisation code */
     desktop=tgt_start(NULL,&myterm);
     
     (...) /* the application code itself */

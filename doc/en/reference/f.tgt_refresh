@@ -2,12 +2,19 @@ TGT Reference Manual: Functions
 
 NAME
 
-tgt_refresh - refresh an object
+tgt_refresh 
+tgt_voilatile_refresh  - refresh an object
 
 SYNOPSIS
 
 void tgt_refresh(struct tgt_object *obj);
+int tgt_voilatile_refresh(struct tgt_object *obj);
 
 DESCRIPTION
 
-tgt_refresh redraws 'obj' and all its children.
+tgt_refresh redraws 'obj' and all its children; tgt_voilatile_refresh does
+exactly the same thing, but it ignores the tgt internal semaphore specyfying 
+whether terminal operations are allowed (it was designed to avoid accessing
+terminal in the same time by concurrent threads); tgt_refresh always blocks
+executing until the refreshing semaphore is unlocked.
+

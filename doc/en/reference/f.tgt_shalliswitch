@@ -1,0 +1,24 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_shalliswitch - check whether the key pressed is an object-change key.
+
+SYNOPSIS
+
+int tgt_shalliswitch(struct tgt_object *obj,int key,int pri);
+
+DESCRIPTION
+
+This function is used in keyboard handling code of class functions to determine
+if the pressed key 'key' is the switching key for object 'obj'. If pri
+is != 0 , only first position on the switching key list is considered, thus
+allowing object to catch as many keystrokes as it's possible (useful eg.
+in text input objects). This function returns a value <0 if the specified key
+should be threated as a 'previous-object' key, >0 if it's a 'next-object' key
+and 0 if that keystroke is not an object switching key and can be interpreted
+by current class function.
+
+EXAMPLE
+
+see f.tgt_activatenext

@@ -13,8 +13,8 @@ DESCRIPTION
 tgt_getdesktop creates a desktop object with parameters situable for
 terminal which description structure was given as an argument.
 
-This function is currently (as for TGT 0.091) equivalent to:
-tgt_createobject(term,TGT_CLASS_DESKTOP,(long[]) { TGTT_X,1, TGTT_Y,1, TGTT_END,0});
+This function is currently (as for TGT 0.0c2) equivalent to:
+tgt_createobject(term,TGT_CLASS_DESKTOP,(tgtt[]) { TGTT_X,1, TGTT_Y,1, TGTT_END,0});
 
 tgt_getdesktop returns NULL if it was unable to create the desktop object.
 

@@ -6,12 +6,16 @@
       to be done :)
       
 - tgt_createandlink can get the terminal description from the object
-  application wants to link the new object to. [T]
+  application wants to link the new object to. [D]
 - better documentation (written by someone who speaks english better than 
-  me ;))) [N]  
+  me ;))) [T]  
 - configuration files reading: ./.tgtrc , ~/.tgtrc and /etc/tgttc [D]
-- basic documentation [I]
+- basic documentation [D]
 - bugfix in CLASS_MENU after opening more than two sub-menus and
   then going back to previus ones (by cursor left) -> the first
-  menus are dissapearing [N]
+  menus are dissapearing [D]
 - dynamic class loading [D]
+
+
+!!!
+mv /etc/termcap-BSD /etc/termcap

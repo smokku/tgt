@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "tgt.h"
 
 struct tgt_int_list
@@ -15,6 +16,8 @@ struct tgt_int_list
     int activebg;
     int activefg;
 };
+
+extern int tgt_preferred_x,tgt_preferred_y;
 
 int tgt_int_listdataf(char **data,int c,int n,char *buffer,int k,int a)
 {
@@ -32,6 +35,7 @@ int tgt_int_listdataf(char **data,int c,int n,char *buffer,int k,int a)
 	for(i=l;i<k;i++) buffer[i]=' ';
 	buffer[k]=0;
     }
+    return(1);
 }
 
     static int defactbg=6;
@@ -39,10 +43,19 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 {
     int i,act,n,k,t,yp,xp,maxx,j;
     struct tgt_int_list *iw;
-    char *rd;
-    
+    tgt_cell attr;
+    tgt_cell *buff;
     switch(type)
     {
+	case TGT_OBJECT_GETSIZES:
+	    if(tgt_getnumtag((tagitem*)(((struct tgt_ac_objectinfo*) b)->ctl),TGTT_LIST_FRAMECOLOR,0))
+		n=4;
+	    else
+		n=2;
+            ((struct tgt_ac_objectinfo*) b)->xsize=tgt_getsizetag((tagitem*)(((struct tgt_ac_objectinfo*) b)->ctl),TGTT_XS,n,((struct tgt_ac_objectinfo*) b)->term);
+            ((struct tgt_ac_objectinfo*) b)->ysize=tgt_getsizetag((tagitem*)(((struct tgt_ac_objectinfo*) b)->ctl),TGTT_YS,n,((struct tgt_ac_objectinfo*) b)->term);
+	    return(1);
+					    
 	case TGT_OBJECT_CREATE:
 	    iw=(struct tgt_int_list*) malloc(sizeof(struct tgt_int_list));
 	    obj->objectf=(int(*)()) tgt_getptrtag(b,TGTT_CALLBACK,NULL);
@@ -51,7 +64,7 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	    iw->data=(void*) tgt_getptrtag(b,TGTT_LIST_ITEMS,NULL);
 	    iw->dataf=(int(*)(void*,int,int,void*,int,int)) tgt_getptrtag(b,TGTT_LIST_DATACALLBACK,(long) tgt_int_listdataf);
 	    iw->chf=(int(*)(struct tgt_object*,int)) tgt_getptrtag(b,TGTT_LIST_CHANGECALLBACK,0);
-	    if(iw->framecolor=tgt_getnumtag(b,TGTT_LIST_FRAMECOLOR,0))
+	    if((iw->framecolor=tgt_getnumtag(b,TGTT_LIST_FRAMECOLOR,-1))!=-1)
 		iw->realys=obj->ys-2;
 	    else
 		iw->realys=obj->ys;
@@ -69,65 +82,85 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	case TGT_OBJECT_REFRESH:
 	    iw=obj->class_data;
 	    act=tgt_hasfocus(obj);
-	    tgt_chattr(obj->term,TGT_TA_BGCOLOR,obj->bg,0);
-	    if(act==1) tgt_chattr(obj->term,TGT_TA_BOLD,0,0);
+	    attr=act?
+		TGT_T_BUILDCELL(obj->fg,obj->bg,1,0,0) :
+		TGT_T_BUILDCELL(obj->fg,obj->bg,0,0,0);
 	    
-	    tgt_chattr(obj->term,TGT_TA_FGCOLOR,obj->fg);
-	    if(iw->framecolor) 
+	    buff=obj->visual_buffer;
+	    if(iw->framecolor!=-1) 
 	    {
-		tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b);
-		tgt_chattr(obj->term,TGT_TA_FGCOLOR,iw->framecolor,0);
-		tgt_int_upperb(obj->term,obj->xs);
-		yp=(int) b+obj->y+1;
+		tgt_int_upperb(buff,obj->xs,TGT_T_FG(attr,iw->framecolor));
+		buff+=obj->xs;
 		maxx=obj->xs-2;
 	    }
 	    else
-	    {
-		yp=(int) b+obj->y;
 		maxx=obj->xs;
-	    }
+
 	    t=iw->realys;
 	    n=iw->dataf(iw->data,TGT_LISTREQ_GETMAX,0,NULL,0,0);
 	    xp=a+obj->x; k=iw->top;
 	    for(i=0;i<t;i++,k++)
 	    {
-		tgt_chattr(obj->term,TGT_TA_CURSOR,xp,yp++);
-		if(iw->framecolor) { tgt_chattr(obj->term,TGT_TA_COLORS,iw->framecolor,obj->bg);tgt_chattr(obj->term,TGT_TA_GFX,0,0); putchar(obj->term->gfx_set[TGT_TC_VL]); tgt_chattr(obj->term,TGT_TA_TXT,0,0); }
+		if(iw->framecolor!=-1) 
+		    *(buff++)=TGT_T_FG(TGT_T_CHAR(attr,TGT_TC_VL),iw->framecolor);
 		if(k<n)
 		{
 		    if(k==iw->current)
 		    {
-			tgt_chattr(obj->term,TGT_TA_COLORS,iw->activefg,iw->activebg);
+			if(act) 
+			{
+			    if(iw->framecolor!=-1)
+			    {
+			        tgt_preferred_x=a+obj->x+1;
+			        tgt_preferred_y=(int) b + obj->y+i+1; 
+			    }
+			    else
+			    {
+			        tgt_preferred_x=a+obj->x;
+			        tgt_preferred_y=(int) b + obj->y+i; 
+			    }
+			}			    
 			iw->dataf(iw->data,TGT_LISTREQ_GETITEM,k,iw->outbuffer,maxx,1);
+			tgt_flprintf(buff,maxx,TGT_T_FG(TGT_T_BG(attr,iw->activebg),iw->activefg),"%s",iw->outbuffer);
 		    }
 		    else
 		    {
-		        tgt_chattr(obj->term,TGT_TA_COLORS,obj->fg,obj->bg);
 			iw->dataf(iw->data,TGT_LISTREQ_GETITEM,k,iw->outbuffer,maxx,0);
+			tgt_flprintf(buff,maxx,attr,"%s",iw->outbuffer);
 		    }
-		    printf("%s",iw->outbuffer);
+		    buff+=maxx;
 		}
 		else
 		{
-		    tgt_chattr(obj->term,TGT_TA_BGCOLOR,obj->bg);
-		    for(j=0;j<maxx;j++) putchar(' ');
+		    tgt_flprintf(buff,maxx,attr,"");
+		    buff+=maxx;
 		}
-		if(iw->framecolor) { tgt_chattr(obj->term,TGT_TA_COLORS,iw->framecolor,obj->bg);tgt_chattr(obj->term,TGT_TA_GFX,0,0); putchar(obj->term->gfx_set[TGT_TC_VL]); tgt_chattr(obj->term,TGT_TA_TXT,0,0); }
-	    }
-	    if(iw->framecolor) 
-	    {
-		tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b+obj->ys-1);
-		tgt_chattr(obj->term,TGT_TA_COLORS,iw->framecolor,obj->bg);
-		tgt_int_lowerb(obj->term,obj->xs);
-	    }
 
-	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
-	    fflush(stdout);
+		if(iw->framecolor!=-1) 
+		    *(buff++)=TGT_T_FG(TGT_T_CHAR(attr,TGT_TC_VL),iw->framecolor);
+	    }
+	    if(iw->framecolor!=-1) 
+		tgt_int_lowerb(buff,obj->xs,TGT_T_FG(attr,iw->framecolor));
 	    return(1);
 	case TGT_OBJECT_HANDLE:
 	    iw=obj->class_data;
 	    switch(a)
 	    {
+		case TGT_KEY_MOUSEDOWN:
+		    k=tgt_mouse_get_y();
+		    if(iw->framecolor!=-1)
+		    {
+			if(k >= (obj->ys-1)) k=obj->ys-2;
+			if(k < 1) k = 1;
+			k-=1;
+		    }
+		    iw->current=iw->top+k;
+		    n=iw->dataf(iw->data,TGT_LISTREQ_GETMAX,0,NULL,0,0)-1;
+		    if(iw->current>n) iw->current=n;
+		    if(iw->current<0) iw->current=0;
+		    tgt_refresh(obj);
+		    if(iw->chf) iw->chf(obj,iw->current);
+		    return(1);
 		case TGT_KEY_PGDN:
 		    iw->current+=iw->realys-1;
 		case TGT_KEY_DOWN: 
@@ -205,7 +238,7 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 		    return(1);
 		case TGTT_LIST_ITEMS: iw->data=b; return(1);
 		case TGTT_LIST_FRAMECOLOR:
-		    if(iw->framecolor=(int) b)
+		    if((iw->framecolor=(int) b))
 			iw->realys=obj->ys-2;
 		    else
 			iw->realys=obj->ys;
@@ -215,6 +248,10 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	    }
 	case TGT_OBJECT_SETDEFAULTS:
 	    defactbg=atoi(tgt_getprefs(b,"list","activebg","6"));    
+	    return(1);
+	case TGT_OBJECT_MOUSEDRAG:
+	    if((int) b < 0) tgt_builtin_list(obj,TGT_OBJECT_HANDLE,TGT_KEY_UP,NULL);
+	    if((int) b > 0) tgt_builtin_list(obj,TGT_OBJECT_HANDLE,TGT_KEY_DOWN,NULL);
 	    return(1);
 	default: return(0);
     }

@@ -1,4 +1,4 @@
-# Komentarz
+# Comment?
 
 [button]
 activebg=1
@@ -6,6 +6,7 @@ activebg=1
 [terminal]
 gfx=-|[]++++
 gfx_start=
+ignore_termcap_type=yes
 
 [string]
 empty=-
@@ -13,3 +14,7 @@ empty=-
 [cycle]
 smark=<:
 emark=:>
+
+[window]
+framecolor=2
+titlecolor=3

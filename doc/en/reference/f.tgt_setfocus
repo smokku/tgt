@@ -2,7 +2,7 @@ TGT Reference Manual: Functions
 
 NAME
 
-tgt_setfocus - activate an object
+tgt_setfocus - pass the activation flag
 
 SYNOPSIS
 
@@ -10,17 +10,10 @@ void tgt_setfocus(struct tgt_object *obj);
 
 DESCRIPTION
 
-tgt_setfocus makes the object obj active object and refreshes it. The
-object is being highlighted and all keyboard input is redirected to it.
+tgt_setfocus makes the specified object, its parent, the parent of its parent,
+etc. active. The active object in TGT is the one that receives keyboard input;
+active objects are usually rendered bold.
 
 EXAMPLE
 
-struct tgt_object *obj;
-
-(...)
-tgt_createandlink(window,term,TGT_CLASS_BUTTON,(long[]) {TGTT_X,2,TGTT_Y,4,TGTT_BUTTON_CAPTION,(long) "Option1",TGTT_END,0});
-obj=tgt_createandlink(window,term,TGT_CLASS_BUTTON,(long[]) {TGTT_X,2,TGTT_Y,5,TGTT_BUTTON_CAPTION,(long) "Option2",TGTT_END,0});
-tgt_createandlink(window,term,TGT_CLASS_BUTTON,(long[]) {TGTT_X,2,TGTT_Y,6,TGTT_BUTTON_CAPTION,(long) "Option3",TGTT_END,0});
-
-tgt_setfocus(obj);
-(...)
+tgt_setfocus(window);

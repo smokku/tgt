@@ -1,0 +1,46 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_menu_* - Menu object help functions
+
+SYNOPSIS
+
+struct tgt_menuhdr * tgt_menu_context(int f);
+void tgt_menu_add(struct tgt_menuhdr * ptr,char *name,short id,short flags,
+                  struct tgt_menuhdr *submenu);
+void tgt_menu_insert(short aid,struct tgt_menuhdr * ptr,char *name,short id,
+                  short flags,struct tgt_menuhdr *submenu);
+void tgt_menu_destroycontext(struct tgt_menuhdr *menu);
+void tgt_menu_delete(struct tgt_menuhdr *menu,short id);
+
+DESCRIPTION
+
+tgt_menu functions are used for creating menu structures for TGTT_MENU_ITEMS
+tag. 
+
+tgt_menu_context() creates the menu context - the 'root object' for a menu
+system. f is a bitfield containing flags changing the style of rendering menu.
+Currently, the only available flag is TGT_MENUF_HORIZONTAL, which orders menu
+to render itself with a horizontal menu bar (the default is a vertical 
+'context-menu').
+
+tgt_destroycontext() frees all memory associated with structures and menu items
+of menu system 'menu'.
+
+tgt_menu_add() adds to context 'ptr' a position displayed as 'name' with
+menuid (which generally should be unique for the whole menu system) 'id',
+and flags contained in the 'flags' bitfield (currently, TGT_MENUF_NONSELECTABLE
+is the only one). If submenu is not NULL, then after choosing this position
+a menu pointed which context is pointed by 'submenu' is opened, thus allowing
+to organize menu items in submenus.
+
+tgt_menu_insert() works similarily to tgt_menu_add(), but the new item
+is placed after position with menuid 'aid'.
+
+tgt_menu_delete() deletes position with menuid equal 'id' from list of items
+of context 'menu'
+
+EXAMPLE
+
+see examples/

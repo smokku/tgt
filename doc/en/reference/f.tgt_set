@@ -6,12 +6,12 @@ tgt_set - set an object attribute
 
 SYNOPSIS
 
-int tgt_set(struct tgt_object *obj,long tag,long value);
-int tgt_get(struct tgt_object *obj,long tag,void *ptr);
+int tgt_set(struct tgt_object *obj,tgtt tag,tgtt value);
+int tgt_get(struct tgt_object *obj,tgtt tag,tgtt *ptr);
 
 DESCRIPTION
 
-tgt_set sets in object 'obj' the attribute 'tag' to new value 'value'
+tgt_set sets in the object 'obj' the attribute 'tag' to new value 'value'
 Not all tags might be set by this function, for exact specifications
 have a look at c.* files.
 
@@ -26,8 +26,8 @@ EXAMPLE
 struct tgt_object *str;
 struct tgt_object *lab;
 
-str=tgt_createandlink(window,term,TGT_CLASS_STRING,(long[]) {TGTT_X,3,TGTT_Y,2,TGTT_CALLBACK,(long) cb,TGTT_END,0});
-lab=tgt_createandlink(window,term,TGT_CLASS_LABEL,(long[]) {TGTT_X,3,TGTT_Y,3,TGTT_LABEL_TEXT,(long) "",TGTT_END,0});
+str=tgt_createandlink(window,TGT_CLASS_STRING,(long[]) {TGTT_X,3,TGTT_Y,2,TGTT_CALLBACK,(long) cb,TGTT_END,0});
+lab=tgt_createandlink(window,TGT_CLASS_LABEL,(long[]) {TGTT_X,3,TGTT_Y,3,TGTT_LABEL_TEXT,(long) "",TGTT_END,0});
 
 (...)
 

@@ -1,33 +1,92 @@
-smoku:
-zrobilem 3 nowe klasy: c_checkbox.c c_slider.c i c_progress.c
-tgt_menu_context() powinno sie nazywac tgt_menu()...
-a w ogole to dlaczego lowlevel/menu.c ???
-zauwaz, ze mamy wiele rownoznacznych tag'ow.. np.
-TGTT_SLIDER_CAPTION, TGTT_PROGRESS_CAPTION, TGTT_BUTTON_CAPTION
-czy TGTT_LABEL_TEXT, TGTT_STATUS_TEXT.. itp.. moze by je zuniformizowac?
-np. TGTT_CAPTION czy TGT_STATUS i jednak wrocic do pliku tgt_tags.h
-albo tgt_class_tags.h ?
-korekta management.c : tgt_createobject_int() (XS i YS domyslnie 1)
-oraz tgt_getdesktop() (ustawianie XS i YS dla desktopu)
-dla potrzeb kolejnej zrobionej klasy c_status.c..
-(oczywiscie do status'a mozna podczepiac inne obiekty, wiec jak sie chce
-miec na nim np. 3 pola to nic prostszego jak przyczepic do niego 3 label'e
-moga miec nawet inne atrybuty wtedy)
-zmienilem c_plaintext.c na c_label.c i dodalem mozliwosc rownania prawo/lewo
-oraz wydzielilem tgt_label.h...
-przydalyby sie #define TGT_COLOR_RED x, TGT_COLOR_BRIGHTGREEN y itp..
+
+1. WHAT IS TGT
+
+TGT (TextmodeGUIToolkit) is a parially object-oriented library for creating
+user interfaces under Linux console. It's designed as an alternative for
+ncurses - however it does not use its philosophy - in TGT model, not only all
+terminal functions but also all GUI management things are done by TGT, thus
+giving the developer a chance to concentrate on more important things in
+his program than user interface. Many TGT concepts are taken from
+AmigaOS / MagicUserInterface for AmigaOS.
+
+Currently, the thing we are worrying mostly about is that TGT can not be
+used in programs that intend to be portable.
+
+2. REQUIREMENTS
+
+- libdl - shipped with many linux distributions
+- LinuxThreads pthread library - as above
+
+- libutil - also comes with many distributions 
+- libgpm - comes with GPM mouse server
+
+There are mechanisms implemented in TGT that allow it to manage without libutil
+and libgpm when they're not available - some magic configuration scripts will
+propably appear in next versions.
+
+- libtermcap - It's not compulsory - actually tgt will manage without it 
+            (or with termcap linked to ncurses) - however that kind of
+	    situation will require some tuning in rcfiles, unless your
+	    terminal is a standart linux one
+
+3. INSTALLATION
+
+make
+make install
+
+or
+
+make
+export LD_LIBRARY_PATH=`pwd`
+
+(in bash)
+
+4. TESTS
+
+If you are new to TGT you can try running files from tests/ subdirectory
+in order to get familar with controls, mouse support, etc.
+
+5. INPUT DEVICES
+
+Default key mappings:
+
+Up
+Left       Switch to the previous object in a window
+Tab
+Down
+Right      Switch to the next object in a window
+`          Switch windows
+Ctrl W     Enter/left window moving mode - when it's turned on, cursor
+           keys will let you reposition your windows.
+Enter/
+Space      Perform an action on current object
+Esc
+Delete
+Backspace  Part menu
+
+Try the mouse support yourself ... ;)
+
+6. PROGRAMMER'S VIEW
+
+If you want to know more about TGT because you want to use TGT routines
+in your applications - see examples/ directory. I personally think that
+writing any documentation for developers is boring, both for the reader
+and the writer (maybe someone will write a kind of tutorial in the future,
+but don't count on me - I'm too lazy) - it's really easier to write and
+to understand an example. Also - check doc/en/CONCEPTS and doc/en/reference 
+
+7. DEVELOPERS WANTED
+
+If you think you can help developing TGT (especially - if you can make it
+run on 64bit machines (erm, I don't even know if it works - 
+I don't have any account on such computers =/) or you can make it run
+under other systems than linux); or you are able to write new documentation,
+(and of course correct our English in the old documents ;) -
+please let me know (just mailto mtg@elsat.net.pl)
 
 
-
-
-
-
-
-hej ... zaczalem pisac doc-e ... doc/en/reference...
-
-2 niespodziewanki: oblookaj .tgtrc, jak chcesz zeby semigrafika do normy
-wrocila to wywal gfx i gfx_start ...
-
-2 ) wywal (przenies gdzies) caly termcap z /lib -a (wszystkie libtermcap*)
-     ew wywal gdzies /etc/termcap... i odpal program =)
-
+---
+______________________________________________________________________
+vlsi <mtg@elsat.net.pl>                                 Mateusz Golicz
+* Only a fool expects rational behavior from his fellow humans. Why *
+*   do you expect it from a machine that humans have constructed?   *

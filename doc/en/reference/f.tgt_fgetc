@@ -1,0 +1,28 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_fgetc - timeouted getchar()
+
+SYNOPSIS
+
+#ifdef TIMEOUT_KEYBOARD
+int tgt_fgetc(int s,int us)
+#endif
+
+DESCRIPTION
+
+tgt_fgetc waits for a keypress for s seconds and us microseconds (using select()).
+If no key is pressed in that period of time, -1 is returned, otherwise - you 
+get the keycode, as acquired from read(0,...)
+
+EXAMPLE
+
+printf("please press enter in 5 seconds ...");
+switch(tgt_fgetc(5,0))
+{
+    case -1: printf("too late!\n"); break;
+    case '\n': printf("thank you\n"); break;
+    default: printf("erm .. actually ... you know ... enter is that L-shaped key... \n"); break;
+    
+}

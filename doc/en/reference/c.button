@@ -1,0 +1,41 @@
+
+NAME
+
+TGT_CLASS_BUTTON - simple button class
+
+DESCRIPTION
+
+Button is just a selectable button, nothing more :)
+
+[Button]
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_BUTTON_CAPTION                                                    CS-
+
+  Requires char * as an argument : this tag specifies the button text.
+  
+
+TGTT_BUTTON_ACTIVEBG                                                   CS-
+
+  Requires an integer containing ANSI color code (preferably specified by
+  using constants : TGT_COLOR_...) which will specify the background color
+  for the button when it's selected (active).
+  
+TGTT_CALLBACK                                                          CS-
+
+  A function specified here (taking struct tgt_object * as an argument)
+  will be called everytime user hits enter while the button is active.
+
+CONFIGURATION
+
+Section: button
+Key:     activebg
+         Default value for TGTT_BUTTON_ACTIVEBG tag
+Value:   Integer, ANSI color code
+Default: 6 (cyan)

@@ -1,0 +1,21 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_gettag - find a tag value in taglist
+
+SYNOPSIS
+
+tgtt tgt_gettag(tgtt *taglist,tgtt stag,tgtt defaultvalue);
+
+DESCRIPTION
+
+This function searches for tag which code was specified as 'stag' in taglist
+pointed by 'taglist'. If that tag is found - it's value is returned, otherwise
+you get value specified as 'defaultvalue'. This function is dedicated rather
+for TGT internal usage.
+
+EXAMPLE
+
+p=tgt_gettag((tgtt[]) {TGTT_X,2,1112,8,4567,21,TGTT_END,0},1112,-1); would
+return ((tgtt) 8).

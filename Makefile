@@ -2,18 +2,25 @@
 SOURCES= lowlevel/lowlevel.c classes/keyboard.c classes/class.c classes/management.c\
 	 app/async.c app/queue.c lowlevel/keytree.c lowlevel/print.c classes/tags.c\
 	 classes/c_desktop.c classes/c_window.c classes/c_button.c\
-	 classes/c_label.c classes/c_string.c classes/c_list.c\
-	 lowlevel/menu.c classes/c_menu.c classes/c_cycle.c\
-	 classes/c_checkbox.c classes/c_slider.c classes/c_progress.c\
-	 classes/c_status.c classes/c_textbuffer.c classes/c_direct.c app/config.c\
-	 app/util.c
+	 app/util.c app/autocreat.c app/config.c\
+	 classes/c_label.c classes/c_checkbox.c classes/c_string.c\
+	 classes/c_slider.c classes/c_progress.c classes/c_termemu.c\
+	 classes/c_direct.c classes/c_status.c classes/c_list.c\
+	 classes/c_textbuffer.c classes/mouse.c\
+	 classes/c_menu.c lowlevel/menu.c classes/c_selectbox.c
+#	 lowlevel/menu.c classes/c_menu.c classes/c_selectbox.c\
+#	 classes/c_checkbox.c classes/c_slider.c classes/c_progress.c\
+#	 classes/c_status.c classes/c_textbuffer.c classes/c_direct.c app/config.c\
+#	classes/c_termemu.c 
+
 OBJECTS = ${SOURCES:.c=.o}
 
-SUBDIRS=examples
+SUBDIRS=examples tests
 
 CFLAGS =  -Iinclude/ -DTGT_POSSIBLE_INFORMFIRST -DTGT_POSSIBLE_ASYNC\
-	     -DTGT_QUEUES -DTIMEOUT_KEYBOARD -DTGT_DLTERMCAP\
-	     -DTGT_DLCLASSES -DSEMAPHORED_REFRESH
+	     -DTIMEOUT_KEYBOARD -DTGT_GPMMOUSE\
+	     -DTGT_DLCLASSES -DSEMAPHORED_REFRESH  -DTGT_DLTERMCAP -Werror -O2 -Wall
+#	     -DSEMAPHORED_REFRESH -Wall -Werror
 LDFLAGS = 
 LIBS = 
 
@@ -28,7 +35,7 @@ all: shared fbclass
 
 # Termcap loaded by libdl
 shared: ${OBJECTS}
-	gcc -shared $(OBJECTS) -o libtgt.so -ldl -lpthread
+	gcc -shared $(OBJECTS) -o libtgt.so -lpthread -ldl -lutil -lgpm
 
 fbclass: classes_so/c_fbpic.c
 	gcc -shared classes_so/c_fbpic.c classes_so/fb_display.c -o fbpic.class $(CFLAGS)

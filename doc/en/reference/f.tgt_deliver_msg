@@ -1,0 +1,22 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_deliver_msg - call class function for an object with specified parameters;
+                  ie. call an object's method.
+
+SYNOPSIS
+
+int tgt_deliver_msg(struct tgt_object *obj,int type,int param,char* param2);
+
+DESCRIPTION
+
+This function calls the class function for object which description is holded
+by obj. 'type' is the method code, param and param2 are parameters, which
+meaning depends on kind of called method. Do not use this function unless
+you REALLY know what are you doing.
+
+EXAMPLES
+
+tgt_deliver_msg(obj,TGT_OBJECT_HANDLE,'\n',NULL);
+tgt_deliver_msg(obj,TGT_OBJECT_DESTROY,0,NULL);

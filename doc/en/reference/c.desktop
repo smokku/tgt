@@ -19,9 +19,15 @@ G => may be read by tgt_get();
 
 TGTT_CALLBACK                                                         C--
 
-Requires a (int (*) (struct tgt_object *,int)) ( pointer to a function, 
-which prototype is int func(struct tgt_object * desktop,int keycode); ) pointer,
-which will be called when a key code can not be understood by
-underlaying objects. This could be used in applications to provide global
-function keys.
+  Requires a (int (*) (struct tgt_object *,int)) ( pointer to a function, 
+  which prototype is int func(struct tgt_object * desktop,int keycode); ) pointer,
+  which will be called when a key code can not be understood by
+  underlaying objects. This could be used in applications to provide global
+  function keys.
 
+TGTT_DESKTOP_HIDECURSOR                                               CS-
+
+  Requires an integer specyfing whether cursor on the terminal assigned to
+  desktop object should be visible or not. 0 means 'no', any other value
+  is 'yes'.
+  

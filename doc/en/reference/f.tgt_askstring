@@ -1,0 +1,27 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_askstring - automatic text input dialog window.
+
+SYNOPSIS
+
+int tgt_askstring(struct tgt_object *ref,char *title,char *body,
+                                char *buttons,char *buffer,int maxlen);
+
+DESCRIPTION
+
+This function displays a simple dialog box with specified text, title and
+button set AND a string (text-input) object; then allows user to fill in
+the string an choose between buttons, and returns the number of button that
+was pressed. See tgt_easyrequest for further description.
+
+buffer is a pointer to a preallocated array (of maxlen length) that the
+typed string will be copied to.
+
+EXAMPLE
+
+if(tgt_askstring(term,"Log-in","Enter your username:","Cancel|Ok",username,20))
+{
+...
+

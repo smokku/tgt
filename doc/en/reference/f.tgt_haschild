@@ -1,0 +1,25 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_haschild - find a child with a specified object-id in object's children
+               list.
+
+SYNOPSIS
+
+struct tgt_object * tgt_haschild(struct tgt_object *obj,int id);
+
+DESCRIPTION
+
+This function returns a pointer to appropiate structure describing object
+with id field set to 'id' (eg. by TGT_ID tag) if object 'obj' is its parent.
+Otherwise, NULL is returned. This function is useful when you don't want
+to store pointers for objects - you might only store a pointer to
+the root object (eg. a window), assign objects their identification numbers
+using appropiate tags, and then use this function each time you need
+the object pointer.
+
+EXAMPLE
+
+if(obj=tgt_haschild(window,USERNAME_INPUT))
+    tgt_set(obj,TGT_STRING_STRING,"incorrect username, type it here again");

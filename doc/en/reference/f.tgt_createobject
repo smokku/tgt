@@ -7,8 +7,8 @@ tgt_createobject, tgt_createandlink - create an object and eventually make
 
 SYNOPSIS
 
-struct tgt_object * tgt_createobject(struct tgt_terminal *term,int type,long *taglist);
-struct tgt_object * tgt_createandlink(struct tgt_object *obj,struct tgt_terminal *term,int type,long *taglist);
+struct tgt_object * tgt_createobject(struct tgt_terminal *term,int type,tgtt *taglist);
+struct tgt_object * tgt_createandlink(struct tgt_object *obj,int type,tgtt *taglist);
 
 DESCRIPTION
 
@@ -17,17 +17,20 @@ application objects) which kind of (for instance TGT_OBJECT_WINDOW, TGT_OBJECT_
 _BUTTON) is given as 'type' argument. The object is assigned also a terminal which
 description (that can be obtained from tgt_start() or tgt_setterminal()) is
 passed as 'term'. The object parameters are specified in 'taglist'-
--an array of longs containing parameters codes (only some are compulsory,
-the rest is optional) and parameter values (see the example). For exact
-description of parameter codes see c.* documentation files.
+-an array of numbers/pointers cast to numbers containing pairs of parameter
+code (only some are compulsory, the rest is optional) and parameter value
+(see the example). For exact description of parameter codes and arguments
+taken by them, see c.* documentation files.
 
 tgt_createandlink is equivalent to:
 
 nobj=tgt_createobject(...);
 tgt_link(nobj,obj);
 
-,which practically means that it behaves just like tgt_createobject() but
+which practically means that it behaves just like tgt_createobject() but
 the object is also assigned a parent 'obj' (which must also be an object). 
+You don't need to specify the terminal structure as it will be derived from
+object's parent.
 Many operations (such as refresh, keyboard handling etc) when performed
 on parent will be performed on the child as well. Many objects, such
 as window,desktop (the root object) also perform children switching when
@@ -52,15 +55,15 @@ struct tgt_object *window;
 
 desktop=tgt_start(NULL,&term);
 window=tgt_createandlink(desktop,term,TGT_CLASS_WINDOW,
-    (long[]) { TGTT_X, 20,
+    (tgtt[]) { TGTT_X, 20,
                TGTT_Y, 5,
 	       TGTT_XS, 40,
 	       TGTT_YS, 15,
 	       TGTT_WINDOW_TITLE, "Test Window",
 	       TGTT_END, 0});
 
-tgt_createandlink(desktop,term,TGT_CLASS_BUTTON, (long[]) { TGTT_X,2,TGTT_Y,5,
-		TGTT_BUTTON_CAPTION,"Press me!",TGTT_CALLBACK,(long) destroy,TGTT_END, 0});
+tgt_createandlink(desktop,term,TGT_CLASS_BUTTON, (tgtt[]) { TGTT_X,2,TGTT_Y,5,
+		TGTT_BUTTON_CAPTION,(tgtt) "Press me!",TGTT_CALLBACK,(tgtt) destroy,TGTT_END, 0});
 
 tgt_refresh(desktop);
 tgt_waitkeys(desktop);

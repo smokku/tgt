@@ -1,0 +1,65 @@
+
+NAME
+
+TGT_CLASS_SLIDER - slider class
+
+DESCRIPTION
+
+Slider looks usually like:
+
+Description [----------V-----]  20%
+
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_SLIDER_CAPTION                                                    CS-
+
+  Requires char * as an argument : this tag specifies the text
+  that will be placed near the box.
+
+TGTT_SLIDER_ACTIVEBG                                                   CS-
+
+  Requires an integer containing ANSI color code (preferably specified by
+  using constants : TGT_COLOR_...) which will specify the background color
+  for slider when it's selected (active).
+  
+TGTT_SLIDER_MINVALUE                                                   CSG
+TGTT_SLIDER_MAXVALUE                                                   CSG
+
+  Those tags specify (by integers) the slider maximal and minimal values
+
+TGTT_SLIDER_VALUE                                                      CSG
+
+  An integer set to the current value of the slider
+  
+TGTT_SLIDER_TYPE                                                       CS-
+
+  A bitwise-or mask of TGT_SLIDERF_SHOWVALUE and TGT_SLIDERF_PERCENT:
+  If the first one was specified, the slider will print it's absolute
+  value on its right:
+  
+  Slider [---------V-----] 830
+  
+  When both TGT_SLIDERF_SHOWVALUE and TGT_SLIDERF_PERCENT are set,
+  it will show the value in % of it's actual range.
+
+  Slider [---------V-----]  70%
+
+TGTT_CALLBACK                                                          CS-
+
+  Requires a pointer to a function taking struct tgt_object * and integer 
+  specyfing the current value of slider.
+
+
+CONFIGURATION
+
+Section: slider
+Key:     activebg
+         Default value for TGTT_SLIDER_ACTIVEBG tag
+Value:   Integer, ANSI color code
+Default: 6 (cyan)

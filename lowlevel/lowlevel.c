@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <stdio.h>
 #ifndef TGT_DLTERMCAP
 #include <termcap.h>
@@ -6,19 +7,69 @@
 #endif
 #include <memory.h>
 #include <string.h>
+#include <stdarg.h>
 #include "tgt.h"
+#include <stdlib.h>
 #define TERMSECTIONNAME "terminal"
 #ifdef TGT_DLTERMCAP
     char* (*tgetstr)(char *,char*);
     int (*tgetnum)(char *);
     int (*tgetent)(char *,char*);
+    char* (*tparam)(const char *,char *,int, ...);
+    int (*tputs)(char *,int,int(*)(int));
+#endif
+#define PRINTF_BUFFER_LENGTH 512
+
+static void *termcap_dlh;
+
+int tgt_preferred_x=-1,tgt_preferred_y=-1;
+
+static inline void tgt_out_param1(char * fstring,int param)
+{
+    char tbuffer[40];
+    char *buf;
+#ifdef TGT_DLTERMCAP
+    if(!termcap_dlh) 
+	printf(fstring,param);
+    else
+    {
+#endif
+	buf=tparam(fstring,tbuffer,40,param);
+	tputs(buf,1,putchar);
+	if(buf!=tbuffer) free(buf);
+#ifdef TGT_DLTERMCAP
+    }
+#endif
+}
+static inline void tgt_out_param2(char * fstring,int param1,int param2)
+{
+    char tbuffer[40];
+    char *buf;
+#ifdef TGT_DLTERMCAP
+    if(!termcap_dlh) 
+	printf(fstring,param1,param2);
+    else
+    {
+#endif
+	buf=tparam(fstring,tbuffer,40,param1,param2);
+	tputs(buf,1,putchar);
+	if(buf!=tbuffer) free(buf);
+#ifdef TGT_DLTERMCAP
+    }
+#endif
+}
+
+#ifndef TGT_DLTERMCAP
+#define tgt_tputs(a,b,c) tputs(a,b,c)
+#else
+inline static void tgt_tputs(char *string,int l,int (*out)(int))
+{
+    if(termcap_dlh) tputs(string,l,out); else printf(string);
+}
 #endif
 
-
-void tgt_chattr(struct tgt_terminal *term,int request,int a,char *b)
+void tgt_chattr(struct tgt_terminal *term,int request,int a,int b)
 {
-    int i,n;
-    char p;
     /* Uniwersalna funkcja zmieniajaca 'atrybuty' terminala, typu
        zmiana kolorow, pozycji kursora, bold/normal ,etc...
        powinna byc uzywana przez handlery klas do rysowania obiektow
@@ -26,46 +77,180 @@ void tgt_chattr(struct tgt_terminal *term,int request,int a,char *b)
        tgt_terminal */
     switch(request)
     {
-	case TGT_TA_BGCOLOR: if(term->bg!=a) { printf(term->c_bgcolor,a); term->bg=a; } return;
-	case TGT_TA_FGCOLOR: if(term->fg!=a) { printf(term->c_fgcolor,a); term->fg=a; } return;
-	case TGT_TA_CLEAR: printf(term->c_clear); return;
-	case TGT_TA_BOLD: printf(term->c_active); return;
-	case TGT_TA_NORMAL: printf(term->c_inactive); term->fg=-1; term->bg=-1; return;
-	case TGT_TA_GFX: printf(term->c_graphics); return;
-	case TGT_TA_TXT: printf(term->c_text); return;
-	case TGT_TA_VISIBLECURSOR: printf(term->c_enablecurs); return;
-	case TGT_TA_INVISIBLECURSOR: printf(term->c_disablecurs); return;
-	case TGT_TA_CURSOR: printf(term->c_move,0,(int)b,(int)a); return;
+	case TGT_TA_BGCOLOR: if(term->bg!=a) { tgt_out_param1(term->c_bgcolor,a); term->bg=a; } return;
+	case TGT_TA_FGCOLOR: if(term->fg!=a) { tgt_out_param1(term->c_fgcolor,a); term->fg=a; } return;
+	case TGT_TA_CLEAR: tgt_tputs(term->c_clear,1,putchar); return;
+	case TGT_TA_BOLD: tgt_tputs(term->c_active,1,putchar); return;
+	case TGT_TA_NORMAL: tgt_tputs(term->c_inactive,1,putchar); term->fg=-1; term->bg=-1; return;
+	case TGT_TA_GFX: tgt_tputs(term->c_graphics,1,putchar); return;
+	case TGT_TA_TXT: tgt_tputs(term->c_text,1,putchar); return;
+	case TGT_TA_VISIBLECURSOR: tgt_tputs(term->c_enablecurs,1,putchar); return;
+	case TGT_TA_INVISIBLECURSOR: tgt_tputs(term->c_disablecurs,1,putchar); return;
+	case TGT_TA_CURSOR: tgt_out_param2(term->c_move,b,a); return;
 	case TGT_TA_COLORS: 
-	    if(term->bg!=(int) b) { printf(term->c_bgcolor,(int) b); term->bg=(char)(int) b; }
-	    if(term->fg!=a) { printf(term->c_fgcolor,a); term->fg=a; }
+	    if(term->bg!=b) { tgt_out_param1(term->c_bgcolor,b); term->bg=(char) b; }
+	    if(term->fg!=a) { tgt_out_param1(term->c_fgcolor,a); term->fg=(char) a; }
 	    return;
     }
 }
-void tgt_int_lowerb(struct tgt_terminal *term,int l)
+void tgt_int_lowerb(tgt_cell * buffer,int l,tgt_cell attr)
 {
-    int i,n,p;
-    /* Dolna ramka. Narozniki + poziome kreski ... */
-    tgt_chattr(term,TGT_TA_GFX,0,0);
-    putchar(term->gfx_set[TGT_TC_LL]); p=term->gfx_set[TGT_TC_HL];
-    for(i=0,n=l-2;i<n;i++) putchar(p);
-    putchar(term->gfx_set[TGT_TC_LR]); 
-    tgt_chattr(term,TGT_TA_TXT,0,0);
+    int i;
+    tgt_cell p;
+    *(buffer++)=TGT_T_FCHAR(attr,TGT_TC_LL);
+    l-=2; p=TGT_T_FCHAR(attr,TGT_TC_HL);
+    for(i=0;i<l;i++) *(buffer++)=p;
+    *(buffer++)=TGT_T_FCHAR(attr,TGT_TC_LR);
     return;
 }
-void tgt_int_upperb(struct tgt_terminal *term,int l)
+void tgt_int_upperb(tgt_cell * buffer,int l,tgt_cell attr)
 {
-    int i,n,p;
-    /* Gorna ramka . Narozniki + poziome kreski ... */
-    tgt_chattr(term,TGT_TA_GFX,0,0);
-    putchar(term->gfx_set[TGT_TC_UL]); p=term->gfx_set[TGT_TC_HL];
-    for(i=0,n=l-2;i<n;i++) putchar(p);
-    putchar(term->gfx_set[TGT_TC_UR]); 
-    tgt_chattr(term,TGT_TA_TXT,0,0);
+    int i;
+    tgt_cell p;
+    *(buffer++)=TGT_T_FCHAR(attr,TGT_TC_UL);
+    l-=2; p=TGT_T_FCHAR(attr,TGT_TC_HL);
+    for(i=0;i<l;i++) *(buffer++)=p;
+    *(buffer++)=TGT_T_FCHAR(attr,TGT_TC_UR);
     return;
 }
 
+void tgt_fill_buffer(tgt_cell * buffer,int xs,int ys,tgt_cell cell)
+{
+    register int i,m;
+    m=xs*ys;
+    for(i=0;i<m;i++)
+	*(buffer++)=cell;
+}
 
+void tgt_change_colors(tgt_cell * buffer,int length,int fg,int bg,int bold)
+{
+    register int i;
+    tgt_cell cell=TGT_T_BOLD(TGT_T_FG(TGT_T_BG(0,bg),fg),bold);
+    for(i=0;i<length;i++)
+	*(buffer++)=(*buffer & 0xff)|cell;
+}
+
+void tgt_blit(tgt_cell * dest,int dxs,tgt_cell *src,int xs,int ys,int xp,int yp)
+{
+    register int dxsd,i;
+    dest+=yp*dxs+xp;
+    dxsd=xs << 1;
+    for(i=0;i<ys;i++)
+    {
+	memcpy(dest,src,dxsd);
+	dest+=dxs;
+	src+=xs;
+    }
+}
+
+static unsigned char tgt_printf_buffer[PRINTF_BUFFER_LENGTH+1];
+
+int tgt_printf(tgt_cell *buffer,int max,tgt_cell attr,char *format,...)
+{
+    int n,i;
+    va_list vl;
+    va_start(vl,format);
+    n=vsnprintf(tgt_printf_buffer,max+1,format,vl);
+    for(i=0;i<n;i++) *(buffer++)=TGT_T_FCHAR(attr,tgt_printf_buffer[i]);
+    va_end(vl);
+    return(n);
+}
+void tgt_flprintf(tgt_cell *buffer,int max,tgt_cell attr,char *format,...)
+{
+    int n,i;
+    va_list vl;
+    va_start(vl,format);
+    n=vsnprintf(tgt_printf_buffer,max+1,format,vl);
+    for(i=0;i<n;i++) *(buffer++)=TGT_T_FCHAR(attr,tgt_printf_buffer[i]);
+    n=max-n;
+    if(n>0) for(i=0;i<n;i++) *(buffer++)=TGT_T_FCHAR(attr,' ');
+    va_end(vl);
+}
+
+void tgt_update_screen(struct tgt_terminal * term)
+{
+    tgt_cell * buffer=term->terminal_buffer;
+    tgt_cell * screen=term->contents_buffer;
+    int y,ys=term->y_size,linelength=term->x_size << 1,xs=term->x_size;
+    int x,xl,inc;
+    int bold,fg,bg;
+    int c_gfx=-1,c_bold=-1,c_fg=-1,c_bg=-1;
+    tgt_cell cell;
+    int c;    
+    
+    for(y=0;y<ys;y++)
+    {
+	if(memcmp(buffer,screen,linelength))
+	{
+	    for(x=0;;x++) if(buffer[x]!=screen[x]) break; /* First different character */
+	    for(xl=xs-1;;xl--) if(buffer[xl]!=screen[xl]) break;
+					    /* Last different character */
+	    xl-=x; buffer+=x; screen+=x;
+	    tgt_chattr(term,TGT_TA_CURSOR,x,y);
+	    inc=xs-x-xl-1;
+	    fflush(stderr);
+	    for(x=0;x<=xl;x++)
+	    {
+		cell=*(buffer++);
+		*(screen++)=cell;
+
+		if((bold=TGT_T_GETBOLD(cell)) != c_bold)
+		{
+		    if((c_bold=bold))
+			tgt_chattr(term,TGT_TA_BOLD,0,0);
+		    else
+		    {
+			tgt_chattr(term,TGT_TA_NORMAL,0,0);
+			c_fg=-1; c_bg=-1;
+		    }
+		}
+
+		if((fg=TGT_T_GETFG(cell)) != c_fg) tgt_chattr(term,TGT_TA_FGCOLOR,c_fg=fg,0);
+		if((bg=TGT_T_GETBG(cell)) != c_bg) tgt_chattr(term,TGT_TA_BGCOLOR,c_bg=bg,0);
+
+		c=TGT_T_GETCHAR(cell);
+		
+		if(c<32)
+		{
+		    if(c<8)
+		    {
+			if(c_gfx!=1)
+			{
+			    c_gfx=1;
+			    tgt_chattr(term,TGT_TA_GFX,0,0);
+			}
+//			putchar('!');
+			putchar(term->gfx_set[c]);
+		    }
+		    else
+			putchar(' ');
+		}
+		else
+		{
+		    if(c_gfx)
+		    {
+			tgt_chattr(term,TGT_TA_TXT,0,0);
+			c_gfx=0;
+		    }
+		    putchar(c);
+		}
+	    }
+	    buffer+=inc;
+	    screen+=inc;
+	}
+	else
+	{
+	    buffer+=term->x_size;
+	    screen+=term->x_size;
+	}
+    }
+    if(tgt_preferred_x!=-1)
+    {
+	tgt_chattr(term,TGT_TA_CURSOR,tgt_preferred_x,tgt_preferred_y);
+	tgt_preferred_x=-1;
+    }
+    fflush(stdout);
+}
 
 void tgt_destroyterminal(struct tgt_terminal *tterm)
 {
@@ -88,12 +273,6 @@ void tgt_term_addkey(struct tgt_terminal *term,char *capability,char *def,int ke
 {
     char *str;
     char kbbuffer[TGT_MAX_SEQ];
-/* Dodaje sekwencje zawarta w atrybucie terminala term capability do tablic
-   znajdowania znakow wprowadzanych z klawiatury .. Jesli sekwencji nie uda
-   sie odczytac, przyjmowana jest domyslna sekwencja def. Wyjscie
-   z termcapa moze zawierac jakies niepozadane znaki typu "\","E"
-   niwelujemy je (tzn przeksztalcamy w naszym przykladzie do 0x1b)
-   za pomoca snprintf() */
    
     str=tgetstr(capability,NULL);
     if(str==NULL)
@@ -119,7 +298,7 @@ void tgt_term_addkey_int(int te,struct tgt_terminal *term,char *capability,char 
    niwelujemy je (tzn przeksztalcamy w naszym przykladzie do 0x1b)
    za pomoca snprintf() */
     str=NULL;
-    if(pstr=tgt_getprefs(g_prefs,TERMSECTIONNAME,conf_name,NULL))
+    if((pstr=tgt_getprefs(g_prefs,TERMSECTIONNAME,conf_name,NULL)))
 	def=pstr;
     else
 	if(te) str=tgetstr(capability,NULL);
@@ -139,7 +318,7 @@ char *tgt_tgetstrd(int te,char *name,char *def,char *conf_name)
     char *ret;
 /* tgt_tgetstr() pobiera atrybut z config-file, jesli nie to termcapa , a jesli
    i to sie nie powiedzie, przyjmuje def (default) */
-    if(ret=tgt_getprefs(g_prefs,TERMSECTIONNAME,conf_name,NULL)) return(strdup(ret));
+    if((ret=tgt_getprefs(g_prefs,TERMSECTIONNAME,conf_name,NULL))) return(strdup(ret));
     if(te && !ret) ret=tgetstr(name,NULL);
     if(!ret) ret=strdup(def);
     return(ret);
@@ -149,11 +328,10 @@ char *tgt_tgetstrd(int te,char *name,char *def,char *conf_name)
 
 struct tgt_terminal * tgt_setscreen(char *name)
 {
-    int te,n;
-    char *str;
-    char *buffer;
+    int te=0,n;
+    char *buffer,*sb;
     struct tgt_terminal *ret;
-    char kbbuffer[TGT_MAX_SEQ];
+//    char kbbuffer[TGT_MAX_SEQ];
 /*
 
 Funkcja pobiera z termcapa parametry terminala podanego jako argument name
@@ -165,16 +343,26 @@ i zwraca wskaznik na stworzona strukture aplikacji
 #ifdef TGT_DLTERMCAP
     void *dlh;
     dlh=dlopen("libtermcap.so",RTLD_LAZY);
+    if(!dlh) dlh=dlopen("libtermcap.so.2",RTLD_LAZY);
     if(dlh)
     {
 	tgetent=(int(*)(char *,char*)) dlsym(dlh,"tgetent");
 	tgetnum=(int(*)(char *)) dlsym(dlh,"tgetnum");
 	tgetstr=(char*(*)(char *,char*)) dlsym(dlh,"tgetstr");
-	if(!tgetent || !tgetnum || !tgetstr)
+	tparam=(char*(*)(const char *,char*,int,...)) dlsym(dlh,"tparam");
+	tputs=(int(*)(char *,int,int(*)(int))) dlsym(dlh,"tputs");
+	if(!tgetent || !tgetnum || !tgetstr || !tputs)
 	{
 	    dlclose(dlh);
 	    dlh=NULL;
 	}
+	if(!tparam)
+	{
+	    dlclose(dlh);
+	    dlh=NULL;
+	    printf("You DO NOT HAVE a REAL termcap, your libtermcap.so is just a ncurses termcap replacement!\n");
+	}
+	
     }
 #endif
 
@@ -197,7 +385,11 @@ i zwraca wskaznik na stworzona strukture aplikacji
 	free(buffer);
 	printf("Termcap library or termcap entry NOT FOUND\n");
 	printf("Attempting to use config file directives or defaults\n");
-	usleep(2000000);
+	if(!tgt_getprefs(g_prefs,TERMSECTIONNAME,"ignore_termcap_type",NULL))
+	{
+	    printf("Press ENTER to continue");
+	    getchar();
+	}
 	te=0;
     }
 /* Przydzielamy pamiec... */
@@ -207,21 +399,23 @@ i zwraca wskaznik na stworzona strukture aplikacji
     ret->color_bg=4; ret->color_fg=7;
 
 /* ilosc kolumn i linii*/
-    if(te)
-    {
-	ret->x_size=tgetnum("co");
-	ret->y_size=tgetnum("li");
-    }
-    else
-    {
-	ret->x_size=80; ret->y_size=25;
-    }
 
-    if(n=atoi(tgt_getprefs(g_prefs,TERMSECTIONNAME,"columns","0"))) ret->x_size=n;
-    if(n=atoi(tgt_getprefs(g_prefs,TERMSECTIONNAME,"lines","0"))) ret->y_size=n;
+    if((sb=getenv("COLUMNS")))
+        ret->x_size=atoi(sb);
+    else
+        if(te) ret->x_size=tgetnum("co"); else ret->x_size=80;
+
+    if((sb=getenv("LINES")))
+        ret->y_size=atoi(sb);
+    else
+        if(te) ret->y_size=tgetnum("li"); else ret->y_size=25;
+
+
+    if((n=atoi(tgt_getprefs(g_prefs,TERMSECTIONNAME,"columns","0")))) ret->x_size=n;
+    if((n=atoi(tgt_getprefs(g_prefs,TERMSECTIONNAME,"lines","0")))) ret->y_size=n;
     
     ret->c_clear=tgt_tgetstrd(te,"cl","\033[H\033[J","clear");
-    ret->c_move=tgt_tgetstrd(te,"cm","\033[%i%d;%dH","move");
+    ret->c_move=tgt_tgetstrd(te,"cm","\033[%d;%dH","move");
 
 /* tgt_tgetstr() w razie braku atrybutu klonuje nam pusty string, zeby
    sie nie wykraszowalo tgt_chattr */
@@ -255,14 +449,41 @@ i zwraca wskaznik na stworzona strukture aplikacji
     tgt_term_addkey_int(te,ret,"@7","\x1b\x5b\x34\x7e","end",TGT_KEY_END);
     tgt_term_addkey_int(te,ret,"kP","\x1b\x5b\x35\x7e","pgup",TGT_KEY_PGUP);
     tgt_term_addkey_int(te,ret,"kN","\x1b\x5b\x36\x7e","pgdn",TGT_KEY_PGDN);
+    tgt_term_addkey_int(te,ret,"WM","\x17","windowmove",TGT_KEY_WINDOWMOVE);
 
     memcpy(ret->gfx_set,tgt_getprefs(g_prefs,TERMSECTIONNAME,"gfx","qxutlkmj"),8);
     /* Odpowiedniki znakow semigraficznych. W trybie graficznym napisanie
      'q' powoduje wyswietlenie linii poziomej, 'j' to dolny prawy naroznik
      ramki etc. Patrz stale w tgt_terminal.h */
     ret->fg=-1; ret->bg=-1;
+
+    ret->terminal_buffer=(tgt_cell*) malloc(sizeof(tgt_cell)*ret->x_size*ret->y_size);
+    ret->contents_buffer=(tgt_cell*) malloc(sizeof(tgt_cell)*ret->x_size*ret->y_size);
+
+    tgt_fill_buffer(ret->terminal_buffer,ret->x_size,ret->y_size,TGT_T_BUILDCELL(ret->color_fg,ret->color_bg,0,0,' '));
+    tgt_fill_buffer(ret->contents_buffer,ret->x_size,ret->y_size,0);
+
 #ifdef TGT_DLTERMCAP
-    if(dlh) dlclose(dlh);
+//    if(dlh) dlclose(dlh);
+    termcap_dlh=dlh;
 #endif
     return(ret);
+}
+
+void tgt_fatal_error(struct tgt_terminal * term,char *string)
+{
+    if(term)
+    {
+	tgt_chattr(term,TGT_TA_TXT,0,0);
+	tgt_chattr(term,TGT_TA_NORMAL,0,0);
+	tgt_chattr(term,TGT_TA_CLEAR,0,0);
+    }
+    else
+	printf("\033[0m\x0f\033[H\033[J");
+	
+    fflush(stdout);
+    fprintf(stderr,"tgt: Fatal error: %s\n",string);
+    fflush(stderr);
+    tgt_rawcon(0);
+    exit(0);
 }

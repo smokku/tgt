@@ -21,17 +21,21 @@ int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void* b)
 	    return(1);
 	case TGT_OBJECT_DESTROY:
 	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
+	    tgt_chattr(obj->term,TGT_TA_TXT,0,0);
 	    tgt_chattr(obj->term,TGT_TA_CLEAR,0,0);
 	    tgt_chattr(obj->term,TGT_TA_VISIBLECURSOR,0,0);
 	    fflush(stdout);
 	    tgt_rawcon(0);
 	    return(1);
 	case TGT_OBJECT_REFRESH:
-	    c=obj->bg;
-	    tgt_chattr(obj->term,TGT_TA_BGCOLOR,c,0);
-	    tgt_chattr(obj->term,TGT_TA_CLEAR,0,0);
+	    tgt_fill_buffer(obj->visual_buffer,obj->xs,obj->ys,TGT_T_BUILDCELL(obj->fg,obj->bg,0,0,' '));
 	    return(1);
 	case TGT_OBJECT_HANDLE:
+	    if(a==0x0c)
+	    {
+		tgt_fill_buffer(obj->term->contents_buffer,obj->xs,obj->ys,0);
+		tgt_refresh(obj);
+	    }
 	    if(obj->objectf) return(obj->objectf(obj,a));
 	    return(0);
 	case TGT_OBJECT_SETTAG:
