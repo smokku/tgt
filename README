@@ -1,0 +1,21 @@
+UWAAGA: Jakbys mial odpalac test: pamietaj o Trzech Magicznych Klawiszach:
+przelaczanie w obrebie klasy desktop (np. pomiedzy okienkami) : `
+przelaczanie w obrebie okna (np. pomiedzy zawartoscia okna)   : tab
+klawisze na ktore reaguja obiekty klasy button                : spacja,enter
+
+uff.. 0:57, skonczylem... mam nadzieje ze komentarze nie zaciemnia
+jeszcze bardziej kodu :)
+
+btw, jak cos to radze czytac od inkludkow...
+
+swoja droga, jak juz przejrzysz kod, zastanow sie nad tym czy nie sensowniej
+byloby gdyby lista dzieci obiektu byla lista linkowana? i czy moze w
+samym obiekcie dac pointer do jego aktywnego dziecka ? ... o 0:59 nie mysli 
+sie latwo, moze Ty wpadniesz na to czy to wogole sie oplaca :)
+
+Wiele funkcji to istna prowizorka-napisane zeby dzialaly... Zalezalo mi jednak
+na szkielecie, wlasnie na czyms co by dzialalo.. Chodzi o sama koncepcje,
+struktury, jak cos to mozna zrobic rewrite poszczegolnych procedur, nie
+zmieniajac filozofii dzialania (czyli np. trzymajac sie prototypow i 
+definicji z inkludkow)
+
