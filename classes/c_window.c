@@ -51,6 +51,7 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	    if(n>0) { tgt_activatenext(obj); return(1); }
 // in future eventually window moving (for instance) functions by keys
 // like alt + -> 
+            if(obj->objectf) return(obj->objectf(a));
 	    return(0);
 	    break;
 	default: return(0);

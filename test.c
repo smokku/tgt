@@ -79,7 +79,7 @@ main()
 
     sprintf(sstring,"1..2...3... Start");
 
-    astatus->classf(astatus,TGTM_LABEL_CHANGETEXT,0,sstring);
+    tgt_set(astatus,TTGT_LABEL_TEXT,sstring);
 
 /* obiekty nie refreshuja sie same od siebie... */
     tgt_refresh(desktop);

@@ -47,4 +47,3 @@ jesli klasa uzywa callbackow musi SAMA wywolac odpowiednie tgt_gettag() */
 /* Metody wlasne klas */
 
 
-#define TGTM_LABEL_CHANGETEXT 1000

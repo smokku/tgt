@@ -1,6 +1,6 @@
 
 SOURCES= lowlevel/lowlevel.c classes/keyboard.c classes/class.c classes/management.c\
-	 app/async.c app/queue.c lowlevel/keytree.c\
+	 app/async.c app/queue.c lowlevel/keytree.c classes/tags.c\
 	 classes/c_desktop.c classes/c_window.c classes/c_button.c\
 	 classes/c_plaintext.c
 OBJECTS = ${SOURCES:.c=.o}

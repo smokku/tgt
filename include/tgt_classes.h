@@ -75,6 +75,10 @@ to jesli parametr req to odpowiednio:
 "eee niezbyt, zapytaj sie moich dzieci" = 0
 */
 
+#define TGT_OBJECT_SETTAG 5
+#define TGT_OBJECT_GETTAG 6
+
+
 /* Pole objflags */
 #define TGT_OBJFLAGS_NONSELECTABLE 1
 /* aktywna -> obiekt nie moze zostac zaznaczony */
@@ -94,3 +98,4 @@ jest _po_ odpytaniu rodzicow o to czy rozumieja
 #define TGT_CLASS_WINDOW 1
 #define TGT_CLASS_BUTTON 2
 #define TGT_CLASS_LABEL 3
+
