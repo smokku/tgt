@@ -67,6 +67,13 @@ int tgt_intrefresh(struct tgt_object *obj,int a,int b)
 #ifdef SEMAPHORED_REFRESH
     static int ref_semaphore=0;
 #endif
+int tgt_voilatile_refresh(struct tgt_object *obj)
+{
+#ifdef SEMAPHORED_REFRESH
+    ref_semaphore=0;
+#endif
+    tgt_refresh(obj);
+}
 
 int tgt_refresh(struct tgt_object *obj)
 {

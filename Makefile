@@ -1,6 +1,6 @@
 
 SOURCES= lowlevel/lowlevel.c classes/keyboard.c classes/class.c classes/management.c\
-	 app/async.c app/queue.c lowlevel/keytree.c classes/tags.c\
+	 app/async.c app/queue.c lowlevel/keytree.c lowlevel/print.c classes/tags.c\
 	 classes/c_desktop.c classes/c_window.c classes/c_button.c\
 	 classes/c_label.c classes/c_string.c classes/c_list.c\
 	 lowlevel/menu.c classes/c_menu.c classes/c_cycle.c\
@@ -38,10 +38,11 @@ clean:
 	for i in $(SUBDIRS); \
 	do $(MAKE) -C $$i clean; done
 		
-	rm -rf libtgt.so *.o *~ core >/dev/null 2>/dev/null
+	rm -rf libtgt.so *.o *.class *~ core >/dev/null 2>/dev/null
 	rm -rf $(OBJECTS) >/dev/null 2>/dev/null
 
 install: 
+	rm -rf /usr/lib/libtgt.so /usr/include/tgt
 	cp ./libtgt.so /usr/lib
 	cp -rf include /usr/include/tgt
 

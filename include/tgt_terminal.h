@@ -60,4 +60,3 @@ struct tgt_terminal
 #define TGT_COLOR_MAGNETA 5
 #define TGT_COLOR_CYAN 6
 #define TGT_COLOR_GREY 7
-#define TGT_COLOR_WHITE 8

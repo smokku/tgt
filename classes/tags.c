@@ -10,6 +10,8 @@ int tgt_set(struct tgt_object * obj,long tag,long value)
 	case TGTT_XS: obj->xs=(int) value; break;
 	case TGTT_YS: obj->ys=(int) value; break;
 	case TGTT_ID: obj->id=(int) value; break;
+	case TGTT_FG: obj->fg=(int) value; break;
+	case TGTT_BG: obj->bg=(int) value; break;
 	default: return(obj->classf(obj,TGT_OBJECT_SETTAG,tag,(void*) value));
     }
     return(1);

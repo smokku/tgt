@@ -20,6 +20,7 @@ void tgt_wint_drawtitleb(struct tgt_terminal *term,int a,char *b,int fg,int bg,i
     for(i=0,n=a-6-strlen(b);i<n;i++) putchar(p); /* cala reszta oprocz 2 znakow na narozniki + 2 na 'T' + 2 na odstepy i dlugosci
     stringa tytulowego to poziome kreski */
     putchar(term->gfx_set[TGT_TC_UR]); /* naroznik */
+    term->fg=fg; term->bg=bg;
     return;
 }
 void tgt_wint_drawsideb(struct tgt_terminal *term,int x,int y,int l,int lxs)

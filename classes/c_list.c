@@ -9,6 +9,7 @@ struct tgt_int_list
     int realys;
     void *data;
     int (*dataf)(void*,int,int,void*,int,int);
+    int (*chf)(struct tgt_object*,int);
     char *outbuffer;
     int framecolor;
     int activebg;
@@ -49,6 +50,7 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	    iw->current=0; iw->top=0;
 	    iw->data=(void*) tgt_getptrtag(b,TGTT_LIST_ITEMS,NULL);
 	    iw->dataf=(int(*)(void*,int,int,void*,int,int)) tgt_getptrtag(b,TGTT_LIST_DATACALLBACK,(long) tgt_int_listdataf);
+	    iw->chf=(int(*)(struct tgt_object*,int)) tgt_getptrtag(b,TGTT_LIST_CHANGECALLBACK,0);
 	    if(iw->framecolor=tgt_getnumtag(b,TGTT_LIST_FRAMECOLOR,0))
 		iw->realys=obj->ys-2;
 	    else
@@ -136,6 +138,7 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 			if(iw->top<0) iw->top=0;
 		    }
 		    tgt_refresh(obj);
+		    if(iw->chf) iw->chf(obj,iw->current);
 		    return(1);
 		case TGT_KEY_UP: 
 		    iw->current--;
@@ -143,17 +146,20 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 		    if(iw->current<iw->top) iw->top=iw->current;
 		    if(iw->top<0) iw->top=0;
 		    tgt_refresh(obj);
+		    if(iw->chf) iw->chf(obj,iw->current);
 		    return(1);
 		case TGT_KEY_HOME:
 		    iw->current=0;
 		    iw->top=0;
 		    tgt_refresh(obj);
+		    if(iw->chf) iw->chf(obj,iw->current);
 		    return(1);
 		case TGT_KEY_END: 
 		    iw->current=iw->dataf(iw->data,TGT_LISTREQ_GETMAX,0,NULL,0,0)-1;
 		    iw->top=iw->current-iw->realys+1;
 		    if(iw->top<0) iw->top=0;
 		    tgt_refresh(obj);
+		    if(iw->chf) iw->chf(obj,iw->current);
 		    return(1);
 		case 13: case 10:
 		    if(obj->objectf) obj->objectf(obj,iw->current);
