@@ -46,7 +46,7 @@ int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
 	case TGT_OBJECT_HANDLE:
 	    if(a==13 || a==10 || a==32) 
 	    {
-		if(obj->objectf!=NULL) obj->objectf(obj->id);
+		if(obj->objectf!=NULL) obj->objectf(obj);
 		return(1);
 	    }
 	    n=tgt_shalliswitch(obj,a,0);

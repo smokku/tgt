@@ -27,7 +27,7 @@ int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void* b)
 	    tgt_chattr(obj->term,TGT_TA_CLEAR,0,0);
 	    return(1);
 	case TGT_OBJECT_HANDLE:
-	    if(obj->objectf) return(obj->objectf(a));
+	    if(obj->objectf) return(obj->objectf(obj,a));
 	    return(0);
 	default: return(0);
 	

@@ -10,17 +10,17 @@
     struct tgt_queue *mq;
 
 /* Callback dla przyciskow - wyjscie z programu i zamkniecie okna dodatkowego*/
-void mkexit(int id)
+void mkexit(struct tgt_object *obj)
 {
-    if(id==100)
+    if(obj->id==100)
     {    
 	tgt_app_queue(mq,QUIT,0,0);
     }
     else
     {
-	tgt_unlink(cwindow);
+	tgt_unlink(obj->ln.parent);
 	tgt_refresh(desktop);
-	tgt_destroyobject(cwindow);
+	tgt_destroyobject(obj->ln.parent);
     }
 }
 
@@ -30,7 +30,7 @@ void refresh(int a)
     tgt_app_queue(mq,0,0,"Refresh");
 }
 /* Callback dla przycisku otwarcia dodatkowegookna */
-void newwindow(int a)
+void newwindow(struct tgt_object *obj)
 {
     cwindow=tgt_createandlink_int(desktop,myterm,TGT_CLASS_WINDOW,
 	(long[]) { TGTT_X,6,TGTT_Y,8,
