@@ -30,23 +30,16 @@ na koniec linii przed przekazaniem danych programowi
 
 long tgt_rawcon(void)
 {
-    if(conswitch_active!=0)
-    {
-	tcsetattr(0,TCSANOW,&ourtermios);
-	conswitch_active=2;
-    }
-    else
-	tgt_initconswitch();
+    if(conswitch_active==0) tgt_initconswitch();
+    tcsetattr(0,TCSANOW,&ourtermios);
+    conswitch_active=2;
+
 }
 void tgt_normalcon(void)
 {
-    if(conswitch_active!=0)
-    {
-	tcsetattr(0,TCSANOW,&oldtermios);
-	conswitch_active=1;
-    }
-    else
-	tgt_initconswitch();
+    if(conswitch_active==0) tgt_initconswitch();
+    tcsetattr(0,TCSANOW,&oldtermios);
+    conswitch_active=1;
 }
 /* Pobiera klawisz z terminala tm ... UGLY !!! BARDZO UGLY !!! */
 
@@ -89,12 +82,15 @@ to kolejny nastepny znak ogolnie w kolejce-to jest do poprawienia:)
     
     gchars[0]=c;
 
+
     if(c==tm->c_cursl[0]) k=max(k,strlen(tm->c_cursl));
     if(c==tm->c_cursr[0]) k=max(k,strlen(tm->c_cursr));
     if(c==tm->c_cursu[0]) k=max(k,strlen(tm->c_cursu));
     if(c==tm->c_cursd[0]) k=max(k,strlen(tm->c_cursd));
     if(c==tm->c_bkspc[0]) k=max(k,strlen(tm->c_bkspc));
     if(c==tm->c_del[0]) k=max(k,strlen(tm->c_del));
+
+    printf("%d   %d %d %d   %d %d\n",c,tm->c_cursl[0],tm->c_cursr[0],tm->c_cursu[0],k,strlen(tm->c_cursl));
 
     if(k==-1) return(c);    
 
