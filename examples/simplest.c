@@ -18,10 +18,10 @@ main()
 
     
     window=tgt_createobject(term,TGT_CLASS_WINDOW, /* Create a window object */
-	(tagitem[]){TGTT_X, 20, TGTT_Y, 10,
+	((tagitem[]){TGTT_X, 20, TGTT_Y, 10,
 		 TGTT_XS,40, TGTT_YS,5,
 		 TGTT_WINDOW_TITLE,"Hello World",
-		 TGTT_END,0});
+		 TGTT_END,0}));
     
     tgt_link(window,desktop); /* Attach it to the root object */
     

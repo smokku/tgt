@@ -9,7 +9,7 @@
 static struct termios ourtermios;
 static struct termios oldtermios;
 static int conswitch_active=0;
-int async_semaphore=0;
+int async_semaphore=1;
 
 void tgt_initconswitch(void)
 {

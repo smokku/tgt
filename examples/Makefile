@@ -24,7 +24,7 @@ status: status.c
 test: test.c
 	gcc test.c -o test -L../ -ltgt -I../include/
 simplest: simplest.c
-	gcc simplest.c -o simplest -L../ -ltgt -I../include/
+	gcc simplest.c -o simplest -L../ -ltgt -I../include/ -Wall
 buffer: buffer.c
 	gcc buffer.c -o buffer -L../ -ltgt -I../include/
 fb: fb.c

@@ -46,6 +46,8 @@ int tgt_builtin_direct(struct tgt_object *obj,int type,int a,void *b)
 	    return(1);
 	case TGT_OBJECT_GETTAG:
 	    if(a==TGTT_DIRECTSURFACE_SCREENMEM) { *(unsigned char **) b=obj->class_data; return(1); }
+	    if(a==TGTT_XS) { *(unsigned int*) b=obj->xs; return(1); }
+	    if(a==TGTT_YS) { *(unsigned int*) b=obj->ys; return(1); }
 	    return(0);
 	default: return(0);
     }

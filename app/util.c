@@ -71,13 +71,13 @@ int tgt_easyrequest(struct tgt_object *ref,char *title,char *body,char *buttons)
 	tgt_unlink(req);
 	tgt_destroyobject(req);
 	free(body); free(linepointers); free(buttons);
-	async_semaphore=0;
+	async_semaphore=1;
 	return(id-1);
     }
     
     tgt_link(req,ref);
     tgt_refresh(req);
     
-    if(async_running) async_semaphore=1;
+    if(async_running) async_semaphore=0;
     while(1) tgt_getkey(req);
 }
