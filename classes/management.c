@@ -11,6 +11,8 @@ void tgt_init_intclasses()
     internal_classes[TGT_CLASS_WINDOW]=tgt_builtin_window;
     internal_classes[TGT_CLASS_BUTTON]=tgt_builtin_button;
     internal_classes[TGT_CLASS_LABEL]=tgt_builtin_label;
+    internal_classes[TGT_CLASS_STRING]=tgt_builtin_string;
+    internal_classes[TGT_CLASS_LIST]=tgt_builtin_list;
     int_initialized=1;    
 }
 
@@ -72,7 +74,7 @@ void tgt_unlink(struct tgt_object *obj)
 }
 
 
-struct tgt_object * tgt_createobject(struct tgt_terminal *term,
+struct tgt_object * tgt_createobject_int(struct tgt_terminal *term,
 				 int (*classf)(struct tgt_object*,int,int,void*),
 				 long *taglist)
 {
@@ -110,7 +112,7 @@ struct tgt_object * tgt_createobject(struct tgt_terminal *term,
 struct tgt_object * tgt_getdesktop(struct tgt_terminal * term)
 {
     /* Front-end dla tgt_createobject() tworzacy nadrzedny obiekt desktopu dla terminala term */
-    return(tgt_createobject(term,tgt_builtin_desktop,(long[]) { TGTT_X,1, TGTT_Y,1, TGTT_END,0} ));
+    return(tgt_createobject_int(term,tgt_builtin_desktop,(long[]) { TGTT_X,1, TGTT_Y,1, TGTT_END,0} ));
     //! a tu z kolei powinno byc TGTT_X,0, TGTT_Y,0   bo wspolzedne ekranowe liczymy od zera..
 }
 void tgt_destroyobject(struct tgt_object *obj)
@@ -129,41 +131,30 @@ void tgt_destroyobject(struct tgt_object *obj)
 	    tgt_destroyobject(nextch);
 	    nextch=tmpch;
 	}while(nextch!=firstch);
+						    
     obj->classf(obj,TGT_OBJECT_DESTROY,0,0);
+
     free(obj);
     return;
 }
-struct tgt_object *tgt_createandlinkobject(struct tgt_object *parent,struct tgt_terminal *term,
-				 int (*classf)(struct tgt_object*,int,int,void*),
-				 long *taglist)
-{
-/* Front-end dla tgt_createobject() -> tworzy obiekt i linkuje go od razu
-   do obiektu parent */
-
-    struct tgt_object *ret;
-    ret=tgt_createobject(term,classf,taglist);
-    if(ret==NULL) return(NULL);
-    tgt_link(ret,parent);
-    return(ret);
-}
-struct tgt_object * tgt_createobject_int(struct tgt_terminal *term,
+struct tgt_object * tgt_createobject(struct tgt_terminal *term,
 				 int classid,
 				 long *taglist)
 {
     /* jw, front-end, tworzy obiekt wykorzystujac jako handler klasy
        jedna z wbudowanych w system klas */
     if(int_initialized==0) tgt_init_intclasses();
-    return(tgt_createobject(term,internal_classes[classid],taglist));
+    return(tgt_createobject_int(term,internal_classes[classid],taglist));
 }
 
-struct tgt_object * tgt_createandlink_int(struct tgt_object *parent,struct tgt_terminal *term,
+struct tgt_object * tgt_createandlink(struct tgt_object *parent,struct tgt_terminal *term,
 				 int classid,
 				 long *taglist)
 {
     /* Kombinacja obu powyzszych */
     struct tgt_object *ret;
     if(int_initialized==0) tgt_init_intclasses();
-    ret=tgt_createobject(term,internal_classes[classid],taglist);
+    ret=tgt_createobject_int(term,internal_classes[classid],taglist);
     if(ret==NULL) return(NULL);
     tgt_link(ret,parent);
     return(ret);

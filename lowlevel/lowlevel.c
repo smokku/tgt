@@ -200,6 +200,9 @@ i zwraca wskaznik na stworzona strukture aplikacji
     tgt_term_addkey(ret,"kr","\033[C",TGT_KEY_RIGHT);
     tgt_term_addkey(ret,"kD","\x1b\x5b\x33\x7e",TGT_KEY_DELETE);
     tgt_term_addkey(ret,"kb","\x7f",TGT_KEY_BKSPC);
+    tgt_term_addkey(ret,"kI","\x1b\x5b\x32\x7e",TGT_KEY_INSERT);
+    tgt_term_addkey(ret,"kh","\x1b\x5b\x31\x7e",TGT_KEY_HOME);
+    tgt_term_addkey(ret,"@7","\x1b\x5b\x34\x7e",TGT_KEY_END);
 
     memcpy(ret->gfx_set,"qxutlkmj",8);
     /* Odpowiedniki znakow semigraficznych. W trybie graficznym napisanie

@@ -6,6 +6,7 @@ POMYSLY NA KLASY I SUGESTIE DOTYCZACE ICH
   typu np. f1 pomoc, 'm' otwiera pulldownmenu etc...), callback
   standartowo zwraca 1 jesli rozumie, 0 jesli nie...
   Co do window: moze przydalby sie jeszcze tag TTGT_WINDOW_BORDERLESS (T/F)...
+  do LABEL,STRING dorobic mozliwosc rownania do prawej/lewej
 
 
 -    Nazwa: ________
@@ -89,12 +90,30 @@ POMYSLY NA KLASY I SUGESTIE DOTYCZACE ICH
   w printf() mozna policzyc biorac liczbe cyfr w min-ie (bo jak min
   bedzie mial -10 a max 0 to min bedzie zajmowal wiecej) lub maxie)
   
+  inne propozycje suwakow:
+  TGTT_SLIDER_TYPE ?
+  
+  ^   [---V----] 45%
+  :
+  :
+  #   <:::::#####:::>
+  #
+  :
+  v
+  
+  
 -   [========------------]  43 %
 
   PROGRESS BAR: -tutaj rowniez mozliwe ustawienie znakow renderujacych obiekt,
   mozliwosc ustawienia minimum i maksimum oraz aktualnej pozycji w przycisku,
   - tag TTGT_PROGRESS_SHOWCURRENT powodujacy przy true pokazywanie procentowego
   postepu obok ...
+  
+     TGTT_PROGRESS_TYPE
+  
+    [#######........] 18
+    >>>>>>>>>>>       61%
+    
 
 -  
     +-----------------+-+
@@ -127,10 +146,15 @@ POMYSLY NA KLASY I SUGESTIE DOTYCZACE ICH
   FRAME: Ramka wygladajaca dokladnie tak jak ramka okna lecz bedaca jedynie
   statycznym, nieaktywowalnym obiektem.. druga zmiana: podczas refreshu
   nie czysci srodka siebie... tagi: raczej brak
+  
+                   v----- ??? (ew. gdybysmy kiedys wymyslili myszke.. ;])
+  +-| Nazwa |------#-+
+  |                  |
+  +------------------+
 
 -         _____  
-    /\    \   /  |
-    \/     \ /   |
+    /-\    |   |  |
+    \_/     \ /   |
             O    . 
 
    ASCIIART: Ikonka... tag TTGT_ASCIIART_ARRAY wskazujacy na char **
@@ -153,4 +177,23 @@ W dalszej kolejnosci:
 
 analogicznie: STRINGREQUESTER i FILEREQUESTER
 
-  
+
+- STATUSBAR: po prostu pozioma belka podzielona na pola (uzyc LABEL'i ?)
+  ktore mozna ustawiac odpowiednimi wywolaniami.
+  - tagi: TGTT_STATUS_SET / GET (jak wybierac ktore pole ustawiamy?)
+   TGTT_STATUS_FG / BG
+
+  | TGTApp v.0.1a                 | Online | .o.ox |
+
+
+i teraz mala bombka (a moze wielka BOMBA?)
+[wiesz co to jest jpig albo aalib?]
+
+- ASCIIPIC: prostokatne pole bez ramek, z ew. suwakami do przewijania w ktorym
+  wyswietlany jest obrazek wczytany przy pomocy imlib'a (zeby sie nie bawic samemu)
+  zredukowany do 16 kolorow (ew. ilus odcieni 16tu podstawowych kolorow)
+  i zamieniony na serie 'X' w odpowiednim kolorze, badz tak jak robi aalib, czyli
+  symulujac jasnosc punktu dobierajac odpowiednio wypelniony znak ASCII
+  - moze to byc nawet wrapper na imlib + aalib
+  mozna by nawet tapete desktopu w ten sposob robic.. ;]
+

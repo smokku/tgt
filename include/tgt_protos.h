@@ -6,6 +6,8 @@ int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_window(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_button(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_label(struct tgt_object *obj,int type,int a,void * b);
+int tgt_builtin_string(struct tgt_object *obj,int type,int a,void * b);
+int tgt_builtin_list(struct tgt_object *obj,int type,int a,void * b);
 
 
 // class.c
@@ -25,20 +27,17 @@ int tgt_waitkeys(struct tgt_object *obj);
 long tgt_gettag(long *taglist,long stag,long defaultvalue);
 void tgt_link(struct tgt_object *obj,struct tgt_object *parent);
 void tgt_unlink(struct tgt_object *obj);
-struct tgt_object * tgt_createobject(struct tgt_terminal *term,
+struct tgt_object * tgt_createobject_int(struct tgt_terminal *term,
                     int (*classf)(struct tgt_object*,int,int,void*),
 		    long *taglist);
 
 struct tgt_object * tgt_getdesktop(struct tgt_terminal * term);
 void tgt_destroyobject(struct tgt_object *obj);
-struct tgt_object *tgt_createandlinkobject(struct tgt_object *parent,struct tgt_terminal *term,
-                                 int (*classf)(struct tgt_object*,int,int,void*),
-				 long *taglist);
-struct tgt_object * tgt_createobject_int(struct tgt_terminal *term,
+struct tgt_object * tgt_createobject(struct tgt_terminal *term,
                                  int classid,
 				 long *taglist);
 								  
-struct tgt_object * tgt_createandlink_int(struct tgt_object *parent,struct tgt_terminal *term,
+struct tgt_object * tgt_createandlink(struct tgt_object *parent,struct tgt_terminal *term,
                                  int classid,long *taglist);
 								  
 								  
@@ -58,3 +57,4 @@ int tgt_app_checkmsg(struct tgt_queue *q,struct tgt_queue_msg *m,unsigned int s,
 struct tgt_keynode * tgt_initroottable(void);
 void tgt_addkeyseq(struct tgt_keynode *l_main_table,char *seq,int c);
 
+struct tgt_terminal * tgt_setscreen(char *name);

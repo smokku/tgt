@@ -130,7 +130,7 @@ struct tgt_object * tgt_findprev_selectable(struct tgt_object * obj)
     for(;;)
     {
 	next=next->ln.prev;
-	if(next==obj) return(NULL);
+	if(next==obj) return(obj);
 	if(!(next->objflags & TGT_OBJFLAGS_NONSELECTABLE)) return(next);
     }
 }

@@ -7,8 +7,11 @@
 #define TGT_KEY_RIGHT -4
 #define TGT_KEY_BKSPC -5
 #define TGT_KEY_DELETE -6
-#define TGT_KEY_NEXTL 9
-#define TGT_KEY_NEXTH '`'
+#define TGT_KEY_INSERT -7
+#define TGT_KEY_HOME -8
+#define TGT_KEY_END -9
+
+
 /* hihi magiczna liczba ;)) */
 #define TGT_KEY_NONE -65536
 

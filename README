@@ -1,4 +1,25 @@
 
+mteg: Nowe klawisze: TGT_KEY_HOME, TGT_KEY_INSERT, TGT_HOME_END
+      Nowa klasa: string, przyklad w examples/string.c , make string...
+    UWAGA !!! Zmiana konwencji nazwowych, teraz tgt_createobject_int() to
+    tgt_createobject() a tgt_createandlink_int to tgt_createandlink      
+
+
+smoku: dorzucilem "troche" do TODO.. ;]
+dlaczego: tgt_createobject_int(...); i tgt_createandlink_int(...); ?
+a konkretnie _int?  nie mogloby byc bez tego?
+moze 'make install' i 'make uninstall'?
+zajrzyj tez do katalogu _other.. wrzucilem tam kilka plikow, ktore
+moga sie przydac, badz warto by je przejrzec..
+ a'propos ngtk - zauwaz, ze wiekszosc funkcjonalnosci, ktora ten gosc
+oznaczyl jako najpilniejsza do zrobienia nam wyszla przy okazji na
+etapie designu... =]]]]]
+ to jest ciekawe:
+- config script, either ~/.ngtkrc or/and /etc/ngtkrc, to define the default
+behaviors of the lib (like the escape timeout in SLang version) (N)
+	   
+
+
 
 mteg: Ok ... No to nadal czekam na sugestie... _Szczegolnie_ dotyczace
 szkieletu... Jesli nie masz juz zadnych pomyslow (chwilowo) to prosze,

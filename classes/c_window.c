@@ -22,6 +22,7 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	case TGT_OBJECT_CREATE:
 	    iw=(struct tgt_int_window*) malloc(sizeof(struct tgt_int_window));
 	    obj->class_data=iw;
+	    obj->objectf=(int(*)()) tgt_gettag(b,TGTT_CALLBACK,(long) NULL);
 	    iw->title=(char*) tgt_gettag(b,TGTT_WINDOW_TITLE,(long) defaulttitle);
 	    iw->borderfg=tgt_gettag(b,TGTT_WINDOW_BORDERCOLOR,6);
 	    iw->titlefg=tgt_gettag(b,TGTT_WINDOW_TITLECOLOR,7);

@@ -3,3 +3,5 @@
 #include "tgt_keyboard.h"
 #include "tgt_tags.h"
 #include "tgt_protos.h"
+#include "tgt_string.h"
+#include "tgt_list.h"
