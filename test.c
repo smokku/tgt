@@ -85,6 +85,7 @@ main()
     tgt_refresh(desktop);
 
     mq=tgt_app_createqueue();
+    tgt_chtimes(0,100000);
     
     /* W tym miejscu w zasadzie uruchamiamy cala maszynerie GUI */
     tgt_async_waitkeys(desktop);

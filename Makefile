@@ -5,7 +5,7 @@ SOURCES= lowlevel/lowlevel.c classes/keyboard.c classes/class.c classes/manageme
 	 classes/c_plaintext.c
 OBJECTS = ${SOURCES:.c=.o}
 
-CFLAGS =  -Iinclude/ -DTGT_POSSIBLE_INFORMFIRST -DTGT_POSSIBLE_ASYNC -DTGT_QUEUES
+CFLAGS =  -Iinclude/ -DTGT_POSSIBLE_INFORMFIRST -DTGT_POSSIBLE_ASYNC -DTGT_QUEUES -DTIMEOUT_KEYBOARD
 LDFLAGS = 
 LIBS = 
 

@@ -1,10 +1,22 @@
+
+mteg: 0.081 ZMIANY:
+- classes/keyboard.c : fgetc() zastapione nowa procedura tgt_fgetc(int sec,int usec),
+  w efekcie teraz jesli przy czekaniu na nacisniecie klawisza przekroczony zostanie
+  timeout (domyslnie 0.5 s ale mozne zmienic go aplikacja wywolujac
+  tgt_chtimes(int seconds,int microseconds)), natychmiast przekazywane sa
+  warstwom nizszym kody wcisnietych klawiszy... Powoduje to zniwelowanie
+  efektow typu 'podwojne esc' znanych z np. Midnight Commandera
+- classes/c_*.c zmiana kolejnosci analizowania klawiszy w metodzie TGT_OBJECT_ 
+  _HANDLE w klasach ktore zawieraja kod przelaczajacy... aktualna kolejnosc
+  to: 1) Analiza kodow wlasnych klasy 2) Analiza kodow zmiany fokusu 3)
+  Analiza hotkeyow (w przypadku desktop i window) - analizatory klawiszy
+  dostarczone przez TGT_CALLBACK...
+- classes/c_*.c dodane fflush(stdout) w wszystkich metodach TGT_REFRESH
+ 
+-----
 hmm ze tak powiem troche nie w tej kolejnosci napisalem :)
 w sumie to prawidlowa kolejnosc czytania to fragmentami od konca pliku :)
 tzn od Twojego komentarza w gore..
-
-
-
-
 
 mteg: No i teraz tak... Do zrobienia zostal jeszcze ten Twoj pomysl
 z tylko jednym pointerem na dzieci obiektu...

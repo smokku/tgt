@@ -43,7 +43,7 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	    tgt_drawlowerb(obj->term,obj->xs);	    
 	    if(act==1) tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
 	    tgt_chattr(obj->term,TGT_TA_TXT,0,0);
-
+	    fflush(stdout);
 	    return(1);
 	case TGT_OBJECT_HANDLE:
 	    n=tgt_shalliswitch(obj,a,0);

@@ -26,7 +26,7 @@ int tgt_builtin_label(struct tgt_object *obj,int type,int a,void *b)
 	    if(a==TTGT_LABEL_TEXT) { obj->class_data=b; return(1); }
 	    return(0);
 	case TGT_OBJECT_GETTAG:
-	    if(a==TTGT_LABEL_TEXT) { *(char *) b=obj->class_data; return(1); }
+	    if(a==TTGT_LABEL_TEXT) { *(char **) b=obj->class_data; return(1); }
 	    return(0);
 	default: return(0);
     }

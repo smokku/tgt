@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
-
+#include <sys/time.h>
+#include <sys/types.h>
 #include "tgt.h"
 #define max(a,b) ((a) > (b) ? (a) : (b))
 
@@ -35,6 +36,38 @@ long tgt_rawcon(int raw)
 	tcsetattr(0,TCSANOW,&oldtermios);
 }
 
+
+int d_seconds=0,d_micros=500000;
+
+void tgt_chtimes(int a,int b)
+{
+    d_seconds=a;
+    d_micros=b;
+}
+#ifdef TIMEOUT_KEYBOARD
+int tgt_fgetc(int s,int us)
+{
+    struct timeval tv;
+    char c;
+    fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(0,&fds);
+    tv.tv_sec=s;
+    tv.tv_usec=us;
+    if(select(1,&fds,NULL,NULL,&tv)==1)
+    {
+	read(0,&c,1);
+	return((int) c);
+    }
+    else
+	return(-1);
+}
+#else
+int tgt_fgetc(int s,int us)
+{
+    return(fgetc(stdin));
+}
+#endif
 int tgt_waitkeys(struct tgt_object *obj)
 {
     int c,t,k,i;
@@ -48,7 +81,8 @@ int tgt_waitkeys(struct tgt_object *obj)
 	k=0;
 	for(lt=term->lookup_root;;)
 	{
-	    c=fgetc(stdin);
+	    c=tgt_fgetc(d_seconds,d_micros);
+	    if(c==-1) break;
 	    lastkeys[k++]=c;
 	    t=lt[c].type;
 	    if(t==TGT_KEYN_LOOKUPTABLE) 
@@ -56,6 +90,9 @@ int tgt_waitkeys(struct tgt_object *obj)
 	    else
 		break;
 	}
+#ifdef TIMEOUT_KEYBOARD
+	if(k==0) continue;
+#endif
 	if(t==TGT_KEYN_KEY)
 	    tgt_deliver_msg(obj,TGT_OBJECT_HANDLE,(int) lt[c].value,NULL);
 	else
