@@ -22,7 +22,7 @@ na koniec linii przed przekazaniem danych programowi
     /* ... oraz zapisujemy ten oryginalny (normalny) */
     tcgetattr(0,&oldtermios);
     memcpy(&ourtermios,&oldtermios,sizeof(struct termios));
-    ourtermios.c_lflag&=!(ECHO|ICANON);
+    ourtermios.c_lflag&=~(ECHO|ICANON);
 }
 
 long tgt_rawcon(int raw)

@@ -128,6 +128,8 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	    iw=obj->class_data;
 	    switch(a)
 	    {
+		case TGT_KEY_PGDN:
+		    iw->current+=iw->realys-1;
 		case TGT_KEY_DOWN: 
 		    iw->current++;
 		    n=iw->dataf(iw->data,TGT_LISTREQ_GETMAX,0,NULL,0,0)-1;
@@ -140,6 +142,8 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 		    tgt_refresh(obj);
 		    if(iw->chf) iw->chf(obj,iw->current);
 		    return(1);
+		case TGT_KEY_PGUP:
+		    iw->current-=iw->realys-1;
 		case TGT_KEY_UP: 
 		    iw->current--;
 		    if(iw->current<0) iw->current=0;

@@ -54,12 +54,12 @@ int tgt_builtin_menu(struct tgt_object *obj,int type,int a,void *b)
 		    case TGT_KEY_DOWN:
 			tgt_menu_chp(iw->currentmenu,1);
 			tgt_refresh(obj);
-			break;
+			return(1);
 		    case TGT_KEY_UP:
 			tgt_menu_chp(iw->currentmenu,-1);
 			tgt_refresh(obj);
-			break;
-		    case 13: case 10: case TGT_KEY_RIGHT:
+			return(1);
+		    case 13: case 10: case TGT_KEY_RIGHT: case 32:
 			id=tgt_menu_enter(&iw->currentmenu);
 			if(id==-1)
 			{

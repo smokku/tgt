@@ -239,14 +239,13 @@ struct tgt_prefs * tgt_load_conf(char *name)
 	    }
 	if(!fh)
 	{
-	    file=(char*) malloc(strlen(name)+6);
+	    file=(char*) malloc(strlen(name)+8);
 	    sprintf(file,"/etc/%s\n",name);
 	    fh=fopen(file,"r");
 	    free(file);
 	    if(!fh) return(ret);
 	}
     }
-
     fseek(fh,0,SEEK_END); size=ftell(fh); rewind(fh);
     mem=file=(char*) malloc(size+1); file[size]=0;
     fread(file,size,1,fh); 
