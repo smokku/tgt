@@ -8,6 +8,11 @@ int tgt_builtin_button(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_label(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_string(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_list(struct tgt_object *obj,int type,int a,void * b);
+int tgt_builtin_menu(struct tgt_object *obj,int type,int a,void * b);
+int tgt_builtin_cycle(struct tgt_object *obj,int type,int a,void * b);
+int tgt_builtin_checkbox(struct tgt_object *obj,int type,int a,void * b);
+int tgt_builtin_slider(struct tgt_object *obj,int type,int a,void * b);
+int tgt_builtin_progress(struct tgt_object *obj,int type,int a,void * b);
 
 
 // class.c

@@ -93,4 +93,11 @@ jest _po_ odpytaniu rodzicow o to czy rozumieja
 #define TGT_CLASS_WINDOW 1
 #define TGT_CLASS_BUTTON 2
 #define TGT_CLASS_LABEL 3
+#define TGT_CLASS_STRING 4
+#define TGT_CLASS_LIST 5
+#define TGT_CLASS_CHECKBOX 6
+#define TGT_CLASS_SLIDER 7
+#define TGT_CLASS_PROGRESS 8
 
+#define TGT_CLASS_MENU 29
+#define TGT_CLASS_CYCLE 30

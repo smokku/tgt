@@ -4,61 +4,6 @@
 #include <string.h>
 #include "tgt.h"
 
-void tgt_drawtitleb(struct tgt_terminal *term,int a,char *b,int fg,int bg,int tit)
-{
-    int i,n,p;
-    /* Rysuje 'belke tytulowa' okna */
-    printf(term->c_graphics); /* Tryb graficzny ... */
-    printf(term->c_fgcolor,fg); printf(term->c_bgcolor,bg); /* Kolorki ... */
-    putchar(term->gfx_set[TGT_TC_UL]); p=term->gfx_set[TGT_TC_HL]; 
-    /* naroznik i znaczek "przekreconego T" do rozpoczecia tytulu... */
-    
-    putchar(term->gfx_set[TGT_TC_TS]); printf(term->c_text);
-    printf(term->c_fgcolor,tit);
-    printf(" %s ",b);
-    /* Tytul... */
-    
-    printf(term->c_fgcolor,fg);
-    printf(term->c_graphics); putchar(term->gfx_set[TGT_TC_TE]); /* znak "przekreconego w druga strone T :)) */
-    for(i=0,n=a-6-strlen(b);i<n;i++) putchar(p); /* cala reszta oprocz 2 znakow na narozniki + 2 na 'T' + 2 na odstepy i dlugosci
-    stringa tytulowego to poziome kreski */
-    putchar(term->gfx_set[TGT_TC_UR]); /* naroznik */
-    return;
-}
-void tgt_drawlowerb(struct tgt_terminal *term,int l)
-{
-    int i,n,p;
-    /* Dolna ramka okna . Narozniki + poziome kreski ... */
-    putchar(term->gfx_set[TGT_TC_LL]); p=term->gfx_set[TGT_TC_HL];
-    for(i=0,n=l-2;i<n;i++) putchar(p);
-    putchar(term->gfx_set[TGT_TC_LR]); 
-    return;
-}
-void tgt_drawsideb(struct tgt_terminal *term,int x,int y,int l,int lxs)
-{
-    char *tmpbuff;
-    int i;
-    /* Rysuje boczna ramke okna poczynajac od pozycji x,y o ilosci
-       kolumn lxs i wierszy l */
-    tmpbuff=(char*) malloc(term->x_size+1);
-    memset(tmpbuff,' ',term->x_size);
-    tmpbuff[0]=term->gfx_set[TGT_TC_VL];  /* pionowa linia */
-    tmpbuff[lxs-1]=term->gfx_set[TGT_TC_VL];
-    tmpbuff[lxs]=0;
-    /* Tworzymy sobie string pomocniczy , cos a'la "|         |" */
-    
-    
-    for(i=0;i<l;i++)
-    {
-	/* No i teraz przemieszczamy kursor corazto nizej i wypluwamy
-	   nasz string */
-	printf(term->c_move,0,y+i,x);
-	printf(tmpbuff);
-    }
-    /* Zwalniamy pomocniczy string */
-    free(tmpbuff);
-}
-
 
 void tgt_chattr(struct tgt_terminal *term,int request,int a,char *b)
 {
@@ -85,6 +30,31 @@ void tgt_chattr(struct tgt_terminal *term,int request,int a,char *b)
 	    return;
     }
 }
+void tgt_int_lowerb(struct tgt_terminal *term,int l)
+{
+    int i,n,p;
+    /* Dolna ramka. Narozniki + poziome kreski ... */
+    tgt_chattr(term,TGT_TA_GFX,0,0);
+    putchar(term->gfx_set[TGT_TC_LL]); p=term->gfx_set[TGT_TC_HL];
+    for(i=0,n=l-2;i<n;i++) putchar(p);
+    putchar(term->gfx_set[TGT_TC_LR]); 
+    tgt_chattr(term,TGT_TA_TXT,0,0);
+    return;
+}
+void tgt_int_upperb(struct tgt_terminal *term,int l)
+{
+    int i,n,p;
+    /* Gorna ramka . Narozniki + poziome kreski ... */
+    tgt_chattr(term,TGT_TA_GFX,0,0);
+    putchar(term->gfx_set[TGT_TC_UL]); p=term->gfx_set[TGT_TC_HL];
+    for(i=0,n=l-2;i<n;i++) putchar(p);
+    putchar(term->gfx_set[TGT_TC_UR]); 
+    tgt_chattr(term,TGT_TA_TXT,0,0);
+    return;
+}
+
+
+
 void tgt_destroyterminal(struct tgt_terminal *tterm)
 {
     /* Zwolnienie calej przydzielonej przez nas i termcap pamieci */

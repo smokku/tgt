@@ -13,6 +13,12 @@ void tgt_init_intclasses()
     internal_classes[TGT_CLASS_LABEL]=tgt_builtin_label;
     internal_classes[TGT_CLASS_STRING]=tgt_builtin_string;
     internal_classes[TGT_CLASS_LIST]=tgt_builtin_list;
+    internal_classes[TGT_CLASS_MENU]=tgt_builtin_menu;
+    internal_classes[TGT_CLASS_CYCLE]=tgt_builtin_cycle;
+    internal_classes[TGT_CLASS_CHECKBOX]=tgt_builtin_checkbox;
+    internal_classes[TGT_CLASS_SLIDER]=tgt_builtin_slider;
+    internal_classes[TGT_CLASS_PROGRESS]=tgt_builtin_progress;
+	    
     int_initialized=1;    
 }
 

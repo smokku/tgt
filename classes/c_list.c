@@ -74,12 +74,7 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	    {
 		tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b);
 		tgt_chattr(obj->term,TGT_TA_FGCOLOR,iw->framecolor,0);
-		tgt_chattr(obj->term,TGT_TA_GFX,0,0);
-		n=obj->xs-2; 
-		putchar(obj->term->gfx_set[TGT_TC_UL]);
-		for(k=obj->term->gfx_set[TGT_TC_HL],i=0;i<n;i++) putchar(k);
-		putchar(obj->term->gfx_set[TGT_TC_UR]);
-		tgt_chattr(obj->term,TGT_TA_TXT,0,0);
+		tgt_int_upperb(obj->term,obj->xs);
 		yp=(int) b+obj->y+1;
 		maxx=obj->xs-2;
 	    }
@@ -120,12 +115,7 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	    {
 		tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b+obj->ys-1);
 		tgt_chattr(obj->term,TGT_TA_COLORS,iw->framecolor,obj->bg);
-		tgt_chattr(obj->term,TGT_TA_GFX,0,0);
-		n=obj->xs-2; 
-		putchar(obj->term->gfx_set[TGT_TC_LL]);
-		for(k=obj->term->gfx_set[TGT_TC_HL],i=0;i<n;i++) putchar(k);
-		putchar(obj->term->gfx_set[TGT_TC_LR]);
-		tgt_chattr(obj->term,TGT_TA_TXT,0,0);
+		tgt_int_lowerb(obj->term,obj->xs);
 	    }
 
 	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);

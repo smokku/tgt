@@ -5,3 +5,8 @@
 #include "tgt_protos.h"
 #include "tgt_string.h"
 #include "tgt_list.h"
+#include "tgt_menuc.h"
+#include "tgt_cycle.h"
+#include "tgt_checkbox.h"
+#include "tgt_progress.h"
+#include "tgt_slider.h"

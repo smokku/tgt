@@ -1,3 +1,8 @@
+smoku:
+dlaczego c_plaintext.c nie ma tgt_refresh(obj); w case TGT_OBJECT_SETTAG: ?
+zrobilem 3 nowe klasy: c_checkbox.c c_slider.c i c_progress.c
+
+
 
 mteg: Nowe klawisze: TGT_KEY_HOME, TGT_KEY_INSERT, TGT_HOME_END
       Nowa klasa: string, przyklad w examples/string.c , make string...
