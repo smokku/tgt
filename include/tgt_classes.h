@@ -87,6 +87,7 @@ jest _po_ odpytaniu rodzicow o to czy rozumieja
    mialy dzieci (ktore moglyby zostac zaktywizowane) ... inaczej zostanie
    zignorowana */
 
+#define TGT_OBJFLAGS_REFRESHBASE 4
 
 
 /* Identyfikatory klas wewnetrznych */

@@ -68,15 +68,17 @@ int tgt_refresh(struct tgt_object *obj)
 {
     int x,y;
     struct tgt_object *parent;
+    struct tgt_object *ref;
     /* Znajdz absolutne wspolrzedne wzgledem ktorych ma zostac narysowany
-       obiekt obj i poddaj go odswierzaniu */
-    x=0; y=0;
+       obiekt obj i poddaj go odswiezaniu */
+    x=0; y=0; ref=obj;
     for(parent=obj->ln.parent;parent!=NULL;parent=parent->ln.parent)
     {
 	x+=parent->x;
 	y+=parent->y;
+	ref=parent;
     }
-    tgt_intrefresh(obj,x,y);
+    if(ref->objflags & TGT_OBJFLAGS_REFRESHBASE) tgt_intrefresh(obj,x,y);
 }
 int tgt_isactive(struct tgt_object *obj)
 {

@@ -46,3 +46,13 @@ struct tgt_terminal
     char fg,bg;
     struct tgt_keynode * lookup_root;
 };
+
+#define TGT_COLOR_BLACK 0
+#define TGT_COLOR_RED 1
+#define TGT_COLOR_GREEN 2
+#define TGT_COLOR_YELLOW 3
+#define TGT_COLOR_BLUE 4
+#define TGT_COLOR_MAGNETA 5
+#define TGT_COLOR_CYAN 6
+#define TGT_COLOR_GREY 7
+#define TGT_COLOR_WHITE 8

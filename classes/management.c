@@ -85,7 +85,6 @@ tagdata tgt_gettag(tagitem *taglist,codetype stag,tagdata defaultvalue)
       defaultvalue */
       
     if(taglist==NULL) return(defaultvalue);
-    printf("lookup\n");
     for(;;)
     {
 	tag=taglist->tcode; value=taglist->tdata; taglist++;

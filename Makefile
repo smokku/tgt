@@ -40,7 +40,12 @@ clean:
 	rm -rf libtgt.so *.o *~ core >/dev/null 2>/dev/null
 	rm -rf $(OBJECTS) >/dev/null 2>/dev/null
 
-install: cp ./libtgt.so /usr/lib
-uninstall: rm -rf /usr/lib/libtgt.so*
+install: 
+	cp ./libtgt.so /usr/lib
+	cp -rf include /usr/include/tgt
+
+uninstall:
+	rm -rf /usr/lib/libtgt.so*
+	rm -rf /usr/include/tgt
 
 distclean: clean
