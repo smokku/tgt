@@ -86,9 +86,8 @@ void tgt_destroyterminal(struct tgt_terminal *tterm)
     /* Zwolnienie calej przydzielonej przez nas i termcap pamieci */
     free(tterm->c_graphics); free(tterm->c_text); free(tterm->c_clear);
     free(tterm->c_fgcolor); free(tterm->c_bgcolor); free(tterm->c_active);
-    free(tterm->c_inactive); free(tterm->c_move); free(tterm->c_cursu);
-    free(tterm->c_cursd); free(tterm->c_cursl); free(tterm->c_cursr);
-    free(tterm->c_del); free(tterm->c_bkspc);
+    free(tterm->c_inactive); free(tterm->c_move); 
+    tgt_destroylookuptable(tterm->lookup_root);
     free(tterm);
 }
 
@@ -99,23 +98,55 @@ void tgt_changedefcolors(struct tgt_terminal * term,unsigned char fg,unsigned ch
     term->color_bg=bg;
 }
 
+void tgt_term_addkey(struct tgt_terminal *term,char *capability,char *def,int key)
+{
+    char *str;
+    char kbbuffer[TGT_MAX_SEQ];
+/* Dodaje sekwencje zawarta w atrybucie terminala term capability do tablic
+   znajdowania znakow wprowadzanych z klawiatury .. Jesli sekwencji nie uda
+   sie odczytac, przyjmowana jest domyslna sekwencja def. Wyjscie
+   z termcapa moze zawierac jakies niepozadane znaki typu "\","E"
+   niwelujemy je (tzn przeksztalcamy w naszym przykladzie do 0x1b)
+   za pomoca snprintf() */
+   
+    str=tgetstr(capability,NULL);
+    if(str==NULL)
+    	snprintf(kbbuffer,TGT_MAX_SEQ-1,def);
+    else
+    {
+	snprintf(kbbuffer,TGT_MAX_SEQ-1,str);
+	free(str);
+    }
+    tgt_addkeyseq(term->lookup_root,kbbuffer,key);
+}
+char *tgt_tgetstr(char *name)
+{
+    char *ret;
+/* tgt_tgetstr() pobiera atrybut z termcapa , a w razie braku atrybutu klonuje
+   nam pusty string, zeby sie nie wykraszowalo tgt_chattr */
+    ret=tgetstr(name,NULL);
+    if(ret==NULL) ret=strdup("");
+    return(ret);
+}
+
 struct tgt_terminal * tgt_setscreen(char *name)
 {
     int te;
     char *str;
     char *buffer;
     struct tgt_terminal *ret;
+    char kbbuffer[TGT_MAX_SEQ];
 /*
 
 Funkcja pobiera z termcapa parametry terminala podanego jako argument name
-(ew. NULL) jak ma odczytac ze zmiennej $TERM, kapsulkuje ja do wlasnej struktury,
+(ew. NULL jak ma odczytac ze zmiennej $TERM), kapsulkuje ja do wlasnej struktury,
 (tgt_terminal -> tgt_terminal.h), na ktora uprzednio przydziela pamiec, 
 i zwraca wskaznik na stworzona strukture aplikacji
 
-TODO: sprawdzanie czy atrybuty nie sa aby rowne NULL i przypisywanie jakichs
-difoltowych wartosci
-
 */    
+
+
+/* Ewentualny odczyt zmiennej srodowiskowej */
 
     if(name==NULL) name=(char*) getenv("TERM");
     if(name==NULL) return(NULL);
@@ -126,56 +157,54 @@ difoltowych wartosci
     te=tgetent(buffer,name);
     if(te!=1) { free(buffer); return(NULL); }
 
+/* Przydzielamy pamiec... */
     ret=(struct tgt_terminal *) malloc(sizeof(struct tgt_terminal));
-    /* domyslne kolory terminala: szary na niebieskim */
+
+/* domyslne kolory terminala: szary na niebieskim */
     ret->color_bg=4; ret->color_fg=7;
-    /* ilosc kolumn i linii*/
+
+/* ilosc kolumn i linii*/
     ret->x_size=tgetnum("co");
     ret->y_size=tgetnum("li");
-    /* znaki sterujace: zmiana trybu semigrafika/text, czyszczenie ekranu*/
-    ret->c_graphics=tgetstr("as",NULL);
-    ret->c_text=tgetstr("ae",NULL);
-    ret->c_clear=tgetstr("cl",NULL);
 
-    /* zmiana kolorow napisu i tla, BOLD-jasniejsze kolory (active)
-       i NORMAL (inactive)*/
-    ret->c_fgcolor=tgetstr("AF",NULL);
-    ret->c_bgcolor=tgetstr("AB",NULL);
-    ret->c_active=tgetstr("md",NULL);
-    ret->c_inactive=tgetstr("me",NULL);
-    /* Przesuniecie kursora do zadanej pozycji */
-    ret->c_move=tgetstr("cm",NULL);
-    /* 
-	Dla obslugi klawiatury: kursor w gore/w dol/w lewo/w prawo
-	Caly ten cyrk z sprintf() robimy dlatego, ze wyjscie z termcapa
-	moze zaierac jakies sekwencje sterujace, np \E , a my chcemy porownywac
-	to z tym co zczytamy z klawiatury (czyli np. 0x1B w przypadku \E)
-    */
-    
-    str=tgetstr("ku",NULL); ret->c_cursu=(char*) malloc(strlen(str)+1); sprintf(ret->c_cursu,str); free(str);
-    str=tgetstr("kd",NULL); ret->c_cursd=(char*) malloc(strlen(str)+1); sprintf(ret->c_cursd,str); free(str);
-    str=tgetstr("kl",NULL); ret->c_cursl=(char*) malloc(strlen(str)+1); sprintf(ret->c_cursl,str); free(str);
-    str=tgetstr("kr",NULL); ret->c_cursr=(char*) malloc(strlen(str)+1); sprintf(ret->c_cursr,str); free(str);    
+/*
+    Kody dla kasowania ekranu i przenoszenia kursora. Bez nich sie NIE OBEJDZIEMY,
+    bez kolorkow, bez grafiki to bedzie jeszcze jakos wygladac (krzaki ale bedzie
+    dalo sie *cos* chociaz zrobic), natomiast nie bedac w stanie przenosic
+    kursora nie jestesmy w stanie rysowac wszystkiego tam gdzie trzeba...
+*/    
+    if((ret->c_clear=tgetstr("cl",NULL))==NULL) { free(ret); return(NULL); }
+    if((ret->c_move=tgetstr("cm",NULL))==NULL) { free(ret->c_clear); free(ret); return(NULL); }
 
-/* To samo dla delete i bkspc*/
+/* tgt_tgetstr() w razie braku atrybutu klonuje nam pusty string, zeby
+   sie nie wykraszowalo tgt_chattr */
 
-    str=tgetstr("dc",NULL);
-    if(str==NULL) str=strdup("\x1b\x5b\x33\x7e");
-    /* Tak u mnie (Slack 7.1) wyglada delete :) "\E[3~" */
-    ret->c_del=(char*) malloc(strlen(str)+1); sprintf(ret->c_del,str); free(str); 
+    ret->c_graphics=tgt_tgetstr("as");
+    ret->c_text=tgt_tgetstr("ae");
 
-    str=tgetstr("bc",NULL); 
-    if(str==NULL) str=strdup("\010"); /* czyli ^H */
-    ret->c_bkspc=(char*) malloc(strlen(str)+1); sprintf(ret->c_bkspc,str); free(str); 
+/* zmiana kolorow napisu i tla, BOLD-jasniejsze kolory (active) i NORMAL (inactive)*/
+    ret->c_fgcolor=tgt_tgetstr("AF");
+    ret->c_bgcolor=tgt_tgetstr("AB");
+    ret->c_active=tgt_tgetstr("md");
+    ret->c_inactive=tgt_tgetstr("me");
+
+/* Stworzenie tablic (struktury drzewa) przeszukujacych klawiature...
+   W sumie dosc kosztowna pamieciowo zabawa... Jedna taka tablica
+   to 2048 bajtow, aktualnie, w przypadku terminala standartowego
+   linux-t tworzone jest ok. :) 3 tablic czyli 6 kB */
+   
+    ret->lookup_root=tgt_initroottable();
+    tgt_term_addkey(ret,"ku","\033[A",TGT_KEY_UP);
+    tgt_term_addkey(ret,"kd","\033[B",TGT_KEY_DOWN);
+    tgt_term_addkey(ret,"kl","\033[D",TGT_KEY_LEFT);
+    tgt_term_addkey(ret,"kr","\033[C",TGT_KEY_RIGHT);
+    tgt_term_addkey(ret,"kD","\x1b\x5b\x33\x7e",TGT_KEY_DELETE);
+    tgt_term_addkey(ret,"kb","\x7f",TGT_KEY_BKSPC);
 
     memcpy(ret->gfx_set,"qxutlkmj",8);
     /* Odpowiedniki znakow semigraficznych. W trybie graficznym napisanie
      'q' powoduje wyswietlenie linii poziomej, 'j' to dolny prawy naroznik
      ramki etc. Patrz stale w tgt_terminal.h */
 
-    if(ret->c_clear!=NULL) printf(ret->c_clear);
-    /* To do obslugi kolejki klawiatury */
-    ret->num=0;
-    ret->pos=0;
     return(ret);
 }

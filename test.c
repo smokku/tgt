@@ -1,5 +1,6 @@
 #include "tgt.h"
 #include "tgt_app.h"
+#include <stdio.h>
 #define MSG 1
 #define QUIT 2
 
@@ -53,7 +54,9 @@ main()
 {
     struct tgt_object *window;
     struct tgt_object *button;
+    struct tgt_object *astatus;
     struct tgt_queue_msg msg;
+    char sstring[256];
     int i;
 
     myterm=tgt_setscreen((void*)0);
@@ -68,6 +71,13 @@ main()
 
     button=tgt_createobject_int(myterm,TGT_CLASS_BUTTON,(long[]) {TTGT_X,3,TTGT_Y,4,TTGT_BUTTON_CAPTION,"[Open window]",TTGT_CALLBACK,newwindow,TTGT_END,0});
     tgt_link(button,window);
+
+
+    astatus=tgt_createandlink_int(desktop,myterm,TGT_CLASS_LABEL,(long[]) {TTGT_X,0,TTGT_Y,24,TTGT_LABEL_TEXT,"",TTGT_END,0});
+
+    sprintf(sstring,"1..2...3... Start");
+
+    astatus->classf(astatus,TGTM_LABEL_CHANGETEXT,0,sstring);
 
 /* obiekty nie refreshuja sie same od siebie... */
     tgt_refresh(desktop);
@@ -84,10 +94,12 @@ main()
 	{
 	    i=0;
 	    if(msg.code==QUIT) break;
-    	    printf("\033[23;0H MESSAGE: %s \n",msg.pointer);
+    	    sprintf(sstring,"MESSAGE: %s  ",msg.pointer);
 	}
 	else
-    	    printf("\033[23;0H No message within last %d seconds\n",++i);
+    	    sprintf(sstring,"No message within last %d seconds  ",++i);
+
+	tgt_refresh(astatus);
     }
     tgt_destroyobject(desktop);
 }

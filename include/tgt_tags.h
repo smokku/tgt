@@ -35,3 +35,10 @@ jesli klasa uzywa callbackow musi SAMA wywolac odpowiednie tgt_gettag() */
 /*kolor tla w momencie kiedy przycisk otrzymuje fokus */
 
 #define TTGT_LABEL_TEXT 1000
+
+
+
+/* Metody wlasne klas */
+
+
+#define TGTM_LABEL_CHANGETEXT 1000

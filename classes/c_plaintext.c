@@ -20,6 +20,10 @@ int tgt_builtin_label(struct tgt_object *obj,int type,int a,void *b)
 	    tgt_chattr(obj->term,TGT_TA_BGCOLOR,obj->bg,0);
 	    tgt_chattr(obj->term,TGT_TA_FGCOLOR,obj->fg,0);
 	    printf("%s",obj->class_data);
+	    fflush(stdout);
+	    return(1);
+	case TGTM_LABEL_CHANGETEXT:
+	    obj->class_data=b;
 	    return(1);
 	default: return(0);
     }

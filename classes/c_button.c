@@ -43,7 +43,6 @@ int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
 	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
 	    return(1);
 	case TGT_OBJECT_HANDLE:
-	    printf("%d\n",a);
 	    if(a==13 || a==10) 
 	    {
 		if(obj->objectf!=NULL) obj->objectf(obj->id);

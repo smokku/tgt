@@ -144,15 +144,13 @@ poinformuj go jako pierwszy */
 
 }
 
-int tgt_waitkeys(struct tgt_object *obj)
+/*int tgt_waitkeys(struct tgt_object *obj)
 {
     int c;
-    /* Przelacz konsole w tryb 'raw' i czekaj na klawisze... jak cos
-       to dostarcz wiadomosc obiektowi obj .. ( w 99% bedzie to obiekt klasy desktop )*/
     tgt_rawcon();
     for(;;)
     {
 	c=tgt_get_key(obj->term);
 	tgt_deliver_msg(obj,TGT_OBJECT_HANDLE,c,NULL);
     }
-}
+}*/

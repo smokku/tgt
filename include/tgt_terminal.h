@@ -42,13 +42,5 @@ struct tgt_terminal
     char *c_graphics;
     char *c_text;
     char *c_move;   /* stringi do wykonywania operacji na terminalu. na WYLACZNY uzytek tgt_chattr() */
-    char *c_cursu;
-    char *c_cursd;
-    char *c_cursl;
-    char *c_cursr;
-    char *c_bkspc;
-    char *c_del;   /* Stringi do czytania klawiatury - na WYLACZNY uzytek keyboard.c */
-    char gchars[10]; /* kolejka nie zanalizowanych jeszcze znakow- patrz keyboard.c*/
-    int num; /* ilosc znakow pozostalych w kolejce */
-    int pos; /* pozycja w kolejce modulo 10 */
+    struct tgt_keynode * lookup_root;
 };

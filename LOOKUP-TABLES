@@ -1,0 +1,57 @@
+  Aktualny algorytm odnajdowania kodow klawiszy wieloznakowych:
+  lookup-table, struktura bedaca praktycznie drzewem:
+
+  lookup table to 256 struktur tgt_keynode zlozonych z rekordu(void* ale moze
+  byc tam w koncu zrzutowane cokolwiek, np int) i jego typu(int)
+  (razem 8 * 256 = 2048 bajtow)
+  
+  przyklad: rozpatrywanie kodow 'A' (dec 65)  , 
+  ^[[1A czyli esc (dec 27 hex 0x1b) [ A (kursor w gore),
+        ^[[1B   ^[[1C i 126 (bkspc) (oczywiscie w przypadku innych terminali
+	niz 'linux' kody te beda wygladac nieco inaczej, i oczywiscie jesli
+	termcap poda prawidlowe dane to beda tez odpowiednio rozmieszczone
+	w lookup-tables.
+  
+  
+  
+  GLOWNA LOOKUP TABLE  (pole lookup_root struktury tgt_terminal)
+      +-------------+--------+ 
+  lp. | TYP REKORDU | REKORD |
+      +-------------+--------+
+   0  | ZNAK           0     |
+   1  | ZNAK           1     |          LOOKUP TABLE DLA 27 (0x1B hex)
+   .  . .              .     .         +---------------+---------+
+   .  . .              .     .       lp| TYP REKORDU   | REKORD  |
+  27  | PODTABELA     ptr  --------->  +---------------+---------+
+   .  . .              .     .       0 |  NIC               -    |
+  65  | ZNAK          65('A')|       1 |  NIC               -    |
+   .  . .              .     .       . .   .                .    .
+ 126  | ZNAK          -5     |       . .   .                .    .
+   .  . .              .     .0x5B('[')|  PODTABELA        ptr ---------+
+ 255  | ZNAK          255    |       . .   .                .    .      |
+      +----------------------+       . .   .                .    .      |
+                                   255 |  NIC               -    |      |
+				       +-------------------------+      |
+                                                                        |
+ +----------------------------------------------------------------------+
+ |
+ |        LOOKUP TABLE DLA 0x1B 0x5B ('[')
+ |       +--------------+----------+
+ |     lp| TYP REKORDU  | REKORD   |
+ +--->   +--------------+----------+
+       0 |  NIC            -       |
+       1 |  NIC            -       |
+       . .  .              .       .
+       . .  .              .       .
+  65('A')|  ZNAK          -1       |  (vel TGT_KEY_UP)
+  66('B')|  ZNAK          -2       |  (vel TGT_KEY_DOWN)
+  67('C')|  ZNAK          -3       |  (vel TGT_KEY_LEFT)
+       . .  .              .       .
+       . .  .              .       .
+     255 |  NIC            -       |
+         +-------------------------+
+ 
+  ZNAK   ==   TGT_KEYN_KEY
+  PODTABELA== TGT_KEYN_LOOKUPTABLE
+  NIC    ==   TGT_KEYN_NONE
+ 

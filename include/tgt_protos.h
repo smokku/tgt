@@ -14,14 +14,11 @@ int tgt_refresh(struct tgt_object *obj);
 void tgt_activatenext_child(struct tgt_object *obj);
 void tgt_activateprev_child(struct tgt_object *obj);
 int tgt_deliver_msg(struct tgt_object *obj,int type,int param,char* param2);
-int tgt_waitkeys(struct tgt_object *obj);
 
 // keyboard.c
 
-void tgt_initconswitch(void);
-long tgt_rawcon(void);
-void tgt_normalcon(void);
-int tgt_get_key(struct tgt_terminal *tm);
+long tgt_rawcon(int);
+int tgt_waitkeys(struct tgt_object *obj);
 
 // management.c
 
@@ -48,3 +45,16 @@ struct tgt_object * tgt_createandlink_int(struct tgt_object *parent,struct tgt_t
 
 
 void tgt_activate(struct tgt_object *obj);
+
+
+#ifdef TGT_QUEUES
+#include "tgt_app.h"
+struct tgt_queue * tgt_app_createqueue(void);
+void tgt_app_queue(struct tgt_queue *q,int code,long d1,void *d2);
+int tgt_app_waitmsg(struct tgt_queue *q,struct tgt_queue_msg *m);
+int tgt_app_checkmsg(struct tgt_queue *q,struct tgt_queue_msg *m,unsigned int s,unsigned int us);
+#endif
+
+struct tgt_keynode * tgt_initroottable(void);
+void tgt_addkeyseq(struct tgt_keynode *l_main_table,char *seq,int c);
+

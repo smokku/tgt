@@ -13,7 +13,7 @@ int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void* b)
 	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
 	    tgt_chattr(obj->term,TGT_TA_CLEAR,0,0);
 	    fflush(stdout);
-	    tgt_normalcon();
+	    tgt_rawcon(0);
 	    return(1);
 	case TGT_OBJECT_REFRESH:
 	    c=obj->bg;
