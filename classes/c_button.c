@@ -9,7 +9,7 @@ struct tgt_int_button
 
 int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
 {
-    int i;
+    int i,act;
     struct tgt_int_button *iw;
     char *title;
     switch(type)
@@ -28,8 +28,9 @@ int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
 	    return(1);
 	case TGT_OBJECT_REFRESH:
 	    iw=obj->class_data;
+	    act=tgt_is_active(obj);
 	    tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b);
-	    if(obj->active==1) 
+	    if(act==1) 
 	    {	
 		tgt_chattr(obj->term,TGT_TA_BOLD,0,0);
 		tgt_chattr(obj->term,TGT_TA_BGCOLOR,iw->activebg);

@@ -1,16 +1,22 @@
 
-struct tgt_object
+struct tgt_listnode
 {
     struct tgt_object *parent;
     /* Rodzic. Wypelniany przy linkowaniu */
     struct tgt_object *next;
     struct tgt_object *prev;
     /* Pointery do polaczenia z innymi dziecmi rodzica */
-    struct tgt_object *children;
-    /* Pointer na dzieci (lista wlasnie takich obiektow polaczonych
-       przez next i prev. W pierwszym prev=NULL a w ostatnim next=NULL
-       (czyli lista nielinkowana-mysle nad tym, mozeby sensowniej bylo
-       linkowana ? */
+    struct tgt_object *first_child;
+    struct tgt_object *last_child;
+    /* Pointer na pierwszy i ostatni element listy
+    dzieci (lista obiektow polaczonych przez
+       prev i next (lista nielinkowana) */
+    struct tgt_object *active_child;	/* Aktywne dziecko, lub NULL */
+};
+
+struct tgt_object
+{
+    struct tgt_listnode ln;
     struct tgt_terminal *term;
     /* Terminal w jakim 'istnieje' obiekt */
     int (*classf) (struct tgt_object *,int,int,void*);
@@ -32,9 +38,13 @@ struct tgt_object
     /* Totalna dowolnosc klasy */
     void *user_data;
     /* Totalna dowolnosc klasy */
-    int active;
-    /* 1- obiekt aktywny (z fokusem) 0- obiekt nieaktywny (bez fokusa)*/
+/*    int active; */
+/* Nie istnieje od v 0.07 */
+    unsigned char objflags;
+/* Pole bitowe... patrz nizej... */
+
 };
+
 
 /*
 Metody klas (rzadania (wiem wiem ze przez z z kropka ale wtedy nie 
@@ -63,6 +73,20 @@ to jesli parametr req to odpowiednio:
  callback uzytkownika,etc." = 1
 "eee niezbyt, zapytaj sie moich dzieci" = 0
 */
+
+/* Pole objflags */
+#define TGT_OBJFLAGS_NONSELECTABLE 1
+/* aktywna -> obiekt nie moze zostac zaznaczony */
+#define TGT_OBJFLAGS_INFORMFIRST 2
+/* Jesli aktywna, to obiekt informowany jest _przed_ rodzicami o zdarzeniach
+(np. context-menu) , jesli zero to informacja przekazywana
+jest _po_ odpytaniu rodzicow o to czy rozumieja
+    wiadomosc */
+/* UWAGA!!! Ta flaga moze byc ustawiona JEDYNIE w obiektach ktore nie beda 
+   mialy dzieci (ktore moglyby zostac zaktywizowane) ... inaczej zostanie
+   zignorowana */
+
+
 
 /* Identyfikatory klas wewnetrznych */
 #define TGT_CLASS_DESKTOP 0

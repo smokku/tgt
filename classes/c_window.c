@@ -12,6 +12,7 @@ struct tgt_int_window
 int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 {
     int i;
+    int act;
     struct tgt_int_window *iw;
     switch(type)
     {
@@ -26,7 +27,8 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	    free(obj->class_data);
 	    return(1);
 	case TGT_OBJECT_REFRESH:
-	    if(obj->active==1) tgt_chattr(obj->term,TGT_TA_BOLD,0,0);
+	    act=tgt_is_active(obj);
+	    if(act==1) tgt_chattr(obj->term,TGT_TA_BOLD,0,0);
 	    iw=obj->class_data;
 	    tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,(void*) ((int) (obj->y+(int) b)));
 	    tgt_drawtitleb(obj->term,obj->xs,iw->title,iw->borderfg,obj->bg,iw->titlefg);
@@ -34,15 +36,16 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	    tgt_drawsideb(obj->term,obj->x+a,obj->y+1+(int) b,obj->ys-2,obj->xs);
 	    tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b+obj->ys-1);
 	    tgt_drawlowerb(obj->term,obj->xs);	    
-	    if(obj->active==1) tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
+	    if(act==1) tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
 	    tgt_chattr(obj->term,TGT_TA_TXT,0,0);
 
 	    return(1);
 	case TGT_OBJECT_HANDLE:
-	    if(a==9) { tgt_activatenext(obj); return(1); }
+	    if(a==9) { tgt_activatenext_child(obj); return(1); }
 // in future eventually window moving (for instance) functions by keys
 // like alt + -> 
 	    return(0);
 	    break;
+	default: return(0);
     }
 }

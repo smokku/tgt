@@ -22,8 +22,10 @@ int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void* b)
 	    printf(obj->term->c_clear);
 	    return(1);
 	case TGT_OBJECT_HANDLE:
-	    if(a=='`') { tgt_activatenext(obj); return(1); }
+	    if(a=='`') { tgt_activatenext_child(obj); return(1); }
 	    return(0);
 //	    if(a==-1) printf("back\n");
+	default: return(0);
+	
     }
 }

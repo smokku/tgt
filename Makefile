@@ -3,7 +3,7 @@ SOURCES= lowlevel/lowlevel.c classes/keyboard.c classes/class.c classes/manageme
 	 classes/c_desktop.c classes/c_window.c classes/c_button.c
 OBJECTS = ${SOURCES:.c=.o}
 
-CFLAGS =  -Iinclude/
+CFLAGS =  -Iinclude/ -DTGT_POSSIBLE_INFORMFIRST
 LDFLAGS = 
 LIBS = 
 

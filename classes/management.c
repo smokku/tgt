@@ -34,24 +34,33 @@ void tgt_link(struct tgt_object *obj,struct tgt_object *parent)
     struct tgt_object *oldch;
     struct tgt_object *ach;
     /* laczy podrzednie obiekt obj z obiektem parent */
-    obj->parent=parent;  /* naszym rodzicem jest od tej chwili parent ... */
-    oldch=parent->children; /* stare dziecko bedace pierwsze na liscie */
-    obj->next=oldch; /* ... teraz bedzie drugie :) */
-    obj->prev=NULL;  /* ... a my pierwsi */
-    if(oldch!=NULL) oldch->prev=obj; 
-    parent->children=obj; /* no i wpisujemy sie na hamca jako poczatek listy */
+    obj->ln.parent=parent;
+    /* naszym rodzicem jest od tej chwili parent ... */
+    oldch=parent->ln.last_child; /* stare dziecko bedace ostatnie na liscie */
+    obj->ln.prev=oldch; /* ... teraz bedzie przedostatnie :) */
+    obj->ln.next=NULL;  /* ... a my ostatni */
+    if(oldch!=NULL) oldch->ln.next=obj; 
+    
+    parent->ln.last_child=obj; /* no i wpisujemy sie na hamca jako koniec listy */
+    if(parent->ln.first_child==NULL) parent->ln.first_child=obj;
 }
 void tgt_unlink(struct tgt_object *obj)
 {
     struct tgt_object *next;
+    struct tgt_object *parent;
     /* odlacza obiekt obj */
-    next=obj->next;
-    if(next!=NULL) next->prev=obj->prev;
-    if(obj->prev!=NULL) obj->prev->next=obj->next;
-    if(obj->parent!=NULL)
+    next=obj->ln.next;
+    if(next!=NULL) next->ln.prev=obj->ln.prev;
+    if(obj->ln.prev!=NULL) obj->ln.prev->ln.next=obj->ln.next;
+    parent=obj->ln.parent;
+    if(parent!=NULL)
     {
-	if(obj->parent->children==obj) /* czy aby nie bylismy poczatkiem listy ?? */
-	    obj->parent->children=next;
+	if(parent->ln.first_child==obj) /* czy aby nie bylismy poczatkiem listy ?? */
+	    parent->ln.first_child=next;
+	if(parent->ln.last_child==obj)	/* albo koncem ??*/
+	    parent->ln.last_child=obj->ln.prev;
+	if(parent->ln.active_child==obj)
+	    parent->ln.active_child=obj->ln.next;
     }
 }
 
@@ -75,9 +84,10 @@ struct tgt_object * tgt_createobject(struct tgt_terminal *term,
     ret->fg=tgt_gettag(taglist,TTGT_FG,term->color_fg); ret->bg=tgt_gettag(taglist,TTGT_BG,term->color_bg);
     ret->id=tgt_gettag(taglist,TTGT_ID,0);
 
-    ret->parent=NULL; ret->children=NULL;
-    ret->next=NULL; ret->prev=NULL;
-    ret->active=0; /* Obiekt nie ma na poczatku fokusa */
+    ret->ln.parent=NULL; ret->ln.first_child=NULL; ret->ln.last_child=NULL;
+    ret->ln.next=NULL; ret->ln.prev=NULL; ret->ln.active_child=NULL;
+    ret->objflags=0;
+
     /* no i teraz dajemy klasie mozliwosc stworzenia swoich wlasnych
        strktur opisujacych obiekt-np. tak jak jest to opisane w tagliscie.
        Zwrocenie zera oznacza brak jakiegos niezbednego tagu czy tam
@@ -99,9 +109,9 @@ void tgt_destroyobject(struct tgt_object *obj)
        przeznaczona dla niego pamiec. Procedura wywoluje siebie rekursywnie w
        celu usuniecia rowniez dzieci obiektu*/
        
-    for(children=obj->children;children!=NULL;)
+    for(children=obj->ln.first_child;children!=NULL;)
     {
-	newch=children->next;
+	newch=children->ln.next;
 	tgt_destroyobject(children);
 	children=newch;
     }
