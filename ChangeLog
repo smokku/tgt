@@ -1,3 +1,10 @@
+0.f9b
+  - some improvements by so_lame <kszysiu@main.braxis.co.uk>
+      1) fixes --disable-dl build (it didn't link libutil)
+      2) adds --without-pthread (does not link with libpthread, throws termemu out)
+      3) makes tgt_obj_makenonselectable/tgt_obj_makeselectable (or whatever) act
+      correct.
+
 0.f9
   - public release
 

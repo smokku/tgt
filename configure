@@ -20,10 +20,11 @@ unset mandir
 unset srcdir
 unset dl
 unset gpm
+unset pthread
 unset cflags
 unset defines
 unset sources
-libs="-lpthread"
+libs=""
 subdirs="classes_so tests tgml/tags tgml"
 srcsubdirs="core classes"
 
@@ -33,7 +34,7 @@ TEMP=$(getopt -o h \
 prefix:,srcdir:,\
 libdir:,includedir:\
 ,infodir:,mandir:,\
-disable-dl,without-gpm,disable-keyb-timeouts \
+disable-dl,without-gpm,disable-keyb-timeouts,without-pthread \
 -n "$BASENAME" -- "$@")
 
 if [ $? != 0 ] ; then cat "$BASEDIR"/config/help >&2 ; exit 1 ; fi
@@ -54,6 +55,7 @@ while true ; do
 		--disable-dl) dl="disabled" ; shift ;;
 		--without-gpm) gpm="disabled" ; shift ;;
 		--disable-keyb-timeouts) keybtmt="disabled" ; shift ;;
+		--without-pthread) pthread="disabled" ; shift ;;
 
 		--) shift ; break ;;
 		*) help ; exit 1 ;;

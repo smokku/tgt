@@ -1,3 +1,4 @@
+#ifndef TGT_NOPTHREAD
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
@@ -665,3 +666,4 @@ void tgt_termemu_initsequencecodes(void)
     termemu_sequence_codes['@'].interpreter = tgt_termemu_seq_ic;
     already_initialized_sequence_codes=1;
 }
+#endif

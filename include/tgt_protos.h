@@ -85,7 +85,9 @@ int tgt_builtin_progress(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_status(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_buffer(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_direct(struct tgt_object *obj,int type,int a,void * b);
+#ifndef TGT_NOPTHREAD
 int tgt_builtin_termemu(struct tgt_object *obj,int type,int a,void * b);
+#endif
 
 
 // class.c

@@ -1,7 +1,10 @@
 #ifndef TGT_APP_INCLUDED
 #define TGT_APP_INCLUDED
+
+#ifndef TGT_NOPTHREAD
 void tgt_async_waitkeys(struct tgt_object *obj);
 void tgt_async_stop(void);
+#endif
 
 struct tgt_queue_msg
 {

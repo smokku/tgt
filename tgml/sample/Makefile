@@ -2,7 +2,7 @@ include ../../Make.conf
 
 TESTS= dbadd
 
-LIBS = -ltgt
+LIBS = -ltgt -I ../../include
 
 OUT=$(NUM)
 

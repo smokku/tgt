@@ -7,7 +7,6 @@
 #include <signal.h>
 #include <sys/resource.h>
 #include <sys/wait.h>
-#include <pthread.h>
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/un.h>

@@ -1,0 +1,10 @@
+echo -n "checking if user wants pthread... "
+if [ "$pthread" == "disabled" ]; then
+	pthread="no"
+	defines="-DTGT_NOPTHREAD $defines"
+else
+	pthread="yes"
+	libs="-lpthread $libs"
+fi
+echo $pthread
+echo "POSIX threads: $pthread" >> ./config.log

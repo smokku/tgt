@@ -46,7 +46,7 @@ int main()
     
     tgt_createandlink(window,TGT_CLASS_BUTTON, /* 2 in 1 ... Create and attach in one function */
 	(tagitem[]){TGTT_X, 28, TGTT_Y, 3,
-	         TGTT_BUTTON_CAPTION, (tgtt) "[Quit]",
+	         TGTT_BUTTON_CAPTION, (tgtt) " [Quit] ",
 		 TGTT_CALLBACK, (tgtt) destroy, /*This will be called when the button is pressed*/
 		 TGTT_END,0});
     tgt_refresh(desktop);    
