@@ -15,6 +15,8 @@ struct tgt_int_string
     char *accept;
 };
 
+    static char emptych='_';
+
 int tgt_builtin_string(struct tgt_object *obj,int type,int a,void *b)
 {
     int i,act,n,k,t;
@@ -29,7 +31,7 @@ int tgt_builtin_string(struct tgt_object *obj,int type,int a,void *b)
 	    iw->maxsize=tgt_gettag(b,TGTT_STRING_MAX,20);
 	    iw->passwd=(unsigned char) tgt_gettag(b,TGTT_STRING_HASHED,0);
 	    iw->ccolor=(unsigned char) tgt_gettag(b,TGTT_STRING_CURSORCOLOR,3);
-	    iw->echar=(char) tgt_gettag(b,TGTT_STRING_EMPTYCHAR,(long) '_');
+	    iw->echar=(char) tgt_gettag(b,TGTT_STRING_EMPTYCHAR,(long) emptych);
 	    iw->accept=(char*) tgt_gettag(b,TGTT_STRING_ACCEPT,(long) NULL);
 	    iw->curpos=0; iw->cursor=0; iw->insmode=1;
 	    iw->buffer=(char*) malloc(iw->maxsize+1);
@@ -190,6 +192,9 @@ int tgt_builtin_string(struct tgt_object *obj,int type,int a,void *b)
 		    return(1);
 	    }	    
 	    return(0);
+	case TGT_OBJECT_SETDEFAULTS:
+	    emptych=tgt_getprefs(b,"string","empty","_")[0];
+	    return(1);
 	default: return(0);
     }
 }

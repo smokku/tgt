@@ -31,8 +31,7 @@ int main()
     char sstring[256];
     int i;
 
-    myterm=tgt_setscreen((void*)0);
-    desktop=tgt_getdesktop(myterm);
+    desktop=tgt_start(NULL,&myterm);
     window=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,(long[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE,(long) "String Class Test",TGTT_END,0});
     tgt_createandlink(window,myterm,TGT_CLASS_BUTTON,(long[]) {TGTT_X,50,TGTT_Y,12,TGTT_BUTTON_CAPTION,(long) "[Exit]",TGTT_CALLBACK,(long) shutdown,TGTT_END,0});
     str=tgt_createandlink(window,myterm,TGT_CLASS_STRING,(long[]) {TGTT_X,2,TGTT_Y,3,TGTT_XS,30,TGTT_STRING_STRING,(long)"Type something here",TGTT_STRING_MAX,250,TGTT_END,0});

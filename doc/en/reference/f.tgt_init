@@ -1,0 +1,26 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_init - initialize TGT library
+
+SYNOPSIS
+
+void tgt_init(void);
+
+DESCRIPTION
+
+tgt_init just reads config files (./.tgtrc , ~/.tgtrc or /etc/tgtrc) ...
+This function is also called when performing a tgt_start() call...
+
+EXAMPLE
+
+struct tgt_object *desktop;
+struct tgt_terminal *term;
+
+tgt_init();
+term=tgt_setterminal(NULL);
+desktop=tgt_getdesktop(term);
+.
+.
+.

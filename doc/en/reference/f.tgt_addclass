@@ -2,7 +2,7 @@ TGT Reference Manual: Functions
 
 NAME
 
-tgt_addclass - Add a class handler function to class tables and initializes
+tgt_addclass - Adds a class handler function to class tables and initializes
                that class
 
 SYNOPSIS

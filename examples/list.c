@@ -117,8 +117,7 @@ int main()
     char sstring[256];
     int i;
 
-    myterm=tgt_setscreen((void*)0);
-    desktop=tgt_getdesktop(myterm);
+    desktop=tgt_start(NULL,&myterm);
     window=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,(long[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE,(long) "List Class Test",TGTT_END,0});
     tgt_createandlink(window,myterm,TGT_CLASS_BUTTON,(long[]) {TGTT_X,50,TGTT_Y,12,TGTT_BUTTON_CAPTION,(long) "[Exit]",TGTT_CALLBACK,(long) shutdown,TGTT_END,0});
     blv=tgt_createandlink(window,myterm,TGT_CLASS_LIST,

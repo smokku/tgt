@@ -1,11 +1,15 @@
 # Komentarz
 
-[string]
-activebg=5
-
 [button]
 activebg=1
 
 [terminal]
 gfx=-|[]++++
 gfx_start=
+
+[string]
+empty=-
+
+[cycle]
+smark=<:
+emark=:>

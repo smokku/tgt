@@ -6,7 +6,7 @@ tgt_async_waitkeys - Start keyboard input in a separate thread
 
 SYNOPSIS
 
-void tgt_waitkeys(struct tgt_object *obj);
+void tgt_async_waitkeys(struct tgt_object *obj);
 
 DESCRIPTION
 
@@ -17,3 +17,4 @@ or message queues...
 
 EXAMPLE
 
+tgt_async_waitkeys(desktop);

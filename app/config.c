@@ -102,7 +102,8 @@ char * tgt_getprefs(struct tgt_prefs* prfs, char *section, char *key,char *def)
     if(!prfs) return(def);
 //    fprintf(stderr,"getting\n");
 //    fprintf(stderr,"Getting %s : %s",section,key);
-    for(cs=prfs->sections;cs!=NULL;cs=cs->next) if(strcmp(cs->name,section)==0) break;
+    for(cs=prfs->sections;cs!=NULL;cs=cs->next) 
+	if(strcmp(cs->name,section)==0) break;
 
     if(cs)
     {
@@ -139,8 +140,11 @@ char * tgt_getprefs(struct tgt_prefs* prfs, char *section, char *key,char *def)
 
 void * g_prefs;
 
+extern int d_seconds,d_micros;
 void tgt_init(void)
 {
     g_prefs=(void*) tgt_int_loadconfig();
+    d_seconds=atoi(tgt_getprefs((struct tgt_prefs*) g_prefs,"keyboard","esc_sec","0"));
+    d_micros=atoi(tgt_getprefs((struct tgt_prefs*) g_prefs,"keyboard","esc_usec","200000"));
 }
 

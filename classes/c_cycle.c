@@ -15,8 +15,8 @@ struct tgt_int_cycle
     char *ds;
     char *de;
 };
-    const static char defs[]="[<";
-    const static char defe[]=">]";
+    char *defs="[<";
+    char *defe=">]";
     
 int tgt_builtin_cycle(struct tgt_object *obj,int type,int a,void *b)
 {
@@ -132,6 +132,11 @@ int tgt_builtin_cycle(struct tgt_object *obj,int type,int a,void *b)
 		case TGTT_CYCLE_MARK2: iw->de=b; break;	
 	    }
 	    return(0);
-	    default: return(0);
+	case TGT_OBJECT_SETDEFAULTS:
+	    defs=tgt_getprefs(b,"cycle","smark","[<");
+	    defe=tgt_getprefs(b,"cycle","emark",">]");
+	    return(1);
+	default: return(0);
+
     }
 }

@@ -20,9 +20,9 @@ classes hierachy (the desktop object) and returns a pointer to it or NULL
 if something went wrong.
 
   The application can also get a pointer to the terminal data structure (for
-instance necessary for creating new objects) by specyfing t-a pointer to 
+instance necessary for creating new objects) by specyfing 't'-a pointer to 
 a pointer variable which will be filled with the terminal description
-object pointer. t might be also NULL (the applicaton might then
+object address. 't' might be also NULL (the applicaton might then
 get that pointer from appropiate field in tgt_terminal structure) 
 
 tgt_start is equivalent to:

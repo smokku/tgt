@@ -1,4 +1,8 @@
 
+
+
+
+
 hej ... zaczalem pisac doc-e ... doc/en/reference...
 
 2 niespodziewanki: oblookaj .tgtrc, jak chcesz zeby semigrafika do normy
@@ -6,5 +10,4 @@ wrocila to wywal gfx i gfx_start ...
 
 2 ) wywal (przenies gdzies) caly termcap z /lib -a (wszystkie libtermcap*)
      ew wywal gdzies /etc/termcap... i odpal program =)
-
 

@@ -13,11 +13,11 @@ struct tgt_object * tgt_createandlink(struct tgt_object *obj,struct tgt_terminal
 DESCRIPTION
 
 tgt_createobject creates an object (eg.window, button, checkbox, list, own
-application objects) which type (for instance TGT_OBJECT_WINDOW, TGT_OBJECT_
-_BUTTON) is given as 'type' argument. The is assigned also a terminal which
-description (which can be obtained from tgt_start() or tgt_setterminal()) is
-passed as 'term'. The object parameters are specified in 'taglist' which
-is an array of longs containing parameters codes (only some are compulsory,
+application objects) which kind of (for instance TGT_OBJECT_WINDOW, TGT_OBJECT_
+_BUTTON) is given as 'type' argument. The object is assigned also a terminal which
+description (that can be obtained from tgt_start() or tgt_setterminal()) is
+passed as 'term'. The object parameters are specified in 'taglist'-
+-an array of longs containing parameters codes (only some are compulsory,
 the rest is optional) and parameter values (see the example). For exact
 description of parameter codes see c.* documentation files.
 
@@ -40,6 +40,8 @@ etc)
 EXAMPLE
 (A simple TGT application, WARNING: untested :)
 
+#include "tgt.h"
+#include <stdio.h>
 void destroy();
 struct tgt_object *desktop;
 

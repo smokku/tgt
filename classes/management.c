@@ -9,7 +9,7 @@
 
 struct tgt_object * tgt_start(char *tname,struct tgt_terminal **ptr)
 {
-    struct tgt_desktop *desktop;
+    struct tgt_object *desktop;
     struct tgt_terminal *terminal;
     tgt_init();
     if(!(terminal=tgt_setscreen(NULL))) return(NULL);

@@ -58,6 +58,8 @@ struct tgt_int_window
     char *title;
 };
 
+    static char defb=6,deftit=7;
+
 int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 {
     int i,n;
@@ -70,8 +72,8 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	    obj->class_data=iw;
 	    obj->objectf=(int(*)()) tgt_gettag(b,TGTT_CALLBACK,(long) NULL);
 	    iw->title=(char*) tgt_gettag(b,TGTT_WINDOW_TITLE,(long) defaulttitle);
-	    iw->borderfg=tgt_gettag(b,TGTT_WINDOW_BORDERCOLOR,6);
-	    iw->titlefg=tgt_gettag(b,TGTT_WINDOW_TITLECOLOR,7);
+	    iw->borderfg=tgt_gettag(b,TGTT_WINDOW_BORDERCOLOR,defb);
+	    iw->titlefg=tgt_gettag(b,TGTT_WINDOW_TITLECOLOR,deftit);
             if(!(obj->next_keys)) obj->next_keys=wswitches_next;
 	    if(!(obj->prev_keys)) obj->prev_keys=wswitches_prev;		
 	    return(1);
@@ -101,6 +103,10 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
             if(obj->objectf) return(obj->objectf(obj,a));
 	    return(0);
 	    break;
+	case TGT_OBJECT_SETDEFAULTS:
+	    defb=atoi(tgt_getprefs(b,"window","framecolor","6"));
+	    deftit=atoi(tgt_getprefs(b,"window","titlecolor","7"));
+	    return(1);
 	default: return(0);
     }
 }

@@ -33,6 +33,7 @@ int tgt_int_listdataf(char **data,int c,int n,char *buffer,int k,int a)
     }
 }
 
+    static int defactbg=6;
 int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 {
     int i,act,n,k,t,yp,xp,maxx,j;
@@ -53,7 +54,7 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	    else
 		iw->realys=obj->ys;
 		
-	    iw->activebg=tgt_gettag(b,TGTT_LIST_ACTIVEBG,6);
+	    iw->activebg=tgt_gettag(b,TGTT_LIST_ACTIVEBG,defactbg);
 	    iw->activefg=tgt_gettag(b,TGTT_LIST_ACTIVEFG,obj->fg);
 
 	    iw->outbuffer=(char*) malloc(obj->xs+1);
@@ -178,6 +179,9 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 		case TGTT_LIST_SELECTED: iw->current=(int) b; return(1);
 		case TGTT_LIST_ITEMS: iw->data=b; return(1);
 	    }
-	    default: return(0);
+	case TGT_OBJECT_SETDEFAULTS:
+	    defactbg=atoi(tgt_getprefs(b,"list","activebg","6"));    
+	    return(1);
+	default: return(0);
     }
 }

@@ -11,7 +11,6 @@ int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void* b)
 	case TGT_OBJECT_CREATE:
 	    tgt_initconswitch();
 	    obj->objectf=(int (*)()) tgt_gettag(b,TGTT_CALLBACK,0);
-	    /* ^ Tu jest warning.. ale nie wiem jak to zrzutowac.. po prostu nie wiem :) */
 	    if(!(obj->next_keys)) obj->next_keys=switches_next;
 	    if(!(obj->prev_keys)) obj->prev_keys=switches_prev;
 	    return(1);

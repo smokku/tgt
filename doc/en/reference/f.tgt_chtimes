@@ -13,6 +13,9 @@ DESCRIPTION
 If tgt was compiled with the TIMEOUT_KEYBOARD definition, tgt_chtimes changes
 keyboard timeout (the time after which keyboard functions immediatly
 return key sequences avoiding 'double ESC' effect known from programs
-such as Midnight Commander) values (0.1s by default) to 'seconds' seconds
+such as Midnight Commander) values (0.5s by default) to 'seconds' seconds
 and 'micros' microseconds.
 
+EXAMPLE
+
+tgt_chtimes(0,100000);

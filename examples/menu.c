@@ -73,8 +73,7 @@ int main()
     tgt_menu_add(pdmptr,"Many items",100,0,sm);
 
 
-    myterm=tgt_setscreen((void*)0);
-    desktop=tgt_getdesktop(myterm);
+    desktop=tgt_start(NULL,&myterm);
     window=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,(long[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE,(long) "Menu Class Test",TGTT_CALLBACK,hotkeys,TGTT_END,0});
     tgt_createandlink(window,myterm,TGT_CLASS_BUTTON,(long[]) {TGTT_X,50,TGTT_Y,12,TGTT_BUTTON_CAPTION,(long) "[Exit]",TGTT_CALLBACK,(long) shutdown,TGTT_END,0});
     menu1=tgt_createandlink(window,myterm,TGT_CLASS_MENU,(long[]) {TGTT_X,1,TGTT_Y,1,TGTT_XS,59,TGTT_CALLBACK,(long) menu,TGTT_END,0});
