@@ -1,9 +1,9 @@
 #include "tgt.h"
 #include "tgt_app.h"
 #include <stdio.h>
+#include <unistd.h>
 
     struct tgt_object *desktop;
-    struct tgt_terminal *myterm;
     struct tgt_object *status1,*status2,*string1;
 /* Callbacks */
 void shutdown()
@@ -26,8 +26,8 @@ int main()
 {
     struct tgt_object *window;
 
-    myterm=tgt_setscreen((void*)0);
-    desktop=tgt_getdesktop(myterm);
+    tgt_setscreen((void*)0);
+    desktop=tgt_getdesktop();
     window=tgt_createandlink(desktop,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE, (tgtt) "statusbar test",TGTT_END,0});
     tgt_createandlink(window,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,50,TGTT_Y,11,TGTT_BUTTON_CAPTION,(tgtt) "[Exit]",TGTT_CALLBACK,(tgtt) shutdown,TGTT_END,0});
     string1=tgt_createandlink(window,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,2,TGTT_Y,3,TGTT_XS,30,TGTT_STRING_STRING,(tgtt) "Type your desired status here",TGTT_STRING_MAX,250,TGTT_END,0});

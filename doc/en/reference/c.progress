@@ -1,0 +1,48 @@
+
+NAME
+
+TGT_CLASS_PROGRESS - progress class
+
+DESCRIPTION
+
+Progress is used to show progress ...
+
+Description [####.........................]  20%
+
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_PROGRESS_CAPTION                                                  CSG
+
+  Requires char * as an argument : this tag specifies the text
+  that will be placed near the box.
+
+TGTT_PROGRESS_ENDVALUE                                                 CSG
+
+  An integer specifying a value equivalent to 100% of progress
+  The default is 100, so you may specify TGTT_PROGRESS_VALUE in %
+  
+TGTT_PROGRESS_VALUE                                                    CSG
+
+  An integer specyfying the current progress.
+
+TGTT_PROGRESS_TYPE                                                     CSG
+
+  A bitwise-or mask of TGT_PROGRESSF_SHOWVALUE and TGT_PROGRESSF_PERCENT:
+  If the first one was specified, the progress will print it's absolute
+  progress (TGTT_PROGRESS_VALUE) on its right:
+  
+  Progress [##########.....] 830
+  
+  When both TGT_PROGRESSF_SHOWVALUE and TGT_PROGRESSF_PERCENT are set,
+  it will show the value in % of it's actual range.
+
+  Progress [##########.....]  70%
+
+CONFIGURATION
+

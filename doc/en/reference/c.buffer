@@ -1,0 +1,38 @@
+
+NAME
+
+TGT_CLASS_TEXTBUFFER - line buffer class
+
+DESCRIPTION
+
+This is a kind of list, however it's items are nonselectable, and if
+many items are added, the first ones disappear ;).
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_BUFFER_BORDERCOLOR                                                C--
+
+  Requires color code - if specified, the object will be sorrounded by
+  a border of this color.
+  
+TGTT_BUFFER_BUFFERSIZE                                                 C--
+
+  Integer specyfing amount of memory to allocate for holding added lines
+  
+TGTA_BUFFER_ADD                                                        -S-
+
+  Setting it will add a line to the buffer, consisted of the string that
+  was passed as the tag value.
+
+TGTT_CALLBACK                                                          CSG
+
+  The function specified here will be called everytime the object receives
+  an unknown keycode .. The keycode will be passed as the second
+  argument.
+
+CONFIGURATION

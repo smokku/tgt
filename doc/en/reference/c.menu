@@ -1,0 +1,40 @@
+
+NAME
+
+TGT_CLASS_MENU - menu class
+
+DESCRIPTION
+
+Menu is a class that should not be directly created in applications ..
+Use front-ends instead:
+
+tgt_menu_add()
+tgt_menu_toggleselectable()
+tgt_menu_getcontext()
+tgt_menu_enable()
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_MENU_SELCOLOR                                                     CSG
+
+  Requires color code as an argument, this is the color the selected item
+  background will be changed to.
+
+TGTT_MENU_FRAMECOLOR                                                   CSG
+
+  Requires color code as an argument, specifies the menu border color
+
+TGTT_CALLBACK                                                          CSG
+
+  A function specified here (taking struct tgt_object * and integer as
+  arguments) that will be called when user selects one of the menu positions.
+  The integer argument will be assigned the number of position that was
+  chosen.
+
+CONFIGURATION
+

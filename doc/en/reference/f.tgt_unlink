@@ -14,7 +14,7 @@ tgt_unlink removes object obj from its parent children list
 
 EXAMPLE
 
-window=tgt_createandlink(term,TGT_CLASS_WINDOW,{...});
+window=tgt_createandlink(TGT_CLASS_WINDOW,{...});
 tgt_link(window,desk);
 tgt_refresh(desk);
 (...) we got bored with that window and don't want to see it again :)

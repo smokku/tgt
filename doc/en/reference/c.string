@@ -21,24 +21,24 @@ TGTT_STRING_STRING                                                     CSG
   This tag specifies input buffer contens - this buffer is statically 
   allocated.
 
-TGTT_STRING_MAX                                                        CS-
+TGTT_STRING_MAX                                                        CSG
 
   Maximal buffer length - ie. amount of memory that is allocated
   for keeping input.
 
-TGTT_STRING_HASHED                                                     CS-
+TGTT_STRING_HASHED                                                     CSG
 
   Requires char (casted to tgtt) as an argument. If this tag is specified,
   given character will appear instead of the right one while displaying
   the string, thus allowing to make password inputs etc.
 
-TGTT_STRING_EMPTYCHAR                                                  CS-
+TGTT_STRING_EMPTYCHAR                                                  CSG
 
   Requires char (casted to tgtt) as an argument. Specifies the character
   that is displayed in places outside the input buffer; typically an
   underscore ('_')
 
-TGTT_STRING_ACCEPT                                                     CS-
+TGTT_STRING_ACCEPT                                                     CSG
 
   Requires char* (casted to tgtt) as an argument. Specifies a set of
   characters that can be typed into string. When a keypress arrives,
@@ -46,12 +46,12 @@ TGTT_STRING_ACCEPT                                                     CS-
   of this tag - if not - it's rejected. This feature can be easily used for
   creating numeric inputs (TGTT_STRING_ACCEPT,"1234567890-")
 
-TGTT_STRING_CURSORCOLOR                                                CS-
+TGTT_STRING_CURSORCOLOR                                                CSG
 
   Specifies a color that is set for the character under cursor - useful
   if the application turns the cursor off.
 
-TGTT_CALLBACK                                                          CS-
+TGTT_CALLBACK                                                          CSG
 
   Specifies a function to be called (int objectf(struct tgt_object *,int))
   whenever user hits enter while the string is active.

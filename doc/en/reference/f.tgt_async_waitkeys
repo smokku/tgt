@@ -3,10 +3,12 @@ TGT Reference Manual: Functions
 NAME
 
 tgt_async_waitkeys - Start keyboard input in a separate thread
+tgt_async_stop     - Kill keyboard input thread.
 
 SYNOPSIS
 
 void tgt_async_waitkeys(struct tgt_object *obj);
+void tgt_async_stop(void);
 
 DESCRIPTION
 
@@ -14,6 +16,12 @@ tgt_async_waitkeys calls tgt_waitkeys() via pthread_create(), allowing
 the application to continue execution. Application and its callbacks
 attached to objects may still communicate via global variables
 or message queues...
+
+tgt_async_stop cancels the thread created by the last call of tgt_async_waitkeys. It's good
+to cancel the input thread before destroying the object that was passed as an argument to
+tgt_async_waitkeys(), unless tgt_destroyobject() is called by that thread (eg. it's used
+in an object callback).
+
 
 EXAMPLE
 

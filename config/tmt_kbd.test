@@ -1,0 +1,7 @@
+echo -n "checking for timeouted keyboard... "
+if [ "$keybtmt" != "disabled" ]; then
+	keybtmt="yes"
+	defines="-DTGT_KEYB_TIMEOUTS $defines"
+fi
+echo $keybtmt
+echo "keyboard-timeouts: $keybtmt" >> ./config.log

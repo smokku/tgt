@@ -13,7 +13,6 @@ void destroy()
 
 int main()
 {
-    struct tgt_terminal *term;
     struct tgt_object *window;
     struct tgt_object *fbo;
     struct tgt_queue_msg m;
@@ -22,9 +21,9 @@ int main()
 
     unsigned char *buffer;
 
-    desktop=tgt_start(NULL,&term); /* Get root object */
+    desktop=tgt_start(NULL); /* Get root object */
     
-    window=tgt_createobject(term,TGT_CLASS_WINDOW, /* Create a window object */
+    window=tgt_createobject(TGT_CLASS_WINDOW, /* Create a window object */
 	(tagitem[]){TGTT_X, 20, TGTT_Y, 3,
 		 TGTT_XS,40, TGTT_YS,20,
 		 TGTT_WINDOW_TITLE,(tgtt) "Hello World",
@@ -33,7 +32,7 @@ int main()
     tgt_link(window,desktop); /* Attach it to the root object */
     
     printf("load\n");
-    if(!tgt_loadclass(1002,"./fbpic.class")) printf("Dynamic class loading failed\n");
+    if(!tgt_loadclass(99,"./fbpic.class")) printf("Dynamic class loading failed\n");
     printf("done\ninit\n");
     
     tgt_createandlink(window,TGT_CLASS_BUTTON, /* 2 in 1 ... Create and attach in one function */
@@ -48,7 +47,7 @@ int main()
 
     printf("creat\n");
     
-    fbo=tgt_createandlink(window,1002,(tagitem[]){TGTT_X, 2, TGTT_Y, 2,
+    fbo=tgt_createandlink(window,99,(tagitem[]){TGTT_X, 2, TGTT_Y, 2,
 		 TGTT_FBPIXMAP_RESIZE,1,
 		 TGTT_FBPIXMAP_XSIZE,100,
 		 TGTT_FBPIXMAP_YSIZE,100,

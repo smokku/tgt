@@ -1,6 +1,7 @@
 #ifndef TGT_APP_INCLUDED
 #define TGT_APP_INCLUDED
 void tgt_async_waitkeys(struct tgt_object *obj);
+void tgt_async_stop(void);
 
 struct tgt_queue_msg
 {
@@ -15,3 +16,4 @@ struct tgt_queue
     int send_pipe;
 };
 #endif
+

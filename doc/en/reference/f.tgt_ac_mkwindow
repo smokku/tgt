@@ -8,29 +8,26 @@ tgt_ac_mkwindow - create a window containing descripted in an autolayout-taglist
 SYNOPSIS
 
 
-struct tgt_object * tgt_ac_mkwindow(struct tgt_terminal * terminal,
-				    char *title,int alignment,
-				    tagitem * description,...)
+struct tgt_object * tgt_ac_mkwindow(char *title,int alignment,
+				    tgtt * description,...)
 
 Specifically, two possibilities:
 
 
-struct tgt_object * tgt_ac_mkwindow(struct tgt_terminal * terminal,
-				    char *title,int alignment,
-				    tagitem * description)
+struct tgt_object * tgt_ac_mkwindow(char *title,int alignment,
+				    tgtt * description)
 
-struct tgt_object * tgt_ac_mkwindow(struct tgt_terminal * terminal,
-				    char *title,TGT_AC_CUSTOM,
-				    tagitem * description,int xp,int yp)
+struct tgt_object * tgt_ac_mkwindow(char *title,TGT_AC_CUSTOM,
+				    tgtt * description,int xp,int yp)
 
 
 DESCRIPTION
 
 This is autolayouting engine function - it creates a fully-featured window
-object with terminal of type 'terminal' assigned, according to description
-passed in ac-taglist 'description', which is an object or ac-object of type 
-TGT_AC_VERTICALGROUP. The window is entitled 'title' and aligned with
+object, according to description passed in ac-taglist 'description', which
+is a TGT_AC_VERTICALGROUP. The window is entitled 'title' and aligned with
 'alignement' (see documentation on autolayout engine) when linked
-to a desktop object. If alignement is TGT_AC_CUSTOM, two additionaly
+to a desktop object. If alignement is TGT_AC_CUSTOM, two additional
 parameters specify a point on the terminal (in percents of its width
 and height) to put the window center at (if possible).
+

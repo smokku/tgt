@@ -1,0 +1,27 @@
+
+Before trying to understand this, read notices contained in 2.c
+
+
+
+This is TGML, the Text GUI Markup Language ... See tgml/ for more details :)
+
+
+
+
+<add inline="void command(struct tgt_object *, int);">
+
+<window name='first' title="The First Window" innerspacing=1 align='hcenter, vcenter' id=500>
+    <checkbox caption='The second window is opened' state='off' 
+	    id=1 callback='command'>
+    <button caption='Open both windows' id=5 callback='command'>
+</window>
+
+<window name='second' title="The Second Window" innerspacing=1 align='hcenter, top' id=501>
+    <checkbox caption='The first window is opened' state='on'
+	    id=2 callback='command'>
+    <group layout="Horizontal">
+        <button caption='Close everything' id=3 callback='command'>
+	<label text='(Reopen with any key)'>
+    </group>
+    <button caption='Quit application' id=4 callback='command'>
+</window>

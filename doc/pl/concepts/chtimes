@@ -1,0 +1,18 @@
+<kuguar> whatis tgt_chtimes() ?
+<mteg> zmienia czasy oczekiwania na sekwencje klawiszy
+<mteg> tgt_chtimes(s,ms)
+<mteg> i wtedy
+<mteg> jeli po s sekundach i ms milisekundach nic nie dotrze nowego,
+<mteg> to klawisz jest interpretowany
+<mteg> w sensie
+<mteg> jak np. na input stream idzie:
+<mteg> (esc) (10 ms op¢¬nienia) , [ (10 ms op¢¬nienia) A
+<mteg> a times jest na 20 ms powiedzmy
+<mteg> to wygeneruje siˆ TGT_KEY_UP
+<mteg> ale jeli bˆdzie
+<mteg> (esc) (10 ms) , [ , (30 ms) A
+<mteg> to wygeneruje siˆ (esc) , [ i A
+<kuguar> qmam
+<kuguar> zaznacz gpm'em i wklej do polskiej dokumentacji
+
+(encoding polskich znakow w standarcie iso-8859-mteg)

@@ -1,0 +1,98 @@
+
+NAME
+
+TGT_CLASS_LIST - list class
+
+DESCRIPTION
+
++------------+
+|Item one    |
+|Item two    |
+|Item three  |
++------------+
+
+Lists could be scrolled; they do not have to be framed.
+
+Usuall parents for lists are windows.
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_LIST_ACTIVEBG                                                     CSG
+
+  Required an integer containing ANSI color code (preferably specified by
+  using constants : TGT_COLOR_...) which will specify the color used as a
+  background for selected items.
+
+TGTT_LIST_ACTIVEFG                                                     CSG
+
+  Required an integer containing ANSI color code (preferably specified by
+  using constants : TGT_COLOR_...) which will specify the color used for
+  outputting selected items.
+
+TGTT_LIST_FRAMECOLOR                                                   CSG
+
+  As above - the provided color will be used for rendering the list frame.
+  If you don't specify this tag, the list will be borderless.
+
+TGTT_LIST_ITEMS                                                        CSG
+
+  Specifies a pointer. It could be anything, if TGTT_LIST_DATACALLBACK
+  is selected (see below)... Otherwise, it's a NULL-terminated array 
+  of strings that'll become list items.
+
+TGTT_LIST_DATACALLBACK                                                 CS-
+
+  Specifies a pointer to a function that is going to be used for
+  reading what to put as item strings ... The function has to match
+  
+  int listdatacallback(void **data,int c,int n,char *buffer,int k,int a);
+  
+  Where
+    data - a pointer provided by user in TGTT_LIST_ITEMS tag
+    c    - request type:
+             TGT_LISTREQ_GETMAX - tgt wants the function to return the
+	                          number of items in the list and ignore
+				  n, buffer, k and a
+	     TGT_LISTREQ_GETITEM - tgt wants the function to fill the buffer
+	                          with a string describing item no. n
+				  (counting from 0), of maximal k characters
+				  length. 'a' specifies whether the item
+				  is currently active in list (1) or not (0)
+
+TGTT_LIST_CHANGECALLBACK                                                CS-
+
+  A function passed with this tag will be called whenever the number of
+  selected item of list changes. It should match a prototype:
+  void change_callback(struct tgt_object * list, int item_number);
+
+TGTT_LIST_CALLBACK                                                      CS-
+
+  The list callback is called whenever user hits space or enter when
+  list object is active. Prototype same as in TGTT_LIST_CHANGECALLBACK.
+
+TGTT_LIST_SELECTED                                                      -SG
+
+  Specifies the number of item that is currently selected in list.
+
+TGTT_LIST_ZERO                                                          -S-
+
+  When set, the list object resets (active item = 0, first visible
+  item = 0)
+
+TGTT_LIST_ADJUST                                                        -S-
+
+  (To be documented)
+  
+
+CONFIGURATION
+
+Section: list
+Key:     activebg
+         Default value for TGTT_LIST_ACTIVEBG tag
+Value:   Integer, ANSI color code
+Default: 6 (cyan)

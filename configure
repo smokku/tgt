@@ -1,0 +1,140 @@
+#!/bin/sh
+##
+## TGT configuration script
+##
+
+# Written by Tomasz Sterna, blame him for any errors, with one exception:
+# If you don't like the idea of writing ./configure not using autotools, 
+# feel free to blame vlsi.
+
+# If You touch anything below, You're asking for trouble
+
+BASENAME=$(basename "$0")
+BASEDIR=$(dirname "$0")
+
+unset prefix
+unset libdir
+unset includedir
+unset infodir
+unset mandir
+unset srcdir
+unset dl
+unset gpm
+unset cflags
+unset defines
+unset sources
+libs="-lpthread"
+subdirs="classes_so tests tgml/tags tgml"
+srcsubdirs="core classes"
+
+# get options
+TEMP=$(getopt -o h \
+--long help,\
+prefix:,srcdir:,\
+libdir:,includedir:\
+,infodir:,mandir:,\
+disable-dl,without-gpm,disable-keyb-timeouts \
+-n "$BASENAME" -- "$@")
+
+if [ $? != 0 ] ; then cat "$BASEDIR"/config/help >&2 ; exit 1 ; fi
+#
+eval set -- "$TEMP"
+
+# process options
+while true ; do
+	case "$1" in
+		-h|--help) cat "$BASEDIR"/config/help ; exit 0 ;;
+
+		--prefix) prefix="$2" ; shift 2 ;;
+		--srcdir) srcdir="$2" ; shift 2 ;;
+		--libdir) libdir="$2" ; shift 2 ;;
+		--includedir) includedir="$2" ; shift 2 ;;
+		--infodir) infodir="$2" ; shift 2 ;;
+		--mandir) mandir="$2" ; shift 2 ;;
+		--disable-dl) dl="disabled" ; shift ;;
+		--without-gpm) gpm="disabled" ; shift ;;
+		--disable-keyb-timeouts) keybtmt="disabled" ; shift ;;
+
+		--) shift ; break ;;
+		*) help ; exit 1 ;;
+	esac
+done
+
+[ -z "$prefix" ] && prefix="/usr/local"
+[ -z "$libdir" ] && libdir="${prefix}/lib"
+[ -z "$includedir" ] && includedir="${prefix}/include"
+[ -z "$mandir" ] && mandir="${prefix}/man"
+[ -z "$infodir" ] && infodir="${prefix}/info"
+
+if [ -z "$srcdir" ]; then
+srcdir="$BASEDIR"
+[ -e "$srcdir/include/tgt.h" ] || srcdir="."
+[ -e "$srcdir/include/tgt.h" ] || srcdir=".."
+srcdir=$(cd "$srcdir" ; pwd)
+fi
+if [ ! -r "$srcdir/include/tgt.h" ]; then
+	echo "$BASENAME: PANIC! sources cannot be found" >&2 ; exit 1
+fi
+builddir=$(pwd)
+
+echo "creating Make.conf"
+cat << EOF | tee ./config.log >Make.conf
+prefix	= $prefix
+libdir	= $libdir
+includedir= $includedir
+mandir	= $mandir
+infodir	= $infodir
+
+srcdir	= $srcdir
+EOF
+
+if [ ! -e ./Makefile ]; then
+	echo "copying Makefile"
+	cat "$srcdir/Makefile" > ./Makefile
+fi
+
+for i in $srcsubdirs; do
+	if [ ! -d "$i" ]; then
+		echo "making $i/"
+		rm -rf "$i"
+		mkdir "$i"
+		echo "getting $i/ sources files"
+	fi
+	sourcestmp=$(cd "$srcdir" ; echo $i/*.c)
+	for j in $sourcestmp; do
+		[ -e "$j" ] || touch "$j"
+	done
+	sources="$sources $sourcestmp"
+done
+for i in $subdirs; do
+	if [ ! -d "$i" ]; then
+		echo "making $i/"
+		rm -rf "$i"
+		mkdir -p "$i"
+	fi
+	if [ ! -e "$i/Makefile" ]; then
+		echo "copying $i/Makefile"
+		cat "$srcdir/$i/Makefile" > "$i/Makefile"
+	fi
+	sourcestmp=$(cd "$srcdir" ; echo $i/*.c)
+	for j in $sourcestmp; do
+		[ -e "$j" ] || touch "$j"
+	done
+done
+
+for i in "$srcdir"/config/*.test; do . $i ; done
+#
+echo >>Make.conf
+cat << EOF | tee -a ./config.log >>Make.conf
+SOURCES	= $sources
+
+LIBS	= $libs
+DEFINES	= $defines
+SODEFINES = -DDEFAULT_FRAMEBUFFER="\"$dfb\""
+CFLAGS	= $cflags -I\$(srcdir)/include
+
+SUBDIRS	= $subdirs
+EOF
+
+exit 0
+## EOF

@@ -1,0 +1,55 @@
+
+  lookup-table is a tree, in which each node has 256 children,
+  of type: another lookup-table, none or a directly passed character
+
+  each node is a tgt_keynode structure, consisted of an entry (void *,
+  but after all, we can cast there eg. a char) and its type(int)
+  (totally 8 * 256 = 2048 bytes on 32-bit machines)
+  
+  example: lookup for a code of 'A' (dec 65)
+           ^[[A (^[ equals esc or dec 27)
+	   in case of terminal 'linux'
+  
+  
+  
+  ROOT LOOKUP TABLE  (lookup_root inside tgt_terminal)
+      +-------------+--------+ 
+  no. | ENTRY TYPE  | ENTRY  |
+      +-------------+--------+
+   0  | CHARACTER      0     |
+   1  | CHARACTER      1     |          LOOKUP TABLE FOR 27 (0x1B hex)
+   .  . .              .     .         +---------------+---------+
+   .  . .              .     .       no| ENTRY TYPE    | ENTRY   |
+  27  | SUBTABLE      ptr  --------->  +---------------+---------+
+   .  . .              .     .       0 |  NIC               -    |
+  65  | CHARACTER     65('A')|       1 |  NONE              -    |
+   .  . .              .     .       . .   .                .    .
+ 126  | CHARACTER     -5     |       . .   .                .    .
+   .  . .              .     .0x5B('[')|  SUBTABLE         ptr ---------+
+ 255  | CHARACTER     255    |       . .   .                .    .      |
+      +----------------------+       . .   .                .    .      |
+                                   255 |  NONE              -    |      |
+				       +-------------------------+      |
+                                                                        |
+ +----------------------------------------------------------------------+
+ |
+ |        LOOKUP TABLE FOR 0x1B 0x5B ('[')
+ |       +--------------+----------+
+ |     no| ENTRY TYPE   | ENTRY    |
+ +--->   +--------------+----------+
+       0 |  NONE           -       |
+       1 |  NONE           -       |
+       . .  .              .       .
+       . .  .              .       .
+  65('A')|  CHARACTER     -1       |  (vel TGT_KEY_UP)
+  66('B')|  CHARACTER     -2       |  (vel TGT_KEY_DOWN)
+  67('C')|  CHARACTER     -3       |  (vel TGT_KEY_LEFT)
+       . .  .              .       .
+       . .  .              .       .
+     255 |  NONE           -       |
+         +-------------------------+
+ 
+  CHARACTER  ==   TGT_KEYN_KEY
+  SUBTABLE == TGT_KEYN_LOOKUPTABLE
+  NONE   ==   TGT_KEYN_NONE
+ 

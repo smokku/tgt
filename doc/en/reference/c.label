@@ -1,0 +1,34 @@
+
+NAME
+
+TGT_CLASS_LABEL - the label class
+
+DESCRIPTION
+
+A label is just a nonselectable, one-line description.
+
+This is a sample label.
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_LABEL_TEXT                                                        CSG
+
+  Requires char * as an argument : this tag specifies the label text.
+  
+
+TGTT_LABEL_TYPE                                                        CSG
+
+  This tag holds an integer describing the label type:
+     TGT_LABELF_ALLEFT  - text inside label will be aligned to the 
+      (default)           left side of the object.
+     TGT_LABELF_ALRIGHT - text inside label will be aligned to the 
+                          right side of the object.
+
+CONFIGURATION
+
+none

@@ -1,0 +1,16 @@
+
+./configure
+make
+
+and then:
+
+export LD_LIBRARY_PATH="."
+tests/(whatever)
+if you just want to see, how it works
+
+or
+
+make install
+ldconfig
+if you plan using it for real
+(it just copies libtgt.so to /usr/lib and include/ to /usr/include)

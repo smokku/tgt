@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
     struct tgt_object *desktop;
-    struct tgt_terminal *myterm;
     struct tgt_object *blv;
     struct tgt_object *nw;
     struct tgt_object *string;
@@ -42,6 +42,7 @@ int ladd(struct tgt_object *obj,int a)
     tgt_refresh(nw);
     return(1);
 }
+
 int ldel(struct tgt_object *obj,int a)
 {
     struct listitem *li;
@@ -90,19 +91,36 @@ void opennew(struct tgt_object *button)
     struct listitem *itm;
     if(tgt_haschild(desktop,112)==NULL)
     {
-	nw=tgt_createandlink(desktop,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_X,5,TGTT_Y,3,TGTT_XS,31,TGTT_YS,20,TGTT_WINDOW_TITLE, (tgtt) "List management",TGTT_ID,112,TGTT_END,0});
-	tgt_setfocus(nw);
+	nw = tgt_createandlink(desktop,TGT_CLASS_WINDOW,
+		(tgtt[]) {TGTT_X,3, TGTT_Y,1,
+			TGTT_XS,31, TGTT_YS,18,
+			TGTT_WINDOW_TITLE, (tgtt) "List management",
+			TGTT_ID, 112,
+			TGTT_END,0});
+	
+	string = tgt_createandlink(nw,TGT_CLASS_STRING,
+		(tgtt[]) {TGTT_X,3, TGTT_Y,15,
+			TGTT_XS, 20,
+			TGTT_STRING_MAX,26,
+			TGTT_END,0} );
+	tgt_createandlink(nw,TGT_CLASS_BUTTON,
+		(tgtt[]) {TGTT_X,24, TGTT_Y,15,
+			TGTT_BUTTON_CAPTION, (tgtt) "[Add]",
+			TGTT_CALLBACK, (tgtt) ladd,
+			TGTT_END,0} );
+
 	l_head=(struct listitem*) malloc(sizeof(struct listitem));
 	l_head->next=NULL;
 	tgt_set(tgt_createandlink(nw,TGT_CLASS_LIST,
-		(tagitem[]) {TGTT_X,3,TGTT_Y,3,TGTT_XS,26,TGTT_YS,10,
-			  TGTT_CALLBACK,(tgtt) ldel,TGTT_LIST_FRAMECOLOR,6,
-			  TGTT_LIST_DATACALLBACK, (tgtt) ldcb,
-			  TGTT_END,0} ),TGTT_LIST_ITEMS,(tgtt) l_head);
-	
-	string=tgt_createandlink(nw,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,3,TGTT_Y,15,TGTT_XS,20,TGTT_STRING_MAX,26,TGTT_END,0} );
-	tgt_createandlink(nw,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,24,TGTT_Y,15,TGTT_BUTTON_CAPTION, (tgtt) "[Add]",TGTT_CALLBACK,(tgtt) ladd,TGTT_END,0} );
+			(tgtt[]) {TGTT_X,2, TGTT_Y,2,
+				TGTT_XS,27, TGTT_YS,13,
+				TGTT_CALLBACK, (tgtt) ldel,
+				TGTT_LIST_FRAMECOLOR, 6,
+				TGTT_LIST_DATACALLBACK, (tgtt) ldcb,
+				TGTT_END,0}),
+		TGTT_LIST_ITEMS, (tgtt) l_head);
 
+	tgt_setfocus(string);
 	tgt_refresh(desktop);
     }
     else
@@ -115,31 +133,62 @@ void opennew(struct tgt_object *button)
 }
 int main()
 {
-    struct tgt_object *window;
+	struct tgt_object *window;
+	static char * list[] = {
+			"TGT: Authors",
+			"----",
+			"Tomasz Sterna",
+			"smoku",
+			"smoku@jaszczur.org",
+			"----",
+			"Mateusz Golicz",
+			"mteg",
+			"mtg@elsat.net.pl",
+			NULL
+		    };
 
-    desktop=tgt_start(NULL,&myterm);
-    window=tgt_createandlink(desktop,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE,(tgtt) "List Class Test",TGTT_END,0});
-    tgt_createandlink(window,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,50,TGTT_Y,12,TGTT_BUTTON_CAPTION, (tgtt) "[Exit]",TGTT_CALLBACK, (tgtt) shutdown,TGTT_END,0});
-    blv=tgt_createandlink(window,TGT_CLASS_LIST,
-	    (tagitem[]) {TGTT_X,5,TGTT_Y,3,
-		      TGTT_XS,20,TGTT_YS,6,
-		      TGTT_LIST_ACTIVEBG,1,
-		      TGTT_LIST_ITEMS,
-      (tgtt) (char* []){ "TGT: Authors","----","Tomasz Sterna","smoku","smoku@linux-pl.com","----","Mateusz Golicz","mteg","mtg@elsat.net.pl",NULL},
-		      TGTT_END,0});
-    tgt_createandlink(window,TGT_CLASS_LIST,
-	    (tagitem[]) {TGTT_X,26,TGTT_Y,3,
-		      TGTT_XS,20,TGTT_YS,6,
-		      TGTT_LIST_ITEMS,
-      (tgtt) (char* []){ "TGT: Authors","----","Tomasz Sterna","smoku","smoku@linux-pl.com","----","Mateusz Golicz","mteg","mtg@elsat.net.pl",NULL},
-		      TGTT_LIST_FRAMECOLOR,6,
-		      TGTT_CALLBACK,(tgtt) smallcb,
-		      TGTT_END,0});
+	desktop=tgt_start(NULL);
 
-    tgt_createandlink(window,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,2,TGTT_Y,12,TGTT_BUTTON_CAPTION,(tgtt) "[Open/Close AddList]",TGTT_CALLBACK, (tgtt) opennew,TGTT_END,0});
+	window = tgt_createandlink(desktop,TGT_CLASS_WINDOW,
+	 (tgtt[]) {TGTT_WINDOW_TITLE, (tgtt) "List Class Test",
+		   TGTT_XS,49,TGTT_YS,13,
+		   TGTT_END,0});
+	tgt_set(window,TGTT_X,(tgt_getterminal()->x_size-49)/2);
+	tgt_set(window,TGTT_Y,(tgt_getterminal()->y_size-13)/2);
+	
+	tgt_createandlink(window,TGT_CLASS_BUTTON,
+	 (tgtt[]) {TGTT_X,40,TGTT_Y,10,
+	 	   TGTT_BUTTON_CAPTION, (tgtt) "[Exit]",
+		   TGTT_CALLBACK, (tgtt) shutdown,
+		   TGTT_END,0});
 
-    tgt_refresh(desktop);
-    tgt_chtimes(0,100000);
-    tgt_waitkeys(desktop);
-    return(1);
+	blv = tgt_createandlink(window,TGT_CLASS_LIST,
+		(tgtt[]) {TGTT_X,4,TGTT_Y,2,
+			TGTT_XS,20,TGTT_YS,6,
+			TGTT_LIST_ACTIVEBG,1,
+			TGTT_LIST_ITEMS, (tgtt) list,
+			TGTT_END,0});
+	tgt_createandlink(window,TGT_CLASS_LIST,
+		(tgtt[]) {TGTT_X,26,TGTT_Y,2,
+			TGTT_XS,20,TGTT_YS,6,
+			TGTT_LIST_ITEMS, (tgtt) list,
+			TGTT_LIST_FRAMECOLOR,6,
+			TGTT_CALLBACK,(tgtt) smallcb,
+			TGTT_END,0});
+
+	tgt_createandlink(window,TGT_CLASS_LABEL,
+		(tgtt[]) {TGTT_X,28,TGTT_Y,8,
+			TGTT_LABEL_TEXT,(tgtt) "Try <ENTER> here",
+			TGTT_END,9});
+
+	tgt_createandlink(window,TGT_CLASS_BUTTON,
+		(tgtt[]) {TGTT_X,2,TGTT_Y,10,
+			TGTT_BUTTON_CAPTION, (tgtt) "[Open/Close AddList]",
+			TGTT_CALLBACK, (tgtt) opennew,
+			TGTT_END,0});
+
+	tgt_refresh(desktop);
+	tgt_chtimes(0,100000);
+	tgt_waitkeys(desktop);
+	return(1);
 }

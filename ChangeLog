@@ -1,0 +1,99 @@
+0.f9
+  - public release
+
+0.f8
+  - bugfixes, cosmetics
+  - pre2-public release
+
+0.f7
+  - added tgt_make_selectable(), tgt_make_nonselectable(), added docs for it
+  - wrote some sentences for doc/en/USERS_VIEW_OF_TGT
+  - wrote reference manual entries for tgt_setdhandler(), tgt_hide() and tgt_unhide()
+  - minior bugfixes in class code
+  - pre-public release
+
+0.f6
+  - version number is reduced by one zero for marketing purposes
+
+0.0f5
+  - minior fixes in SET method of TGTT_SELECTBOX_ITEMS tag inside selectbox.c
+  - made some list tags settable/gettable
+  - added tgt_setdhandler()
+  - added tgt_notified_send()
+  - added tgt_hide()
+  - added tgt_unhide()
+  - minior feature adds in mouse.c
+
+
+0.0f2
+  - added tgt_menu_modify(), tgt_menu_delete(), tgt_menu_insert(),
+    tgt_menu_selectability() and appropiate meta-tags for menu class
+  - cosmetics, changes in FAQ
+
+0.0f
+  - added tgt_direct_get()
+  - completed include/tgt_acmacros.h
+  - wrote example #2, wrote examples/README
+  - rebuilded examples/ source-tree
+  - added simple TGML tags documentation
+  - added 0. to README
+  - renamed changelog
+  - did some minior fixes inside ./mkrelease ;) 
+
+0.0e7
+  - modified the source tree
+  - added ./configure script 
+  - improved TGML
+
+0.0e6
+  - added TGML, added macros in include/tgt_acmacros.h
+  - added some examples
+
+0.0e5
+  - changed API dramatically, now there are no terminal args in function calls
+  - corrected reference manual entries for changed functions
+  - added tgt_getterminal() and g_terminal
+  - removed POSSIBLE_ASYNC, POSSIBLE_INFORMFIRST and SEMAPHORED_REFRESH from
+    code
+
+0.0e45
+  - fixed detecting comments in app/config.c
+
+0.0e44
+  - now selectbox sets its menu component a proper position, when 
+    user changes TGTT_SELECTBOX_SELECTED
+  - added TGTA_MENU_SELECT to c_menu.c
+  - added object dimensions checking in refresh routines
+  - now, when menu is selected, the first position is highlighted by
+    default
+  - added changing background color of selectbox when it's activated
+
+0.0e4
+  - corrected some grammar and spelling mistakes in documentation
+
+0.0e39
+  - minior bugfixes and error handling in autocreat.c
+  - added getsizes support to checkbox class
+  - started to write a big demo program (tests/TGT)
+  - fixed bugs in classes/class.c/tgt_haschild & in classes/class.c/tgt_findchild
+  - corrected tests/csp.c
+  - wrote some class descriptions for doc/en/reference
+
+0.0e384
+  - added comments to all core sources (I (vlsi) personally do not like comments,
+    ,,it was hard to write, it has to be hard to read'' ;)
+
+0.0e37
+  - written a README file draft
+  - changed autocreat API a bit
+  - changed dialog routines - now the buttons are centered
+  - added an example source code using TGT draft
+
+0.0e*
+  - Mouse support added for nearly all classes
+
+0.0d9:
+
+  - Some classes refresh faster now
+  - Modified tests/termemu to use autocreate routines
+  - Cleaned and commented classes/class.c

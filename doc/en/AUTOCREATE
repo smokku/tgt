@@ -37,9 +37,9 @@ This group has two children:
    2) A button labelled "[OK]" in area sorrounded by "o"'s
 In the language of autocreat we'll write that:
 
-win=tgt_ac_mkwindow( term, /* Terminal structure, straigth from tgt_start() */
-		    TGT_AC_VERTICALGROUP, /* Window contens type, in our example
-		                             - a vertical group */
+win=tgt_ac_mkwindow("Window", /* Window title */
+		    TGT_AC_LEFT|TGT_AC_BOTTOM, /* Window position on terminal,
+		                                  in our case - lower left corner*/
 		    (tgtt[])		       /* Window contents */
                      {TGT_AC_CHILD, (...)      /* The . . stuff, see below */
 		          TGT_AC_END, 0,
@@ -48,10 +48,9 @@ win=tgt_ac_mkwindow( term, /* Terminal structure, straigth from tgt_start() */
 		      TGT_AC_CHILD, TGT_CLASS_BUTTON,	 /* Our button */
 			    TGT_BUTTON_CAPTION, (tgtt) "[OK]",  /* It's data ... */
 			    TGTT_END,0,
-		      TGT_AC_END,0}, /* End of taglist */
-		      "Window", /* Window title */
-		      TGT_AC_LEFT|TGT_AC_BOTTOM); /* Window position on terminal,
-		                                  in our case - lower left corner*/
+		      TGT_AC_END,0}); /* End of taglist */
+		      
+		      
 
 However, we notice ofcourse, that the  . . . area is a horizontal group of:
 

@@ -11,17 +11,16 @@ contained in lowlevel/lowlevel.c file, that is routines to:
    else...
  - dispose terminal description, tgt_destroyterminal(struct tgt_terminal * term);
  - change terminal attributes, like colors, cursor position, etc:
-    tgt_chattr(struct tgt_terminal * term,int attribute_code,int parama,int paramb);
+    tgt_chattr(int attribute_code,int parama,int paramb);
    attribute codes are internal constants, like 
-    tgt_chattr(term,TGT_TA_COLORS,TGT_COLOR_RED,TGT_COLOR_BLUE);
+    tgt_chattr(TGT_TA_COLORS,TGT_COLOR_RED,TGT_COLOR_BLUE);
 
 2. TGT OBJECTS CONCEPT
 
   Parts of GUI in TGT are called 'objects', and are described in a structure
 called tgt_object (see include/tgt_classes.h), which contains, besides other
-fields, a pointer to terminal structure to use while rendering the object,
-x and y position and dimensions of object, a pointer to a function which handles
-special things as rendering, handling keyboard for that object 
+fields, x and y position and dimensions of object, a pointer to a function
+which handles special things as rendering, handling keyboard for that object 
 (an 'object class' function), and a void* pointer for everything that class
 function wants to store. There's a limited number of built-in class functions,
 each of them has its assigned constant (TGT_OBJECT_BUTTON, 

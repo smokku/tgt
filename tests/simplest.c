@@ -1,5 +1,6 @@
 #include "tgt.h"
 #include <stdio.h>
+#include <unistd.h>
 
 struct tgt_object *desktop;
 
@@ -11,14 +12,13 @@ void destroy()
 
 int main()
 {
-    struct tgt_terminal *term;
     struct tgt_object *window;
     
 
-    desktop=tgt_start(NULL,&term); /* Get root object */
+    desktop=tgt_start(NULL); /* Get root object */
 
     
-    window=tgt_createobject(term,TGT_CLASS_WINDOW,
+    window=tgt_createobject(TGT_CLASS_WINDOW,
     (tgtt[]) {TGTT_X, 20, TGTT_Y, 10,
 		 TGTT_XS,40, TGTT_YS,6,
 		 TGTT_WINDOW_TITLE, (tgtt) "Hello World",

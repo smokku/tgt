@@ -1,6 +1,35 @@
+1. ,,I see qqqqqqq's and xxxxx's instead of semigraphic frames around windows.
+   
+   This problem has occured eg. in RedHat 7.1 default install (thanks kaczorek).
+   The possible solutions are:
+   
+        - add as (^N for normal linux terminal) and ae (^O) codes to your
+	  /etc/termcap
+	- add to your ~/.tgtrc or /etc/.tgtrc:
+	
+	   [terminal]
+	   gfx_start=\x0e
+	   gfx_end=\x0f
 
-1. My mouse in TGT does not work ! It acts just like on a normal console,
-   all I can do is copy and paste text!
+        - copy examples/.tgtrc to your ~ and uncomment these lines:
+	
+           gfx=-|[]++++
+           gfx_start=
+           gfx_end=
+	
+
+   If this happens 'under' the ,,screen'' program, you can also copy .tgtrc
+   delivered with tgt (in examples/) to your home directory and try
+   uncommenting lines under these ones:
+   
+       # Uncomment to have semigraphics under screen
+       # (Thanks to kaczorek, <kaczorek@msg.beta.pl>)
+
+	   
+
+
+2. ,,My mouse in TGT does not work ! It acts just like on a normal console,
+   all I can do is copy and paste text!''
     
    Ensure that:
       - your gpm is running ;)
@@ -14,9 +43,11 @@
         by you)
       - you do not use devfs - because as for version 1.19.3 , libgpm assumes
         that your tty devices are named *exactly* /dev/tty<vt_number>
+	(smoku has a devfs-"fixed" gpm so you can bug him)
 
-2. When I press backspace, strange things happen ...
+3. ,,When I press backspace, strange things happen ...''
 
    This often is caused by a bad backspace entry in /etc/termcap - do a
-   showkey -a , press backspace , and compare returned values with bc entry
-   for terminal 'linux' in /etc/termcap file ....
+   showkey -a (or -m in certain versions of showkey such as the Red Hat one), press backspace ,
+   and compare returned values with bc entry for terminal 'linux' in /etc/termcap file ....
+

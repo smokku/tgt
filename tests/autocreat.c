@@ -1,5 +1,23 @@
+/* ----------------------------------------------------------------------------
+**      autocreat.c Example of automatic layouter facility usage
+** ----------------------------------------------------------------------------
+**      TGT                                       TextGUIToolkit Library
+**      Copyright (C)   2000-2001       Mateusz Golicz and Tomasz Sterna
+**
+**      LGPL license
+**
+** ----------------------------------------------------------------------------
+**      MAINTAINER      Mateusz Golicz
+**
+**      
+**      DO NOT TOUCH THIS CODE. IT'S UGLY, UGLY, UGLY, UGLY!
+**
+*/
+
+
 #include "tgt.h"
 #include <stdio.h>
+#include <unistd.h>
     struct tgt_object *win,*desk;
 
 
@@ -12,11 +30,9 @@ void vbcb(struct tgt_object *obj)
 
 int main(int argc,char **argv)
 {
-    struct tgt_terminal *term;
-     
-    desk=tgt_start(NULL,&term);
+    desk=tgt_start(NULL);
    
-    win=tgt_ac_mkwindow(term,"Test",TGT_AC_CUSTOM,(tagitem[])
+    win=tgt_ac_mkwindow("Test",TGT_AC_CUSTOM,(tagitem[])
       	   {TGT_AC_ALIGNMENT,TGT_AC_BOTTOM,
 	    TGT_AC_SPACING,1,
 	    TGT_AC_CHILD,TGT_CLASS_BUTTON,

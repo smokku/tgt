@@ -1,52 +1,47 @@
+include ../Make.conf
 
-OBJECTS = csp list string menu status simplest buffer fb direct dialog config autocreat termemu window
+OBJECTS = csp list string menu status simplest buffer fb direct dialog config autocreat termemu window TGT
 
 
-CFLAGS =  -Werror -Wall
-LDFLAGS = 
-LIBS = -L../ -ltgt
-
-#default target: compile
 all: tests
 
-tests: csp list string status simplest fb direct dialog config autocreat buffer window termemu menu
-csp: csp.c
-	gcc $(CFLAGS) csp.c -o csp -L../ -ltgt -I../include/
-termemu: termemu.c
-	gcc $(CFLAGS) termemu.c -o termemu -L../ -ltgt -I../include/
-config: config.c
-	gcc $(CFLAGS) config.c -o config -L../ -ltgt -I../include/
-list: list.c
-	gcc $(CFLAGS) list.c -o list -L../ -ltgt -I../include/
-string: string.c
-	gcc $(CFLAGS) string.c -o string -L../ -ltgt -I../include/
-menu: menu.c
-	gcc $(CFLAGS) menu.c -o menu -L../ -ltgt -I../include/
-status: status.c
-	gcc $(CFLAGS) status.c -o status -L../ -ltgt -I../include/
-test: test.c
-	gcc $(CFLAGS) test.c -o test -L../ -ltgt -I../include/
-simplest: simplest.c
-	gcc $(CFLAGS) simplest.c -o simplest -L../ -ltgt -I../include/ -Wall
-buffer: buffer.c
-	gcc $(CFLAGS) buffer.c -o buffer -L../ -ltgt -I../include/
-fb: fb.c
-	gcc $(CFLAGS) fb.c -o fb -L../ -ltgt -I../include/
-direct: direct.c
-	gcc $(CFLAGS) direct.c -o direct -L../ -ltgt -I../include/
-dialog: dialog.c
-	gcc $(CFLAGS) dialog.c -o dialog -L../ -ltgt -I../include/
-autocreat: autocreat.c
-	gcc $(CFLAGS) autocreat.c -o autocreat -L../ -ltgt -I../include/
-window: window.c
-	gcc $(CFLAGS) window.c -o window -L../ -ltgt -I../include/
+tests: $(OBJECTS)
+csp: $(srcdir)/tests/csp.c
+	gcc $(CFLAGS) $(srcdir)/tests/csp.c -o csp -L../ -ltgt
+termemu: $(srcdir)/tests/termemu.c
+	gcc $(CFLAGS) $(srcdir)/tests/termemu.c -o termemu -L../ -ltgt
+config: $(srcdir)/tests/config.c
+	gcc $(CFLAGS) $(srcdir)/tests/config.c -o config -L../ -ltgt
+list: $(srcdir)/tests/list.c
+	gcc $(CFLAGS) $(srcdir)/tests/list.c -o list -L../ -ltgt
+string: $(srcdir)/tests/string.c
+	gcc $(CFLAGS) $(srcdir)/tests/string.c -o string -L../ -ltgt
+menu: $(srcdir)/tests/menu.c
+	gcc $(CFLAGS) $(srcdir)/tests/menu.c -o menu -L../ -ltgt
+status: $(srcdir)/tests/status.c
+	gcc $(CFLAGS) $(srcdir)/tests/status.c -o status -L../ -ltgt
+test: $(srcdir)/tests/test.c
+	gcc $(CFLAGS) $(srcdir)/tests/test.c -o test -L../ -ltgt
+simplest: $(srcdir)/tests/simplest.c
+	gcc $(CFLAGS) $(srcdir)/tests/simplest.c -o simplest -L../ -ltgt
+buffer: $(srcdir)/tests/buffer.c
+	gcc $(CFLAGS) $(srcdir)/tests/buffer.c -o buffer -L../ -ltgt
+fb: $(srcdir)/tests/fb.c
+	gcc $(CFLAGS) $(srcdir)/tests/fb.c -o fb -L../ -ltgt
+direct: $(srcdir)/tests/direct.c
+	gcc $(CFLAGS) $(srcdir)/tests/direct.c -o direct -L../ -ltgt
+dialog: $(srcdir)/tests/dialog.c
+	gcc $(CFLAGS) $(srcdir)/tests/dialog.c -o dialog -L../ -ltgt
+autocreat: $(srcdir)/tests/autocreat.c
+	gcc $(CFLAGS) $(srcdir)/tests/autocreat.c -o autocreat -L../ -ltgt
+window: $(srcdir)/tests/window.c
+	gcc $(CFLAGS) $(srcdir)/tests/window.c -o window -L../ -ltgt
+TGT: $(srcdir)/tests/TGT.c
+	gcc $(CFLAGS) $(srcdir)/tests/TGT.c -o TGT -L../ -ltgt
 
 # make a clean source tree again
 clean: 
 	rm -rf libtgt.so *.o *~ core >/dev/null 2>/dev/null
 	rm -rf $(OBJECTS) >/dev/null 2>/dev/null
-
-install: cp ./libtgt.so /usr/lib
-uninstall: rm -rf /usr/lib/libtgt.so*
 
 distclean: clean

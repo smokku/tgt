@@ -10,7 +10,7 @@ tgt_app_checkmsg    -queue functions
 SYNOPSIS
 
 struct tgt_queue * tgt_app_createqueue(void);
-void tgt_app_queue(struct tgt_queue *q,int code,long data1,void *data2);
+void tgt_app_queue(struct tgt_queue *q,int code,long data,void *pointer);
 int tgt_app_waitmsg(struct tgt_queue *q,struct tgt_queue_msg *m);
 int tgt_app_checkmsg(struct tgt_queue *q,struct tgt_queue_msg *m,int s,int us);
 
@@ -23,13 +23,16 @@ and the application.
 tgt_app_createqueue creates a queue and saves allocated data in a tgt_queue
 structure
 
-tgt_app_queue sends a message to queue q with 'code','data1','data2' parameters,
+tgt_app_queue sends a message to queue q with 'code','data','pointer' parameters,
 which meaning depends only on the application. Those fields will be available in
 'code', 'data' and 'pointer' fields in tgt_queue_msg in queue receiving functions.
 
 tgt_app_waitmsg waits for a message to appear in queue q and places received
 message data (code,data,pointer) in a tgt_queue_msg structure pointed by m.
 This function always returns 1.
+
+tgt_queue_msg structure is composed of three fields named ,,code'', ,,data'' and ,,pointer'',
+which are assigned appropiate values passed in tgt_queue().
 
 tgt_app_checkmsg works just like tgt_app_waitmsg , but if no messages are
 available in queue for s seconds and us micros, the function returns 

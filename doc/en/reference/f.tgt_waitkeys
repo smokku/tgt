@@ -2,10 +2,12 @@ TGT Reference Manual: Functions
 
 NAME
 
-tgt_waitkeys - Start processing keyboard input
+tgt_getkey - process input event
+tgt_waitkeys - start processing input in a loop
 
 SYNOPSIS
 
+void tgt_getkey(struct tgt_object *obj);
 void tgt_waitkeys(struct tgt_object *obj);
 
 DESCRIPTION
@@ -15,6 +17,8 @@ and its children. This function never returns, all further program code
 is executed only from callbacks (functions which pointers are specified
 by appropiate tags for classes, see c.*). For function handling keys
 asynchronously , have a look at tgt_async_waitkeys();
+
+tgt_getkey processes a single keyboard event, but try to avoid using it.
 
 EXAMPLE
 

@@ -1,9 +1,9 @@
 #include "tgt.h"
 #include "tgt_app.h"
 #include <stdio.h>
+#include <unistd.h>
 
     struct tgt_object *desktop;
-    struct tgt_terminal *myterm;
     struct tgt_object *progr;
 /* Callbacks */
 void shutdown()
@@ -25,22 +25,54 @@ void slider_move(struct tgt_object *obj,int i)
 }
 int main()
 {
-    struct tgt_object *window;
+	struct tgt_object *window;
+	struct tgt_terminal *myterm;
 
-    desktop=tgt_start(NULL,&myterm);
-//    myterm=tgt_setscreen((void*)0);
-//    desktop=tgt_getdesktop(myterm);
-    window=tgt_createandlink(desktop,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE, (tgtt) "checkbox/slider/progress-bar test",TGTT_END,0});
-    tgt_createandlink(window,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,50,TGTT_Y,12,TGTT_BUTTON_CAPTION, (tgtt) "[Exit]",TGTT_CALLBACK, (tgtt) shutdown,TGTT_END,0});
-    tgt_createandlink(window,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,2,TGTT_Y,3,TGTT_XS,30,TGTT_STRING_STRING,(tgtt) "Type something here",TGTT_STRING_MAX,250,TGTT_END,0});
-    tgt_createandlink(window,TGT_CLASS_CHECKBOX,(tagitem[]) {TGTT_X,2,TGTT_Y,4,TGTT_CHECKBOX_CAPTION,(tgtt) "Jeden",TGTT_END,0});
-    tgt_createandlink(window,TGT_CLASS_CHECKBOX,(tagitem[]) {TGTT_X,12,TGTT_Y,4,TGTT_CHECKBOX_CAPTION,(tgtt)  "Dwa",TGTT_END,0});
-    tgt_createandlink(window,TGT_CLASS_SLIDER,(tagitem[]) {TGTT_X,2,TGTT_Y,5,TGTT_XS,30,TGTT_SLIDER_CAPTION,(tgtt) "Slide ",TGTT_SLIDER_MINVALUE,50,TGTT_SLIDER_MAXVALUE,140,TGTT_SLIDER_TYPE,TGT_SLIDERF_SHOWVALUE|TGT_SLIDERF_PERCENT,TGTT_CALLBACK,(tgtt)  slider_move,TGTT_END,0});
-    progr=tgt_createandlink(window,TGT_CLASS_PROGRESS,(tagitem[]) {TGTT_X,2,TGTT_Y,6,TGTT_XS,20,TGTT_PROGRESS_VALUE,10,TGTT_PROGRESS_ENDVALUE,50,TGTT_FG,6,TGTT_PROGRESS_TYPE,TGT_PROGRESSF_SHOWVALUE,TGTT_END,0});
-//    tgt_createandlink(window,TGT_CLASS_LABEL,(tagitem[]) {TGTT_X,2,TGTT_Y,7,TGTT_LABEL_TEXT,(long) "Numeric :",TGTT_END,0});
-//    tgt_createandlink(window,TGT_CLASS_STRING,(tagitem[]) {TGTT_X,12,TGTT_Y,7,TGTT_XS,20,TGTT_STRING_MAX,30,TGTT_STRING_ACCEPT,(long) "0123456789.-",TGTT_END,0});
-    tgt_refresh(desktop);
-    tgt_chtimes(0,100000);
-    tgt_waitkeys(desktop);
-    return(1);
+	desktop = tgt_start(NULL);
+	myterm = tgt_getterminal();
+	
+	window = tgt_createandlink(desktop,TGT_CLASS_WINDOW,
+	 (tgtt[]) {TGTT_WINDOW_TITLE, (tgtt) "checkbox/slider/progress-bar test",
+		   TGTT_XS,39,TGTT_YS,7,
+		   TGTT_END,0});
+	tgt_set(window,TGTT_X,(myterm->x_size-39)/2);
+	tgt_set(window,TGTT_Y,(myterm->y_size-7)/2);
+	
+	tgt_createandlink(window,TGT_CLASS_BUTTON,
+	 (tgtt[]) {TGTT_X,31,TGTT_Y,5,
+		   TGTT_BUTTON_CAPTION, (tgtt) "[Exit]",
+		   TGTT_CALLBACK, (tgtt) shutdown,
+		   TGTT_END,0});
+	tgt_createandlink(window,TGT_CLASS_CHECKBOX,
+	 (tgtt[]) {TGTT_X,2,TGTT_Y,2,
+		   TGTT_CHECKBOX_CAPTION,
+		   (tgtt) "One",
+		   TGTT_END,0});
+	tgt_createandlink(window,TGT_CLASS_CHECKBOX,
+	 (tgtt[]) {TGTT_X,12,TGTT_Y,2,
+		   TGTT_CHECKBOX_CAPTION,
+		   (tgtt) "Two",
+		   TGTT_END,0});
+	tgt_createandlink(window,TGT_CLASS_SLIDER,
+	 (tgtt[]) {TGTT_X,2,TGTT_Y,3,
+		   TGTT_XS,30,
+		   TGTT_SLIDER_CAPTION,(tgtt) "Slide ",
+		   TGTT_SLIDER_MINVALUE,50,
+		   TGTT_SLIDER_MAXVALUE,140,
+		   TGTT_SLIDER_TYPE,TGT_SLIDERF_SHOWVALUE|TGT_SLIDERF_PERCENT,
+		   TGTT_CALLBACK,(tgtt) slider_move,
+		   TGTT_END,0});
+	progr = tgt_createandlink(window,TGT_CLASS_PROGRESS,
+	 (tgtt[]) {TGTT_X,2,TGTT_Y,4,
+		   TGTT_XS,20,
+		   TGTT_FG,6,
+		   TGTT_PROGRESS_VALUE,10,
+		   TGTT_PROGRESS_ENDVALUE,50,
+		   TGTT_PROGRESS_TYPE,TGT_PROGRESSF_SHOWVALUE,
+		   TGTT_END,0});
+
+	tgt_refresh(desktop);
+	tgt_chtimes(0,100000);
+	tgt_waitkeys(desktop);
+	return(1);
 }

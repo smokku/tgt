@@ -1,0 +1,46 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_recursive_set - Set an attribute to object and all his children
+
+SYNOPSIS
+
+void tgt_recursive_set(struct tgt_object * obj, tgtt tag, tgtt value)
+
+DESCRIPTION
+
+tgt_recursive_set sets the attribute 'tag' to the new value 'value' in object
+'obj' and in all of its children. Be careful using it, set only these tags, 
+which are common in all these objects.
+
+EXAMPLE
+
+struct tgt_object * win;
+
+win = tgt_createobject(TGT_CLASS_WINDOW, (tgtt[])
+                {TGTT_XS, 20, TGTT_YS, 5,
+                 TGTT_X, 0, TGTT_Y, 0,
+                 TGTT_WINDOW_TITLE, (tgtt) "Welcome to localhost",
+                 TGTT_END,0});
+tgt_createandlink(win, TGT_CLASS_LABEL, (tgtt[])
+                {TGTT_LABEL_TEXT, (tgtt) "Login:",
+                 TGTT_X, 2, TGTT_Y, 2,
+                 TGTT_END,0});
+tgt_createandlink(win, TGT_CLASS_LABEL, (tgtt[])
+                {TGTT_LABEL_TEXT, (tgtt) "Password:",
+                 TGTT_X, 2, TGTT_Y, 3,
+                 TGTT_END,0});
+...
+tgt_recursive_set(addobjwindow, TGTT_BG, TGT_COLOR_RED);
+/* it does the same like when you add TGTT_BG tags with TGT_COLOR_RED value to
+each of above objects, like this: */
+tgt_createandlink(win,  TGT_CLASS_BUTTON, (tgtt[])
+                {TGTT_BUTTON_CAPTION, (tgtt) "Enter",
+                 TGTT_CALLBACK, (tgtt) log_in,
+                 TGTT_X, 2, TGTT_Y, 4,
+                 TGTT_BG, TGT_COLOR_RED, TGTT_END,0});
+             /* ^^^^^^^^^^^^^^^^^^^^^^^^ */
+
+/* want more? see examples/3.c */
+

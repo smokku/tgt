@@ -4,7 +4,6 @@
 #include <signal.h>
 #include <unistd.h>
     struct tgt_object *desktop;
-    struct tgt_terminal *myterm;
     struct tgt_object *str;
     struct tgt_object *buff;
     void * sid;
@@ -34,9 +33,9 @@ int main()
     hndlr=tgt_launch_launcher();
 
 
-    desktop=tgt_start(NULL,&myterm);
+    desktop=tgt_start(NULL);
 
-    window=tgt_ac_mkwindow(myterm,"Termemu Test",TGT_AC_HCENTER|TGT_AC_VCENTER,(tagitem[])
+    window=tgt_ac_mkwindow("Termemu Test",TGT_AC_HCENTER|TGT_AC_VCENTER,(tgtt[])
 		    {TGT_AC_ALIGNMENT,TGT_AC_LEFT,
 		     TGT_AC_SPACE,1,
 		     TGT_AC_CHILD,TGT_AC_HORIZONTALGROUP,

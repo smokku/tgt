@@ -29,3 +29,11 @@ jesli klasa uzywa callbackow musi SAMA wywolac odpowiednie tgt_gettag() */
 #define TGTT_NEXT_KEYS 9
 #define TGTT_PREV_KEYS 10
 
+
+
+#define TGTT_GENERIC_CAPTION 2000
+#define TGTT_GENERIC_ACTIVEBG 2001
+#define TGTT_GENERIC_FRAMECOLOR 2002
+#define TGTT_GENERIC_MIN 2003
+#define TGTT_GENERIC_MAX 2004
+#define TGTT_GENERIC_VALUE 2005

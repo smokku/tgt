@@ -16,18 +16,18 @@ M => must be specified when creating an object
 S => may be set by tgt_set();
 G => may be read by tgt_get();
 
-TGTT_BUTTON_CAPTION                                                    CS-
+TGTT_BUTTON_CAPTION                                                    CSG
 
   Requires char * as an argument : this tag specifies the button text.
   
 
-TGTT_BUTTON_ACTIVEBG                                                   CS-
+TGTT_BUTTON_ACTIVEBG                                                   CSG
 
   Requires an integer containing ANSI color code (preferably specified by
   using constants : TGT_COLOR_...) which will specify the background color
   for the button when it's selected (active).
   
-TGTT_CALLBACK                                                          CS-
+TGTT_CALLBACK                                                          CSG
 
   A function specified here (taking struct tgt_object * as an argument)
   will be called everytime user hits enter while the button is active.

@@ -8,6 +8,7 @@ tgt_haschild - find a child with a specified object-id in object's children
 SYNOPSIS
 
 struct tgt_object * tgt_haschild(struct tgt_object *obj,int id);
+struct tgt_object * tgt_findchild(struct tgt_object *obj,int id);
 
 DESCRIPTION
 
@@ -18,6 +19,9 @@ to store pointers for objects - you might only store a pointer to
 the root object (eg. a window), assign objects their identification numbers
 using appropiate tags, and then use this function each time you need
 the object pointer.
+
+findchild looks deeper into the object tree, as it searches also children
+of passed object's children etc. recursively.
 
 EXAMPLE
 

@@ -9,9 +9,9 @@
 #define TGT_COLOR_BRIGHTCYAN TGT_COLOR_CYAN | TGT_COLOR_HIGHBRIGHT
 #define TGT_COLOR_WHITE TGT_COLOR_GREY | TGT_COLOR_HIGHBRIGHT
 
-void tgt_mvcladdstr(struct tgt_terminal *term, int x, int y, int fg, int bg, const char *str);
-void tgt_mvcladdch(struct tgt_terminal *term, int x, int y, int fg, int bg, const char chr);
-void tgt_claddstr(struct tgt_terminal *term, int fg, int bg, const char *str);
-void tgt_claddch(struct tgt_terminal *term, int fg, int bg, const char chr);
-void tgt_chclr(struct tgt_terminal *term, int fg, int bg);
-void tgt_chfg(struct tgt_terminal *term, int fg);
+void tgt_mvcladdstr(int x, int y, int fg, int bg, const char *str);
+void tgt_mvcladdch(int x, int y, int fg, int bg, const char chr);
+void tgt_claddstr(int fg, int bg, const char *str);
+void tgt_claddch(int fg, int bg, const char chr);
+void tgt_chclr(int fg, int bg);
+void tgt_chfg(int fg);

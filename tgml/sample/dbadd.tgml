@@ -1,0 +1,42 @@
+<add inline="void command(struct tgt_object *, int);">
+<window name="samplewindow" title="Sample Window #1" align="hcenter, vcenter">
+    <spacing size=1>
+    <group layout="horizontal">
+	<group layout="horizontal">
+	    <group layout="vertical">
+		<label text="Name:">
+		<label text="Surname:">
+		<label text="Phone:">
+	    </group>
+	    <group layout="vertical">
+		<string width=10>
+		<string width=10>
+		<string width=10>
+	    </group>
+	</group>
+
+	<group layout="horizontal">
+	    <group layout="vertical">
+		<label text="City:">
+		<label text="Street:">
+		<label text="Sex:">
+	    </group>
+	    <group layout="vertical">
+		<string width=10>
+		<string width=10>
+		<selectbox>
+		    <item string="Male">
+		    <item string="Female">
+		</selectbox>
+	    </group>
+	</group>
+	
+	<group layout="vertical">
+	    <button caption="[  Add ]">
+	    <button caption="[ Clear]">
+	    <button caption="[Export]">
+	</group>
+
+    </group>
+    <button caption="[ OK ]" align='hcenter' callback="command" id=100>
+</window>

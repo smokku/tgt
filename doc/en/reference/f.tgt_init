@@ -20,7 +20,7 @@ struct tgt_terminal *term;
 
 tgt_init();
 term=tgt_setterminal(NULL);
-desktop=tgt_getdesktop(term);
+desktop=tgt_getdesktop();
 .
 .
 .

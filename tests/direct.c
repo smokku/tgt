@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
     struct tgt_object *desktop;
-    struct tgt_terminal *term;
 
 void destroy()
 {
@@ -18,11 +17,13 @@ int main()
     struct tgt_object * direct;
     tgt_cell *dsurface;
     
-    desktop=tgt_start(NULL,&term); /* Get root object */
+    int counter = 1;
+    
+    desktop=tgt_start(NULL); /* Get root object */
 
     tgt_set(desktop,TGTT_DESKTOP_HIDECURSOR,1);
     
-    window=tgt_createobject(term,TGT_CLASS_WINDOW, /* Create a window object */
+    window=tgt_createobject(TGT_CLASS_WINDOW, /* Create a window object */
 	(tagitem[]){TGTT_X, 20, TGTT_Y, 5,
 		 TGTT_XS,40, TGTT_YS,15,
 		 TGTT_WINDOW_TITLE,(tgtt) "Direct surface example",
@@ -47,7 +48,12 @@ int main()
 	{
 	    *(dsurface++)=TGT_T_BUILDCELL(rand()%8,rand()%8,rand()%2,rand()%2,'a'+i%24);
 	}
-	tgt_refresh(direct);
+	if(! (counter++ % 50)){
+		tgt_set(window,TGTT_X,rand() % (tgt_getterminal()->x_size-40));
+		tgt_set(window,TGTT_Y,rand() % (tgt_getterminal()->y_size-15));
+		tgt_refresh(desktop);
+	} else
+		tgt_refresh(direct);
 	usleep(10);
     }
 }

@@ -1,0 +1,29 @@
+
+NAME
+
+TGT_CLASS_TERMEMU - TGT terminal emulator
+
+DESCRIPTION
+
+Termemu is a terminal emulator class ... It does not have any own tags.
+Use magic functions:
+
+tgt_launch_launcher()
+tgt_launcher_system()
+tgt_launcher_kill()
+tgt_launcher_getchildpid()
+tgt_attach_launcher()
+tgt_halt_launcher()
+tgt_detach_launcher()
+
+to run applications inside this object.
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+CONFIGURATION
+

@@ -6,7 +6,7 @@ tgt_fgetc - timeouted getchar()
 
 SYNOPSIS
 
-#ifdef TIMEOUT_KEYBOARD
+#ifdef TGT_KEYB_TIMEOUTS
 int tgt_fgetc(int s,int us)
 #endif
 

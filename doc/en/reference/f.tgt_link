@@ -14,12 +14,11 @@ tgt_link adds 'obj' to the list of 'parent' children.
 
 EXAMPLE
 
-struct tgt_terminal *term;
 struct tgt_object *desk;
 struct tgt_object *window;
 
-if(!desk=tgt_start(NULL,&term)) return;
-window=tgt_createobject(term,TGT_CLASS_WINDOW,(tgtt[]) {...});
+if(!desk=tgt_start(NULL)) return;
+window=tgt_createobject(TGT_CLASS_WINDOW,(tgtt[]) {...});
 tgt_link(window,desk);
 tgt_refresh(desk);
 

@@ -1,0 +1,11 @@
+
+(to be written)
+
+Generally, the end-user part of tgt are the config files. The lookup order is:
+
+./.tgtrc
+~/.tgtrc
+/etc/.tgtrc
+
+See examples/.tgtrc for a sample config file. You can also read doc/en/reference/c.* in order
+to learn keywords, with which some default object properties may be changed.

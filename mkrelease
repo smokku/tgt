@@ -3,7 +3,7 @@
 TGTNAME="tgt-`cat VERSION`"
 OLDDIR="`pwd`"
 
-make clean
+make distclean
 
 cd ..
 mv tgt $TGTNAME

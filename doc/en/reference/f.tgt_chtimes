@@ -10,7 +10,7 @@ void tgt_chtimes(int seconds,int micros);
 
 DESCRIPTION
 
-If tgt was compiled with TIMEOUT_KEYBOARD defined, tgt_chtimes changes
+If tgt was compiled with TGT_KEYB_TIMEOUTS defined, tgt_chtimes changes
 keyboard timeout (the time after which keyboard functions immediately
 return key sequences avoiding 'double ESC' effect known from programs
 such as Midnight Commander) values (0.5s by default) to 'seconds' seconds

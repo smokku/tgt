@@ -1,0 +1,21 @@
+Usage: ./configure [options]
+Options: [defaults in brackets after descriptions]
+
+If a long option shows an argument as mandatory, then it is mandatory
+for the equivalent short option also.  Similarly for optional arguments.
+
+General:
+  --help	print this message
+  
+Directory and file names:
+  --prefix=PREFIX	install files in PREFIX [/usr/local]
+  --libdir=DIR		object code libraries in DIR [PREFIX/lib]
+  --includedir=DIR	C header files in DIR [PREFIX/include]
+  --infodir=DIR		info documentation in DIR [PREFIX/info]
+  --mandir=DIR		man documentation in DIR [PREFIX/man]
+  --srcdir=DIR		find the sources in DIR [configure dir or ..]
+
+Features and packages:
+  --disable-dl		disable dynamic linker support
+  --without-gpm		disable gpm support even if curses found
+  --disable-keyb-timeouts  disable timeouted ESC catching

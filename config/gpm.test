@@ -1,0 +1,28 @@
+echo -n "checking for GPM... "
+if [ "$gpm" != "disabled" ]; then
+gpm="no"
+echo "GPM check" >>./config.log
+rm -f \$\$~test \$\$~test.c
+cat >./\$\$~test.c << EOF
+#include "gpm.h"
+int main(int argc, char ** argv)
+{
+	Gpm_Connect conn;
+	Gpm_Open(&conn,0);
+}
+EOF
+echo "1st:" >>./config.log
+cc 2>>./config.log >>./config.log -o ./\$\$~test ./\$\$~test.c -lgpm
+if [ -e ./\$\$~test ]; then
+	libs="-lgpm $libs" ; defines="-DTGT_GPMMOUSE $defines" ; gpm="yes"
+else
+	echo "2nd: -I/usr/local/include" >>./config.log
+	cc 2>>./config.log >>./config.log -o ./\$\$~test ./\$\$~test.c -I/usr/local/include -lgpm
+	if [ -e ./\$\$~test ]; then
+	libs="-lgpm $libs" ; defines="-DTGT_GPMMOUSE $defines" ; cflags="-I/usr/local/include $cflags" ; gpm="yes"
+	fi
+fi
+rm -f \$\$~test \$\$~test.c
+fi
+echo $gpm
+echo "GPM: $gpm" >> ./config.log

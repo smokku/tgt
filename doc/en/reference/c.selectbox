@@ -1,0 +1,63 @@
+
+NAME
+
+TGT_CLASS_SELECTBOX - selectbox class
+
+DESCRIPTION
+
+Selectbox is a control, that can be used instead a set of checkboxes,
+if user has to select one of many available options.
+
+[<Currently active option>]
+
+The option can be changed using PGUP or PGDN. If a selectbox object
+is hit using ENTER, it opens a menu with a list of available options.
+Usual parents for checkbox objects are windows.
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_SELECTBOX_ITEMS                                                   CSG
+
+  Requires char ** as an argument : this tag specifies an array containing
+  strings that'll be used as options. That array has to be NULL-terminated,
+  eg. {"Option no 1","Option no 2","Option no 3",NULL}
+
+TGTT_SELECTBOX_SELECTED                                                CSG
+
+  An integer specifying the position of currently chosen option in the
+  SELECTBOX_ITEMS table.
+  
+TGTT_SELECTBOX_MARK1                                                   CSG
+
+  This tag specifies the string that is displayed before the option name
+  while refreshing the object, by default '[<'
+
+TGTT_SELECTBOX_MARK2                                                   CSG
+
+  Like above, but this time it's the string displayed after the option name,
+  by default '>]'
+  
+TGTT_CALLBACK                                                          CSG
+
+  Requires a pointer to a function taking struct tgt_object * and integer,
+  which value is set to the value of SELECTED tag. Called whenever the selected
+  option changes.
+
+CONFIGURATION
+
+Section: selectbox
+Key:     smark
+         Default value for TGTT_SELECTBOX_MARK1
+Value:   String
+Default: [<
+
+Section: selectbox
+Key:     emark
+         Default value for TGTT_SELECTBOX_MARK2
+Value:   String
+Default: >]

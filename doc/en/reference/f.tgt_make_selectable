@@ -1,0 +1,19 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_make_selectable    - make an object able to receive focus and input
+tgt_make_nonselectable - make an object unable to receive focus and input
+
+
+SYNOPSIS
+
+void tgt_make_selectable(struct tgt_object *obj);
+void tgt_make_nonselectable(struct tgt_object *obj);
+
+DESCRIPTION
+
+Functionality as in NAME section.
+
+Warning: Making objects not designed for receiving input, such as LABEL, selectable may result
+in strange application behaivour.

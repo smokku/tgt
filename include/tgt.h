@@ -4,7 +4,6 @@
 #include "tgt_keyboard.h"
 #include "tgt_tags.h"
 #include "tgt_autocreat.h"
-#include "tgt_protos.h"
 #include "tgt_window.h"
 #include "tgt_label.h"
 #include "tgt_button.h"
@@ -21,4 +20,5 @@
 #include "tgt_direct.h"
 #include "tgt_prefs.h"
 #include "tgt_print.h"
-
+#include "tgt_app.h"
+#include "tgt_protos.h"

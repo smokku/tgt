@@ -1,20 +1,9 @@
-[D] - done
-[C] - currently developed
-[I] - has to be done as soon as possible
-[T] - could be done in deep future ;)
-[N] - we have no idea how to do this but sooner or later this will have
-      to be done :)
-      
-- tgt_createandlink can get the terminal description from the object
-  application wants to link the new object to. [D]
-- better documentation (written by someone who speaks english better than 
-  me ;))) [T]  
-- configuration files reading: ./.tgtrc , ~/.tgtrc and /etc/tgttc [D]
-- basic documentation [D]
-- bugfix in CLASS_MENU after opening more than two sub-menus and
-  then going back to previus ones (by cursor left) -> the first
-  menus are dissapearing [D]
-- dynamic class loading [D]
+- better documentation
+- for some classes - a rewrite of refresh code
+
+- complete rewrite using conception from doc/pl/speedup-concept and many concepts that assume
+  total isolation from keeping absolute object coordinates.
+
 
 
 !!!

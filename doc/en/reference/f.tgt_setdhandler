@@ -1,0 +1,19 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_setdhandler - set immediate input handling function
+
+SYNOPSIS
+
+void tgt_setdhandler(int (*dh)(struct tgt_object* obj, int nsg, int a, char* b));
+
+DESCRIPTION
+
+This function causes all further input events be passed to function dh() before delivering
+to object. The function is required to return 0 (in case the message was not understood by
+handler and needs passing to objects) or 1 (in case the message was interpreted and its
+delivery should be abadoned).
+
+Setting a NULL input handler will cause all messages to be delivered again directly to the
+objects.

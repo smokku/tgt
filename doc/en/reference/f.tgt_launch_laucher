@@ -1,0 +1,59 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_.*launcher.*  - functions dealing with launchers
+
+SYNOPSIS
+
+void * tgt_launch_launcher(void);
+void tgt_halt_launcher(void * linfo);
+
+void * tgt_launcher_system(void * linfo,char * command);
+void tgt_launcher_kill(void * linfo);
+int tgt_launcher_getchildpid(void * linfo);
+
+void tgt_detach_launcher(void* linfo);
+void tgt_attach_launcher(void* linfo, struct tgt_object *obj);
+
+DESCRIPTION
+
+  There is a possibility of running applications inside TGT terminal emulator;
+actually, running applications 'under' TGT was the reason that class was created
+for. Because we were experiencing problems while forcing threaded applications
+to fork(), there is a need to use ,,launchers'', which are just child processes
+of the main application created BEFORE it became threaded, that call fork()
+when it's neccessary to run an external executable.
+
+Launchers allocate pty's on which the executed applications perform all I/O.
+The other end of those ptys can be attached to an termemu object.
+
+tgt_launch_launcher() is used to create a launcher (which means fork()ing and
+allocating proper structures to store PID, state etc.). The returned value
+is a pointer to an internal TGT 'black box' holding launcher data.
+This function may not be called after tgt_async_waitkeys() or pthread_create()
+(from libpthread.so)
+
+tgt_halt_launcher() detaches the launcher, which a pointer to was given as
+an argument, sends a KILL signal to its process, and deallocates memory obtained
+during tgt_launch_launcher(); ie. it just destroys the launcher ;)
+
+tgt_launcher_system() tells a laucher to fork() and execute inside itself 
+/bin/sh -c "command". It is not recommended to call tgt_launcher_system() when
+the launcher already executes a command (in such a situation, run more launchers,
+or use tgt_launcher_kill(). It's good to call this function after tgt_attach_launcher().
+
+tgt_launcher_kill() sends SIGKILL to the application that is currently run by
+a launcher.
+
+tgt_launcher_getpid() returns the PID of the last child process created by a
+launcher (ie. the PID of application that is currently running/was running last)
+
+tgt_attach_launcher() connects a launcher to a termemu object. Do not even
+try to attach a launcher to a different object.
+
+tgt_detach_launcher() disconnects a launcher from termemu.
+
+EXAMPLE
+
+see sample source files delivered with TGT

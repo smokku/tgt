@@ -7,7 +7,7 @@ tgt_start - Initialize TGT library, create a terminal description and return
 
 SYNOPSIS
 
-struct tgt_object * tgt_start(char * terminal, struct tgt_terminal ** t);
+struct tgt_object * tgt_start(char * terminal);
 
 
 DESCRIPTION
@@ -19,30 +19,20 @@ to care about terminal types) and then allocates the root object in TGT
 classes hierachy (the desktop object) and returns a pointer to it or NULL
 if something went wrong.
 
-  The application can also get a pointer to the terminal data structure (for
-instance necessary for creating new objects) by specyfing 't'-a pointer to 
-a pointer variable which will be filled with the terminal description
-object address. 't' might be also NULL (the applicaton might then
-get that pointer from appropiate field in desktop's tgt_object structure) 
-
 tgt_start is functionally equivalent (as for TGT 0.0c2) to:
 
 tgt_init();
-*t=tgt_setterminal(terminal);
-obj=tgt_getdesktop(terminal);
+tgt_setterminal(terminal);
+obj=tgt_getdesktop();
 
 EXAMPLE
 
 int main(int argc,char **argv);
 {
     struct tgt_object *desktop;
-    struct tgt_terminal *myterm;
     (...) /* own initialisation code */
-    desktop=tgt_start(NULL,&myterm);
+    desktop=tgt_start(NULL);
     
     (...) /* the application code itself */
 }
 
-[mteg]
-
-	     

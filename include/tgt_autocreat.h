@@ -90,5 +90,6 @@ struct tgt_ac_objectinfo
              then size specified at xsize is exact, otherwise it's minimal possible
 	     object size (however the object could be enlarged) */
     unsigned char alignment; 
-    struct tgt_terminal * term;
+//    struct tgt_terminal * term;
 };
+

@@ -1,0 +1,279 @@
+02:08 <mteg> ale¿ kontynuuj.[0m
+02:08 <kuguar> no wiec tak..[0m
+02:09 <kuguar> w buforach przestajemy trzymac co konkretnie ma byc drukowane na ekranie[0m
+02:09 <kuguar> no, moze trzymamy - przyda sie do innych celow[0m
+02:09 <kuguar> ale rownolegle mamy bufory, ktore z dzieci znajduje sie w danym miejscu[0m
+02:10 <kuguar> (taka troche inna koncepcja z-bufora)[0m
+02:10 <kuguar> teraz tak:[0m
+02:10 <mteg> tgt_object * screen[X_SIZE][Y_SIZE]; :))[0m
+02:10 <kuguar> chcemy wyswietlic znak[0m
+02:10 <kuguar> wiemy jaki ma byc i jakie atrybuty[0m
+02:11 <kuguar> wstawiamy go w odpowiednie miejsce w buforze kontrolki (for future use - np przesuniecia okien)[0m
+02:11 <kuguar> potem filtrujemy kolejno przez rodzicow[0m
+02:11 <kuguar> kazdy rodzic porownuje czy kontrolka z ktorej przyszlo zadanie jest "u niego" widoczna[0m
+02:12 <kuguar> jesli dotrzemy w ten sposob ze znakiem do desktopu, to wstawiamy go do bufora desktopu i natychmiast drukujemy na ekranie[0m
+02:12 <kuguar> do tego invalidatujemy wszystkie kontrolki przez ktore udalo sie znakowi przejsc (jakims znacznikiem)[0m
+02:13 <kuguar> zebysmy pozniej przy rebuild_parent() wiedzieli, ze niektore dzieci sa "niewazne" i je rowniez musimy przerysowac w calosci[0m
+02:13 <kuguar> gra?[0m
+02:13 <mteg> mia³bym do Ciebie pro¶bê...[0m
+02:14 <mteg> ... omawiaj swoje pomys³y oszczêdniej ... bo d³ugo trwa takie przekazywanie my¶li a mnie a¿ korci ¿eby Ci przerwaæ bo np. siê (¼le) domy¶lam co dalej i chcê burzyæ ca³± koncepcjê ;)[0m
+02:14 <kuguar> tylko niektore kontrolki moga dzialac w ten sposob - inne moga tradycyjnie wolac rebuild_parent() za kazda zmiana[0m
+02:15 <mteg> a ja bym zrobi³ tak:[0m
+02:15 <kuguar> ba, zamiast invalidacji mozemy po prostu wstawiac znak do bufora kazdego kolejnego rodzica i isc dalej - to nawet prostsze..[0m
+02:16 <mteg> ok, jak skoñczysz to daj znaæ.[0m
+02:16 <mteg> w sensie mówiæ.[0m
+02:16 [msg>mteg] mteg[0m
+02:16 <kuguar> ostanie zdanie podsumowujace - niektore kontrolki (normalne, np. guziki) tworza sobie po prostu bufory i czekaja zeby rodzic cos z tym zrobil,[0m
+02:16 <kerozorek> br.. zimno w nocy jest[0m
+02:16 [mteg(mtg@shaerrawedd.elsat.net.pl)] mteg[0m
+02:17 ùíù Channel userlist for #jaszczur at (02:17am):[0m
+02:17 [@boak     ][jaszczur@pa121.radzymin.sdi.tpnet.pl     ][n/a]0[0m
+02:17 [@elk      ][wysek@pa7.solec.sdi.tpnet.pl             ][n/a]0[0m
+02:17 [@kerozorek][kaczorek@pa42.warszawa.sdi.tpnet.pl      ][n/a]0[0m
+02:17 [@kuguar   ][smoku@pa121.radzymin.sdi.tpnet.pl        ][n/a]0[0m
+02:17 [@mteg     ][mtg@shaerrawedd.elsat.net.pl             ][n/a]0[0m
+02:17 [@Piaskowy ][mzieba@proxima.unixsyndrome.com          ][n/a]0[0m
+02:17 <kuguar> ale niektore takie jak termemu czy directbuffer chcialyby jak najszybciej "strzelac literami w ekran"[0m
+02:17 <kuguar> -- koniec --[0m
+02:17 <mteg> kurde.[0m
+02:17 ùíù #jaszczur [-ooo boak kuguar mteg] by mteg[0m
+02:17 ùíù #jaszczur [-o+b mteg *!mtg@*.net.pl] by Piaskowy[0m
+02:17 ùíù #jaszczur [+o boak] by Piaskowy[0m
+02:18 <kerozorek> rotfl[0m
+02:18 <kerozorek> o so chodzi ?:>[0m
+02:18 <<< #jaszczur, mteg [mtg@shaerrawedd.elsat.net.pl] : apff, nie bêdzie +m i kaczorek jako moderator to nie.[0m
+02:19 ùíù SWAP: No such window: 5[0m
+02:21 >>> #jaszczur, mteg [mtg@shaerrawedd.elsat.net.pl][0m
+02:21 ùíù #jaszczur topic : jeszcze wczoraj chcialem zmienic w sobie cos ...[0m
+02:21 ùíù [Users(#jaszczur:6)] [0m
+02:21 [ mteg      ] [@kuguar    ] [@kerozorek ] [@Piaskowy  ] [@elk       ] [0m
+02:21 [@boak      ] [0m
+02:21 ùíù #jaszczur [+o mteg] by boak[0m
+02:21 ùíù BitchX: Join to #jaszczur was synched in 0.542 secs!![0m
+02:21 <<< #jaszczur, kuguar [smoku@pa121.radzymin.sdi.tpnet.pl] : kuguar[0m
+02:22 >>> #jaszczur, kuguar [smoku@pa121.radzymin.sdi.tpnet.pl][0m
+02:22 ùíù #jaszczur [+o kuguar] by boak[0m
+02:22 <boak> [kuguar] Panie! (smoku)[0m
+02:23 ùíù #jaszczur [-bbb *!*@gphobby.krakow.pl *!*ciekomp@* *!*poluvex@*] by kuguar[0m
+02:23 ùíù #jaszczur [-b *fo*ow*!*@*] by kuguar[0m
+02:23 ùíù #jaszczur [+bbb *!*@gphobby.krakow.pl *!*ciekomp@* *!*poluvex@*] by kuguar[0m
+02:23 <mteg> erhm. mo¿emy kontynuowaæ?[0m
+02:23 <kuguar> juz ci przeszlo? ;>[0m
+02:24 <mteg> <mteg> nic. nie mogˆ rozmawia‘ z nim na standartowych zasadach przekrzykiwania[0m
+02:24 <mteg>           siˆ, jestem zbyt zmˆczony ..[0m
+02:24 <kerozorek> a³a.[0m
+02:24 <mteg> nie, po prostu skupi³em siê w sobie ..[0m
+02:24 <mteg> i jednak bêdê krzycza³ :P [0m
+02:24 <mteg> ;)[0m
+02:24 <mteg> mogê zatem zaczynaæ?[0m
+02:24 <kuguar> nawijaj[0m
+02:24 <mteg> zatem ja bym zrobi³ tak ...[0m
+02:25 <kerozorek> kuguar: a ty nic nie mów dopóki mteg nie skoñczy, ok ?:>[0m
+02:25 <kuguar> kerozorek: wlasnie taki mialem zamiar, ale mnie sprowokowales[0m
+02:26 <mteg> 1) globalny bufor ... w strukturce terminala ... xs*ys pól struct tgt_object * .. updatowany przy ka¿dym rebuild_parent (IMO do zrobienia) ... taki bufor przyda siê bardzo do obs³ugi myszy bo jak na razie ka¿dy event to procka która szuka w co uderzy³ kursor (rekursywna) ...[0m
+02:27 <mteg> 2) tgt_cheap_refresh(object, x, y, xs, ys) - który sprawdza punkt-po-punkcie, czy obszar (x,y)-(x+xs,y+ys) z bufora obiektu jest widoczny ... i je¶li tak to pastuje go do buforów i wyprowadza na ekran bez zbêdnych rebuildów, zgodnie z tym co Ty poda³e¶ ...[0m
+02:28 <mteg> w gruncie rzeczy, to co mam na my¶li to Twoja koncepcja ..[0m
+02:28 <mteg> .. tylko ³adniej u³o¿ona.[0m
+02:28 <kuguar> moge?[0m
+02:28 <mteg> 10 9 8 7 6 5 4 3 2 1[0m
+02:29 <mteg> po prostu w takiej sytuacji tgt_cheaprefresh() by³oby zastrze¿one do internal-usage tgt, podczas gdy normalne refresh() by³oby rather do u¿ycia jako funkcja API w aplikacjach korzystaj±cych z tgt.[0m
+02:29 <mteg> -- odbiór --[0m
+02:30 ùíù SWAP: No such window: 5[0m
+02:30 <kuguar> 1) bardzo sprytne rozwiazanie naszej dlugiej dyskuzji o z-buforze[0m
+02:30 <kuguar> 2) imo niepotrzebne - termemu i tak robi to znak po znaku[0m
+02:30 <mteg> oja.[0m
+02:31 <kerozorek> mteg: !!!!!!1[0m
+02:31 <mteg> przepraszam.[0m
+02:31 <mteg> kerozorek a Ty nie !!!-uj tylko kop mnie :P[0m
+02:31 <kuguar> ad.1) (tej w ktorej zastanawialismy sie w jaki sposob wlasciwie numerowac obiekty)[0m
+02:31 <kuguar> ---[0m
+02:32 <mteg> bufory wewnêtrzne obiektów lepsze od Zbuffera i tak s± .. IMO ...[0m
+02:32 <mteg> ale ad 2.) ..[0m
+02:33 <mteg> ja tu siê staram wymy¶liæ jakie¶ uniwersalne rozwi±zanie ... =][0m
+02:33 <mteg> a nie tylko do termemu[0m
+02:33 <kuguar> moge?[0m
+02:33 <kerozorek> ehh.[0m
+02:33 <mteg> ehh. no i co ja poradzê?[0m
+02:33 <mteg> -- odbiór --[0m
+02:34 <kuguar> kerozorek: <bo on teraz wklepie 2kB tekstu zeby mnie przekonac, a ja i tak jestem juz przekonany> ;][0m
+02:34 <kuguar> 1) oczywiscie, ze to co mamy teraz jest debesciak i nie wrocimy do koncepcji z-bufora[0m
+02:35 <kuguar> 1) ten buforek bardzo sie przyda - tylko ze bez odpowiednikow w kazdej kontrolce, to trudno ci bedzie go odswierzac..[0m
+02:35 <kuguar> 2) jestem przekonany..[0m
+02:35 <kuguar> przeciez mozna zrobic funkcje odswierzajaca jeden znak[0m
+02:36 <kuguar> a potem zamknac ja w funkcji cheap_refresh()[0m
+02:36 <kuguar> ad1) a moze zamiast bufora w kontrolkach trzymajacego atrybut+znak[0m
+02:37 <kuguar> zrobic bufor trzymajacy struktury {atrybut, znak, wskaznik na obiekt skad to sie wzielo}[0m
+02:37 <kuguar> -- over --[0m
+02:37 <kerozorek> kuguar: <to, ¿e ty jeste¶ przekonany, to nie znaczy, ¿e twój pomys³ jest najlepszy> :>[0m
+02:38 <kuguar> kerozorek: <ale ja jestem przekonany do _jego_ pomyslu>[0m
+02:38 <kerozorek> kuguar: <aha>[0m
+02:38 <kerozorek> kuguar: <no to siê nie zrozumieli¶my:>[0m
+02:39 <mteg> ad. ad1) jak na mnie to nie. bo mi to skomplikuje sprawdzanie czy co¶ siê w terminalu zmieni³o ,wiêcej bajtów do memcmp()owania itp .. lepiej po prostu osobny pointer w obiekcie ...  struct tgt_object ** objectareamap_buffer; kucze ... w ogóle to mi siê to nie podoba, bo dochodzi nastêpne memcpy() przy rebuild_parent .. ale zak³adaj±c, ¿e dziêki temu to ostatnie bêdzie rzadziej wywo³ywane ...[0m
+02:39 <mteg> ad. 2 ...[0m
+02:40 <mteg> hm. no ja gdzie¶ poczyta³em , ¿e zawsze lepiej hurtem robiæ ;))[0m
+02:40 <mteg> ale IMO tak mo¿na zrobiæ na pocz±tek ..[0m
+02:40 <mteg> ¿eby za bardzo nie komplikowaæ[0m
+02:41 <mteg> -- over --[0m
+02:41 <kuguar> ale to hurtem i tak skladaloby sie z kolejnego wolania pojedynczych.. ;]  a termemu wie, ze chce wlac pojedyncze i moze wolac je bezposrednio[0m
+02:41 <kuguar> ale to ty jestes tu code-wizz'em, wiec rob jak uwazasz za lepiej[0m
+02:42 ùíù Usage: /SET  - Set Variables[0m
+02:42 ùíù Value of LOGFILE set to /home/mteg/devel/TextGUIToolkit/tgt/doc/pl/speedup-concept[0m
+02:42 <kuguar> ad1) nie widze mozliwosci innego zrobienia tego - pomysl z oddzielna tablica jest ok - tak mi sie tylko struktura jako bardziej generic nasunela..[0m
+02:42 ùíù Starting logfile /home/mteg/devel/TextGUIToolkit/tgt/doc/pl/speedup-concept[0m
+02:42 ùíù Value of LOG set to ON[0m
+[1;31mù[0m[1;37mí[1;31mù[0m End of Lastlog
+[0;34m<[0mmteg[0;34m>[0m  Starting logfile[0m
+[0;34m<[0mmteg[0;34m>[0m           /home/mteg/devel/TextGUIToolkit/tgt/doc/pl/speedup-concept[0m
+[0;34m<[0mmteg[0;34m>[0m (...)[0m
+[0;34m<[0mmteg[0;34m>[0m  End of Lastlog[0m
+IRC log ended Sun Jun 10 02:43:51 2001
+[1;31mù[0m[1;37mí[1;31mù[0m Starting logfile /home/mteg/devel/TextGUIToolkit/tgt/doc/pl/speedup-concept
+IRC log started Sun Jun 10 02:43:57 2001
+[1;31mù[0m[1;37mí[1;31mù[0m Value of LOG set to ON
+[1;34m<[0mkuguar[1;34m>[0m wiec latwiej jest zrobic to kopiujac element jednej tablicy, niz ten sam element z trzech tablic na przyklad[0m
+[1;31mù[0m[1;37mí[1;31mù[0m [0m#plug [1;30m[[1;37m+l 2038068182[1;30m][0m by [1;37m^raven[0m
+[1;34m<[0mkuguar[1;34m>[0m przy porownaniach.. no to tylko przy blit'cir calego desktopu bierzesz pod uwage tylko znaki[0m
+[1;34m<[0mkuguar[1;34m>[0m -- over --[0m
+[0;34m<[0mmteg[0;34m>[0m ee nie .. skoro ju¿ mamy obiektow± koncepcjê, to musimy przyj±æ, ¿e wyj±tki suxx. eno, IMO to jest detal .. ale ³atwiej by po prostu by³o jakby to by³o osobno .. bo to dwie zupe³nie odrêbne rzeczy - grafika i management.[0m
+[1;31mù[0m[1;37mí[1;31mù[0m [0m#jaszczur topic by [1;37mkuguar[1;30m:[1;37m jeszcze wczoraj chcialem zmienic w sobie cvs ...[0m
+[0;34m<[0mmteg[0;34m>[0m -- over --[0m
+[1;31m-[1;37m>[1;31m- [0;36mSoboL^_ [0m-> [1;36mMiSoboL^[0m
+[1;31mù[0m[1;37mí[1;31mù[0m SWAP: Window 2 is not hidden!
+[1;31mù[0m[1;37mí[1;31mù[0m SWAP: Window 2 is not hidden!
+[1;34m<[0mkuguar[1;34m>[0m to ad1, czy 2?[0m
+[1;34m<[0mkuguar[1;34m>[0m -- over --[0m
+[0;34m<[0mmteg[0;34m>[0m nie numerowa³e¶ zagadnieñ to nie wiem które jest które.[0m
+[0;34m<[0mmteg[0;34m>[0m <kuguar> przy porownaniach.. no to tylko przy blit'cir calego desktopu[0m
+[0;34m<[0mmteg[0;34m>[0m           bierzesz pod uwage tylko znaki[0m
+[0;34m<[0mmteg[0;34m>[0m to by³o odno¶nie tego.[0m
+[0;34m<[0mmteg[0;34m>[0m -- over --[0m
+[1;34m<[0mkuguar[1;34m>[0m numerowalem.. pierwszy fragment jest do 2, a od "ad 1)" jest do 1[0m
+[1;34m<[0ml[1;34m>[0m ^raven: je¿u, znowu?[0m
+[1;34m<[0m^raven[1;34m>[0m kurde[0m
+[1;34m<[0m^raven[1;34m>[0m znow[0m
+[1;34m<[0ml[1;34m>[0m (co to w ogóle ma byæ?)[0m
+[1;34m<[0m^raven[1;34m>[0m a bo ja wiem[0m
+[1;34m<[0m^raven[1;34m>[0m BX jest glupi[0m
+[1;31mù[0m[1;37mí[1;31mù[0m [0m#plug [1;30m[[1;37m-o ^raven[1;30m][0m by [1;37m^raven[0m
+[1;34m<[0ml[1;34m>[0m no wybacz[0m
+[1;34m<[0ml[1;34m>[0m u¿ywam BX tyle czasu[0m
+[1;34m<[0mkerozorek[1;34m>[0m ciekawe kto wymy¶li³ ludzi...[0m
+[1;34m<[0ml[1;34m>[0m i mi tak nigdy nie zrobi³[0m
+[1;34m<[0mkuguar[1;34m>[0m no bo zastanawiam sie jak updatowac dablice wskaznikow na obiekty w terminalu[0m
+[1;34m<[0m^raven[1;34m>[0m wiesz ja tez[0m
+[1;34m<[0m^raven[1;34m>[0m i ostatnio zaczal miec shizy[0m
+[1;34m<[0m^raven[1;34m>[0m na BX'ie jade z 4-5 lat[0m
+[1;34m<[0m^raven[1;34m>[0m i tutaj jakies +l[0m
+[1;34m<[0mkuguar[1;34m>[0m trudno byloby to zrobic bez odpowiadajacych mu tablic w samych obiektach[0m
+[1;34m<[0m^raven[1;34m>[0m moze mam wersje jakas nie-taka [0m
+[1;31mù[0m[1;37mí[1;31mù[0m [0m#plug [1;30m[[1;37m-l[1;30m][0m by [1;37ml[0m
+[0;34m<[0mmteg[0;34m>[0m stopstop[0m
+[1;34m<[0m^raven[1;34m>[0m musze upgradnac[0m
+[1;34m<[0ml[1;34m>[0m daj /chanst[0m
+[1;34m<[0mkuguar[1;34m>[0m kopiowanych i modyfikowanych coraz wyzej tak samo jak wszystkie znaki[0m
+[1;34m<[0ml[1;34m>[0m i czy masz limit checking czy co¶?[0m
+[0;34m<[0mmteg[0;34m>[0m always always avoid redundancy[0m
+[1;34m<[0mkuguar[1;34m>[0m - pause -[0m
+[0;34m<[0mmteg[0;34m>[0m ja to ju¿ wiem.[0m
+[1;34m<[0m^raven[1;34m>[0m   There is no limit and limit checking is Disabled[0m
+[0;34m<[0mmteg[0;34m>[0m bo to ju¿ ustalili¶my.[0m
+[1;34m<[0ml[1;34m>[0m huh[0m
+[1;34m<[0ml[1;34m>[0m wiadomo.[0m
+[0;34m<[0mmteg[0;34m>[0m teraz o detalach rozmawiamy[0m
+[1;34m<[0m^raven[1;34m>[0m mam wszystko off[0m
+[0;34m<[0mmteg[0;34m>[0m czy trzymaæ to razem czy w kupie[0m
+[1;34m<[0mKooba[1;34m>[0m dupa ja¶ka.[0m
+[1;34m<[0mKooba[1;34m>[0m ;P[0m
+[1;31mù[0m[1;37mí[1;31mù[0m [0m#plug topic by [1;37mKooba[1;30m:[1;37m klóp¶.[0m
+[1;34m<[0mkuguar[1;34m>[0m -- - -[0m
+[1;34m<[0mkerozorek[1;34m>[0m 'razem czy w kupie' ?:>[0m
+[1;34m<[0mkuguar[1;34m>[0m imo to bez roznicy[0m
+[1;34m<[0m^raven[1;34m>[0m csety tez dobrze ustawione[0m
+[0;34m<[0mmteg[0;34m>[0m rotfl[0m
+[1;34m<[0m^raven[1;34m>[0m zaraz obadam czy nie ma nowej wersji bxa[0m
+[0;34m<[0mmteg[0;34m>[0m s/razem/osobno/[0m
+[1;34m<[0mkerozorek[1;34m>[0m imo te¿ bez ró¿nicy :>[0m
+[1;34m<[0mkuguar[1;34m>[0m tzn. ty lepiej uznasz czy wygodniej jest ci razem, czy w kupie[0m
+[1;34m<[0mkerozorek[1;34m>[0m rotfl[0m
+[1;34m<[0mkerozorek[1;34m>[0m mteg: do fortune :>[0m
+[1;34m<[0mkuguar[1;34m>[0m ja tylko chcialem zwrocic uwage, ze z _teoretycznego_ punktu widzenia zawsze bedziesz manipulowal wszystkimi na raz, wiec moze lepiej w kupie...[0m
+[1;34m<[0mKooba[1;34m>[0m a ja musze odtwrozyc backup[0m
+[1;34m<[0mKooba[1;34m>[0m przekopulowac kernel[0m
+[1;34m<[0mKooba[1;34m>[0m odpalic router.[0m
+[1;34m<[0mKooba[1;34m>[0m :\[0m
+[1;34m<[0mkuguar[1;34m>[0m IMO to bez roznicy ==> dla mnie to bez roznicy, bo to nie ja bede to kodowal[0m
+[1;31mù[0m[1;37mí[1;31mù[0m [0m#jaszczur topic by [1;37mkerozorek[1;30m:[1;37m <mteg> czy trzymaæ to razem czy w kupie[0m
+[1;34m<[0mkerozorek[1;34m>[0m nieno, text tygodnia :>[0m
+[1;31mù[0m[1;37mí[1;31mù[0m [0m#jaszczur topic by [1;37mkuguar[1;30m:[1;37m czytac miedzy wierszami, a nie od razu wybierac najmniej sensowna wersje[0m
+[1;34m<[0mkerozorek[1;34m>[0m ej :<[0m
+[1;31mù[0m[1;37mí[1;31mù[0m [0m#jaszczur topic by [1;37mmteg[1;30m:[1;37m my¶leæ, my¶leæ, my¶leæ ... co oczywi¶cie nie przeszkadza w czepianiu siê.[0m
+[0;34m<[0mmteg[0;34m>[0m <kuguar> tzn. ty lepiej uznasz czy wygodniej jest ci razem, czy w kupie[0m
+[0;34m<[0mmteg[0;34m>[0m to by³ sarkazm/ironia ?[0m
+[0;34m<[0mmteg[0;34m>[0m czy naprawdê siê zrozumieli¶my ? :>>>[0m
+[1;34m<[0mkuguar[1;34m>[0m ja od razu zrozumialem ze chodzi ci o oddzielnie/razem i przeszedlem do porzadku dziennego[0m
+[1;34m<[0m^raven[1;34m>[0m sssam ircii-pana-1.0c18.tar.gz [0m
+[1;34m<[0m^raven[1;34m>[0m moze nie bedzie sie buraczyc[0m
+[1;34m<[0mkerozorek[1;34m>[0m no ja te¿, ale to fajnie zabrzmia³o :>[0m
+[1;34m<[0mkuguar[1;34m>[0m po co to wyciagac na wierzch i toczyc bezcelowa dyskusje tak jak teraz?[0m
+[0;34m<[0mmteg[0;34m>[0m ehhh, przekazywanie my¶li za pomoc± zestawu 24 kszta³tów ewidentnie suxx.[0m
+[1;34m<[0mKooba[1;34m>[0m od pana?[0m
+[1;34m<[0mKooba[1;34m>[0m ;:[0m
+[1;34m<[0mKooba[1;34m>[0m >[0m
+[1;34m<[0m^raven[1;34m>[0m panasync[0m
+[1;34m<[0m^raven[1;34m>[0m ftp://ftp.bitchx.com/pub/BitchX/source/ircii-pana-1.0c18.tar.gz   [0m
+[1;34m<[0mkuguar[1;34m>[0m a za pomoca niewiele wiekszej liczby dzwiekow? ale wrocmy do tematu[0m
+[1;34m<[0ml[1;34m>[0m ftp://lam.sk/pub/people/lam/irc/[0m
+[0;34m<[0mmteg[0;34m>[0m ja chcê link ... np. dwie synapsy, Rx i Tx i to do serial portu .. kuguar u siebie to samo .. , cross i tunelowanie po TCP/IP.[0m
+[1;34m<[0ml[1;34m>[0m szybciej ci bêdzie[0m
+[1;34m<[0ml[1;34m>[0m i Tclki s±[0m
+[1;34m<[0mkuguar[1;34m>[0m konkluzja: implementacje pozostawiam tobie, ale chcialem tylko zwrocic uwage na pewien aspekt[0m
+[1;34m<[0m^raven[1;34m>[0m ja na polpaku nie jestem[0m
+[1;34m<[0m^raven[1;34m>[0m tylko na ip[0m
+[1;34m<[0ml[1;34m>[0m ach[0m
+[1;34m<[0ml[1;34m>[0m przykro mi :)[0m
+[1;34m<[0m^raven[1;34m>[0m hehe[0m
+[1;34m<[0m^raven[1;34m>[0m do polpaku nie jest tak traficznie[0m
+[1;34m<[0m^raven[1;34m>[0m przez proxy jade jak cos[0m
+[1;34m<[0mkuguar[1;34m>[0m czyli co? dodajemy ten kaskadowy, hierarchiczny z-bufor?[0m
+[1;34m<[0mKooba[1;34m>[0m Playing MPEG stream from DeadKennedys-HolidayinCambodia.mp3 ...[0m
+[0;34m<[0mmteg[0;34m>[0m to *nie* jest z-bufor. ale dodajemy. w 2.0 .. w sensie .. 2.0 bêdzie po wypuszczeniu 1.0spm1[0m
+[0;34m<[0mmteg[0;34m>[0m a 1.0spm1 zostanie wypuszczone kiedy zostan± dokoñczone obecne modyfikacje:[0m
+[0;34m<[0mmteg[0;34m>[0m czyli:[0m
+[0;34m<[0mmteg[0;34m>[0m  - doc/en/reference/*[0m
+[0;34m<[0mmteg[0;34m>[0m   - examples/ , tgml/sample[0m
+[0;34m<[0mmteg[0;34m>[0m    - USERS_VIEW_OF_TGT, mo¿e jaki opis .tgtrc krótki[0m
+[0;34m<[0mmteg[0;34m>[0m      - no i opis makr z tgt_acmacros.h , te¿ w miarê nied³ugi.[0m
+[1;34m<[0mkuguar[1;34m>[0m i moja dzialka:[0m
+[1;34m<[0mkuguar[1;34m>[0m  - build-system[0m
+[0;34m<[0mmteg[0;34m>[0m kuguar dzia³a ju¿.[0m
+[1;34m<[0mkuguar[1;34m>[0m skonczyes[0m
+[0;34m<[0mmteg[0;34m>[0m kuguar starczy³o -L ../../.. itp. pododawaæ do ,,moich'' makefili[0m
+[1;34m<[0mkuguar[1;34m>[0m ?[0m
+[1;34m<[0mkuguar[1;34m>[0m acha.[0m
+[1;34m<[0mkuguar[1;34m>[0m to git[0m
+[0;34m<[0mmteg[0;34m>[0m a nie .. [0m
+[0;34m<[0mmteg[0;34m>[0m przepraszam [0m
+[0;34m<[0mmteg[0;34m>[0m to nie zadzia³a w pe³ni tak jak ma[0m
+[1;34m<[0mkuguar[1;34m>[0m (to moje kopiowanie do odpowiednich katalogow dzialalo?)[0m
+[0;34m<[0mmteg[0;34m>[0m tzn. nie bêdzie siê da³o skompilowaæ ,,nie za¶miecaj±c ¼róde³''[0m
+[0;34m<[0mmteg[0;34m>[0m ale fakt faktem ¿e trzeba ten buildsystem zrobiæ ..[0m
+[0;34m<[0mmteg[0;34m>[0m no to ja proponuje tak:[0m
+[1;34m<[0mkuguar[1;34m>[0m to wystaw to gdzies, a ja popracuje[0m
+[1;34m<[0mkuguar[1;34m>[0m trzeba po prostu pododawac $(srcdir) gdzieniegdzie[0m
+[1;34m<[0m^raven[1;34m>[0m /usr/bin/m4: configure.in: 5: Bad expression in eval (bad input): 0 + 13 * 1000 + 2 * 1000000 < 0 + 49b * 1000 + 2 * 1000000[0m
+[1;34m<[0m^raven[1;34m>[0m jezu[0m
+[0;34m<[0mmteg[0;34m>[0m mteg.jaszczur.org/tgt/tgt-0.0f.tar.gz[0m
+[1;30mð [1;33ml/#plug [0mumiera (¶piê.) [9-7e9-MsgLog On][0m
+[0;34m<[0mmteg[0;34m>[0m IMO nie bêdzie zmian w makefilach, poza dodaniem wiêkszej ilo¶ci ¼róde³ w tgml/sample/ i ew. examples/[0m
+[1;34m<[0mkuguar[1;34m>[0m ok[0m
+[1;34m<[0mkuguar[1;34m>[0m kerozorek: dziekuje pieknie za moderowanie[0m
+[1;34m<[0mkuguar[1;34m>[0m i ide juz dzis w kime[0m
+[0;34m<[0mmteg[0;34m>[0m warningi w window.c i status.c ju¿ poprawione[0m
+[1;30m[[0mkerozorek      [1;30m] [[0mkuguar         [1;30m] [[0m               [1;30m] [[0m               [1;30m][0m
+[1;34m<[0mkerozorek[1;34m>[0m branoc kugu¶[0m
+[0;34m<[0mmteg[0;34m>[0m kerozorek ja równie¿ dziêkujê.[0m
+[1;34m<[0mkerozorek[1;34m>[0m mteg: te¿ idzisz?[0m
+[0;34m<[0mmteg[0;34m>[0m kerozorek napiszeesz co¶ w tym tgml'u do ponedzia³ku tak do 6.00 ? :>[0m
+[0;34m<[0mmteg[0;34m>[0m kerozorek nie, ale skoro kuguar wybywa to nie bêdzie ju¿ IMO moderowanie konieczne, conie ? :>[0m
+[1;34m<[0mkuguar[1;34m>[0m a na koniec mozna sie posmiac.. ;][0m
+IRC log ended Sun Jun 10 03:03:25 2001

@@ -1,16 +1,42 @@
 
+0. DOCUMENTATION FILES CONTAINED IN TGT AT THE MOMENT
+ README           - this file
+ INSTALL          - a fragment of this file containing installation instructions
+ COMMON_PROBLEMS  - a file describing how to manage with several problems that
+                    may occur while trying to use TGT; please read this before
+		    mailing us if you think something does not work properly
+		    in TGT
+
+
+
+ doc/en/reference - reference manual of TGT functions and classes for
+                    programmers
+ doc/en/CONCEPTS  - an introduction to tgt programming, incomplete
+ doc/en/WHYNOTC++
+ doc/en/LOOKUP-TABLES - documents that may help to understand the source code
+                    of TGT		    
+ 
+ doc/pl           - obsolete, do not read :)
+ 
+
 1. WHAT IS TGT
 
-TGT (TextmodeGUIToolkit) is a parially object-oriented library for creating
-user interfaces under Linux console. It's designed as an alternative for
-ncurses - however it does not use its philosophy - in TGT model, not only all
-terminal functions but also all GUI management things are done by TGT, thus
-giving the developer a chance to concentrate on more important things in
-his program than user interface. Many TGT concepts are taken from
-AmigaOS / MagicUserInterface for AmigaOS.
+TGT (TextmodeGUIToolkit) is a (mainly) object-oriented library, written in C,
+for creating user interfaces under Linux console. It's designed as an
+alternative for ncurses - however it does not use its philosophy - in TGT
+model, not only all terminal functions but also all GUI management things are
+done by TGT, thus giving the developer a chance to concentrate on more
+important things in his program than user interface; of course it is done at the
+cost of flexibility ...
+
+Some TGT concepts are taken from AmigaOS and MUI (Magic User Interface) for
+AmigaOS.
 
 Currently, the thing we are worrying mostly about is that TGT can not be
 used in programs that intend to be portable.
+
+We plan a total rewrite of tgt mechanisms soon. Any concepts and suggestions are welcome.
+
 
 2. REQUIREMENTS
 
@@ -20,22 +46,25 @@ used in programs that intend to be portable.
 - libutil - also comes with many distributions 
 - libgpm - comes with GPM mouse server
 
-There are mechanisms implemented in TGT that allow it to manage without libutil
-and libgpm when they're not available - some magic configuration scripts will
-propably appear in next versions.
+There are mechanisms implemented in TGT that allow it to work fine without
+libutil and libgpm when they're not available - some magic configuration
+scripts will probably appear in next versions.
 
 - libtermcap - It's not compulsory - actually tgt will manage without it 
             (or with termcap linked to ncurses) - however that kind of
 	    situation will require some tuning in rcfiles, unless your
-	    terminal is a standart linux one
+	    terminal is a standard linux one
 
 3. INSTALLATION
 
+./configure
 make
 make install
+ldconfig
 
 or
 
+./configure
 make
 export LD_LIBRARY_PATH=`pwd`
 
@@ -45,6 +74,10 @@ export LD_LIBRARY_PATH=`pwd`
 
 If you are new to TGT you can try running files from tests/ subdirectory
 in order to get familar with controls, mouse support, etc.
+If You use dynamically loaded classes, make sure TGT is able to
+find them (as for the moment, this means you have to copy fbpic.class
+into one of your libdirs (or use a cheap trick with LD_LIBRARY_PATH)
+if you want to see how tests/fb works)
 
 5. INPUT DEVICES
 
@@ -52,14 +85,18 @@ Default key mappings:
 
 Up
 Left       Switch to the previous object in a window
+
 Tab
 Down
 Right      Switch to the next object in a window
+
 `          Switch windows
+
 Ctrl W     Enter/left window moving mode - when it's turned on, cursor
            keys will let you reposition your windows.
 Enter/
 Space      Perform an action on current object
+
 Esc
 Delete
 Backspace  Part menu
@@ -79,9 +116,9 @@ to understand an example. Also - check doc/en/CONCEPTS and doc/en/reference
 
 If you think you can help developing TGT (especially - if you can make it
 run on 64bit machines (erm, I don't even know if it works - 
-I don't have any account on such computers =/) or you can make it run
+I don't have any access to such computers =/) or you can make it run
 under other systems than linux); or you are able to write new documentation,
-(and of course correct our English in the old documents ;) -
+(and of course correct our english in the old documents ;) -
 please let me know (just mailto mtg@elsat.net.pl)
 
 

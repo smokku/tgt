@@ -10,4 +10,3 @@
 #include <asm/types.h>
 #include <string.h>
 #include <errno.h>
-#include "config.h"

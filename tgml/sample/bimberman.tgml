@@ -1,0 +1,163 @@
+<add inline="extern void command(struct tgt_object *, int);">
+<window name="players" title="Players Setup">
+    <spacing size=1>
+    <group layout="horizontal">
+	<group layout="vertical">
+	    <label text="Player 1" fgcolor="red">
+	    <group layout="horizontal">
+		<label text="Active:">
+		<space>
+		<checkbox>
+	    </group>
+	    <group layout="horizontal">
+		<label text="Nick">
+		<space>
+		<string>
+	    </group>
+		<group layout="horizontal">
+		<label text="Color:">
+		<space>
+		<selectbox id=911>
+		    <item string="Aqua">	11
+		    <item string="Azure">	12
+		    <item string="Crimson">	4
+		    <item string="Cyan">	10
+		    <item string="Firebrick">	7
+		    <item string="Gray">	14
+		    <item string="Green">	3
+		    <item string="Lime">	9
+		    <item string="Magenta">	13
+		    <item string="Navy">	2
+		    <item string="Olive">	5
+		    <item string="Purple">	6
+		    <item string="Silver">	15
+		    <item string="White">	16
+		    <item string="Yellow">	8
+		</selectbox>
+	    </group>
+	    <group layout="horizontal">
+		<label text="Head:">
+		<space>
+		<selectbox id=912>
+		    <item string=" @ ">
+		    <item string=" G ">
+		    <item string=" Q ">
+		    <item string=" C ">
+		</selectbox>
+	    </group>
+	    <space>
+	    <label text="Player 3" fgcolor="red">
+	    <group layout="horizontal">
+		<label text="Active:">
+		<space>
+		<checkbox>
+	    </group>
+	    <group layout="horizontal">
+		<label text="Nick">
+		<space>
+		<string>
+	    </group>
+		<group layout="horizontal">
+		<label text="Color:">
+		<space>
+		<selectbox id=921 width=13>
+		</selectbox>
+	    </group>
+	    <group layout="horizontal">
+		<label text="Head:">
+		<space>
+		<selectbox id=922 width=13>
+		</selectbox>
+	    </group>
+	</group>
+	<group layout="vertical">
+	    <label text="Player 2" fgcolor="red">
+	    <group layout="horizontal">
+		<label text="Active:">
+		<space>
+		<checkbox>
+	    </group>
+	    <group layout="horizontal">
+		<label text="Nick">
+		<space>
+		<string>
+	    </group>
+		<group layout="horizontal">
+		<label text="Color:">
+		<space>
+		<selectbox id=931 width=13>
+		</selectbox>
+	    </group>
+	    <group layout="horizontal">
+		<label text="Head:">
+		<space>
+		<selectbox id=932 width=13>
+		</selectbox>
+	    </group>
+	    <space>
+	    <label text="Player 4" fgcolor="red">
+	    <group layout="horizontal">
+		<label text="Active:">
+		<space>
+		<checkbox>
+	    </group>
+	    <group layout="horizontal">
+		<label text="Nick">
+		<space>
+		<string>
+	    </group>
+		<group layout="horizontal">
+		<label text="Color:">
+		<space>
+		<selectbox id=941 width=13>
+		</selectbox>
+	    </group>
+	    <group layout="horizontal">
+		<label text="Head:">
+		<space>
+		<selectbox id=942 width=13>
+		</selectbox>
+	    </group>
+	</group>
+    </group>
+</window>
+<window name="connect" title="Multiplayer Network">
+    <group layout="horizontal">
+	<group layout="vertical">
+	    <label text="Connected players">
+	    <list framecolor="grey" width=30 height=11>
+		<item string="Player 1">
+		<item string="Player 2">
+		<item string="Player 3">
+	    </list>
+	    <checkbox caption="I'm ready!" align="hright">
+	</group>
+	<space>
+	<group layout="vertical" align="vbottom">
+	    <label text="Allowed items"> #jesli zostana zmienione, to automatycznie wylacza sie allow
+	    <checkbox caption="+1 bomb" state="on">
+	    <checkbox caption="+1 power" state="on">
+	    <checkbox caption="+1 speed" state="on">
+	    <checkbox caption="-1 bomb">
+	    <checkbox caption="-1 speed">
+	    <checkbox caption="auto-bomb" state="on">
+	    <checkbox caption="instant-boom" state="on">
+	    <checkbox caption="bomb kicking" state="on">
+	    <checkbox caption="bomb throwing">
+	    <checkbox caption="invulnerability">
+	    <checkbox caption="walk through walls" state="on">
+	    <checkbox caption="ghosts">
+	</group>
+	<space>
+    </group>
+    <textbuffer border="grey" height=8 id=900>
+    <group layout="horizontal">
+	<string string="-Hit <Enter> here-" callback="command" id=100>
+	<selectbox>
+	    <item string="  All  ">
+	    <item string="Player 1">
+	    <item string="Player 2">
+	    <item string="Player 3">
+	</selectbox>
+    </group>
+</window>

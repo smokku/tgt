@@ -1,11 +1,10 @@
 #include "tgt.h"
 #include "tgt_app.h"
-#include "tgt_menu.h"
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
     struct tgt_object *desktop;
-    struct tgt_terminal *myterm;
     struct tgt_object *menu;
     struct tgt_object *status;
 /* Callbacks */
@@ -24,7 +23,7 @@ void cyclechange(struct tgt_object *obj,int id)
 
 void hotkeys(struct tgt_object *obj,int k)
 {
-    if(k==TGT_KEY_ESC) 
+    if(k==TGT_KEY_ESC || k==TGT_KEY_MOUSEUP) 
     tgt_menu_enable(menu,5,0);
 }
 
@@ -34,7 +33,7 @@ int main()
     struct tgt_object *submenu;
     
 
-    desktop=tgt_start(NULL,&myterm);
+    desktop=tgt_start(NULL);
     window=tgt_createandlink(desktop,TGT_CLASS_WINDOW,(tagitem[]) {TGTT_X,10,TGTT_Y,5,TGTT_XS,60,TGTT_YS,15,TGTT_WINDOW_TITLE,(tgtt) "Menu Class Test",TGTT_CALLBACK,(tgtt) hotkeys,TGTT_END,0});
     tgt_createandlink(window,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,50,TGTT_Y,12,TGTT_BUTTON_CAPTION,(tgtt) "[Exit]",TGTT_CALLBACK, (tgtt) shutdown,TGTT_END,0});
 //    tgt_createandlink(window,TGT_CLASS_BUTTON,(tagitem[]) {TGTT_X,5,TGTT_Y,6,TGTT_BUTTON_CAPTION,(tgtt) "[Context Menu]",TGTT_CALLBACK,(tgtt) newmenu,TGTT_END,0});
@@ -42,22 +41,31 @@ int main()
     tgt_createandlink(window,TGT_CLASS_SELECTBOX,(tagitem[]) {TGTT_X,5,TGTT_Y,5,TGTT_XS,20,TGTT_SELECTBOX_ITEMS,(tgtt) (char*[]) { "Item One","Item Two","Item Three",NULL },TGTT_CALLBACK,(tgtt) cyclechange,TGTT_END,0});
     status=tgt_createandlink(window,TGT_CLASS_LABEL,(tagitem[]) {TGTT_X,5,TGTT_Y,12,TGTT_LABEL_TEXT,(tgtt) "Press <ESC> to enter the menu",TGTT_END,0});
     
-    submenu=tgt_menu_getcontext(myterm);
+    submenu=tgt_menu_getcontext();
     tgt_menu_add(submenu,"Submenu Item Number One",0,NULL);
     tgt_menu_add(submenu,NULL,0,NULL);
     tgt_menu_add(submenu,"Submenu Nonselectable item",1,NULL);
+    tgt_menu_add(submenu,"Submenu Nonselectable item turned selectable",1,NULL);
     tgt_menu_add(submenu,"Submenu Item Number Two",0,NULL);
+    tgt_menu_selectability(submenu, 3, 1);
+    tgt_menu_insert(submenu,0,"Additionally inserted item",0,NULL);
+
     
-    
-    menu=tgt_menu_getcontext(myterm);
+    menu=tgt_menu_getcontext();
+    tgt_menu_add(menu,"Main menu position to delete",0,NULL);
     tgt_menu_add(menu,"Main menu position one",0,NULL);
     tgt_menu_add(menu,NULL,0,NULL);
     tgt_menu_add(menu,"Main menu position two",0,NULL);
     tgt_menu_add(menu,"Main menu position three",0,NULL);
     tgt_menu_add(menu,NULL,0,NULL);
-    tgt_menu_add(menu,"Submenu gateway       >>",0,submenu);
+    tgt_menu_add(menu,NULL,0,NULL);
     tgt_menu_add(menu,NULL,0,NULL);
     tgt_menu_add(menu,"Main menu position four",0,NULL);
+    tgt_menu_add(menu,"Main menu position to delete",0,NULL);
+
+    tgt_menu_modify(menu, 6,"Submenu gateway       >>",0,submenu);
+    tgt_menu_delete(menu, 9);
+    tgt_menu_delete(menu, 0);
 
     tgt_link(menu,window);
     

@@ -2,12 +2,15 @@ TGT Reference Manual: Functions
 
 NAME
 
-tgt_set - set an object attribute
+tgt_set         - modify object properties
+tgt_get         - read object properties
+tgt_direct_get
 
 SYNOPSIS
 
 int tgt_set(struct tgt_object *obj,tgtt tag,tgtt value);
 int tgt_get(struct tgt_object *obj,tgtt tag,tgtt *ptr);
+tgtt tgt_direct_get(struct tgt_object * obj, tgtt tag);
 
 DESCRIPTION
 
@@ -18,8 +21,11 @@ have a look at c.* files.
 Similarly, tgt_get saves the attribute 'tag' of object 'obj' into
 variable pointed by ptr. 
 
-Both functions return 1 if the attribute was sucessfully set or saved and
-0 when something went wrong.
+tgt_get and tgt_set functions return 1 if the attribute was sucessfully set or
+saved and 0 when something went wrong.
+
+tgt_direct_get() acts just like tgt_get(), but the tag value is passed as
+a return value. There is no error control while using this function.
 
 EXAMPLE
 

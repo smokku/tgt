@@ -1,0 +1,18 @@
+
+
+# section name
+[terminal]
+
+# Uncomment to have no semigraphics after all
+# gfx=-|[]++++
+# gfx_start=
+# gfx_end=
+
+# Uncomment to have semigraphics under screen
+# (Thanks to kaczorek, <kaczorek@msg.beta.pl>)
+# gfx_start=\x1b(0l
+# gfx_end=\x1b(1l
+
+
+# ... another section ...
+[button]

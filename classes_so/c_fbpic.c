@@ -16,6 +16,8 @@ struct imgdata
 };
 
 
+extern struct tgt_terminal * g_terminal;
+
 void fb_simpleresize(unsigned char * src,int sx,int sy,unsigned char * dest,int dx,int dy)
 {
     int y,x,p;
@@ -45,8 +47,8 @@ int classmain(struct tgt_object *obj,int type,int a,void *b)
 	    iw->y_size=tgt_getnumtag(b,TGTT_FBPIXMAP_YSIZE,0);
 	    getCurrentRes(&x,&y);
 	    iw->fbxr=x;iw->fbyr=y;
-	    iw->cxs=iw->fbxr/obj->term->x_size;
-	    iw->cys=iw->fbyr/obj->term->y_size;
+	    iw->cxs=iw->fbxr/g_terminal->x_size;
+	    iw->cys=iw->fbyr/g_terminal->y_size;
 	    iw->rbx=iw->cxs*obj->xs;
 	    iw->rby=iw->cys*obj->ys;
     

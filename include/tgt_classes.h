@@ -12,7 +12,7 @@ struct tgt_listnode
 struct tgt_object
 {
     struct tgt_listnode ln;
-    struct tgt_terminal *term; 
+//    struct tgt_terminal *term; 
     /* Terminal description to use when rendering object */
     int (*classf) (struct tgt_object *,int,int,void*);
     /* The class functions, takes a pointer to object structure,
@@ -27,8 +27,11 @@ struct tgt_object
 		    callbacks */
     void *class_data;
     /* Depends on classf */
-    void *user_data;
+    void *classlink_data;
     /* Depends on classf */
+    void *user_data;
+    unsigned char user_data2;
+    /* whatever user wants */
 /*    int active; */
 /* Nie istnieje od v 0.07 */
     unsigned char objflags;
@@ -36,6 +39,7 @@ struct tgt_object
     int *prev_keys;	/* Keys switching to previous child. */
     int *next_keys;	/* Keys switching to next child. */
     tgt_cell * visual_buffer;
+    int socket;
 };
 
 
@@ -97,6 +101,8 @@ jest _po_ odpytaniu rodzicow o to czy rozumieja
 #define TGT_OBJFLAGS_DONOTKILL 16
 #define TGT_OBJFLAGS_RECURSIVEKILL 32
 
+#define TGT_OBJFLAGS_NETLINKED 64
+
 
 
 #define TGT_OBJFLAGS_REFRESHBASE 4
@@ -131,3 +137,5 @@ jest _po_ odpytaniu rodzicow o to czy rozumieja
 #define tgt_refresh(x) tgt_do_refresh(x,1)
 #define tgt_single_refresh(x) tgt_do_refresh(x,0)
 #define tgt_realloc_buffer(x) x->visual_buffer=(tgt_cell*) realloc(x->visual_buffer,x->xs*x->ys*sizeof(tgt_cell))
+#define tgt_parent(x) ((x)->ln.parent)
+

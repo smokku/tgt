@@ -1,0 +1,18 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_hide
+tgt_unhide -  Make an object invisible and unselectable
+
+SYNOPSIS
+
+void tgt_hide(struct tgt_object * obj);
+void tgt_unhide(struct tgt_object * obj);
+
+DESCRIPTION
+
+tgt_hide hides an object and makes it unselectable, which means the focus cannot be set on it
+tgt_unhide makes the object visible and selectable again
+
+Those functions refresh properly objects and their parents, when necessary.

@@ -1,0 +1,8 @@
+echo -n "checking for DEFAULT_FRAMEBUFFER... "
+if [ -n "$FRAMEBUFFER" ]; then
+	dfb="$FRAMEBUFFER"
+else
+	dfb="/dev/fb0"
+fi
+echo $dfb
+echo "fb: $dfb" >> ./config.log

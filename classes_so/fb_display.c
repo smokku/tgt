@@ -14,7 +14,7 @@
  * extern void getCurrentRes(int *x,int *y);
  *
  */
-
+ 
 #include "fb_display.h"
 
 unsigned short red[256], green[256], blue[256];

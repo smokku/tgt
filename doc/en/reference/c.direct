@@ -1,0 +1,28 @@
+
+NAME
+
+TGT_CLASS_DIRECTSURFACE - direct TGT buffer class
+
+DESCRIPTION
+
+Direct Surface is an area, that the programmer can fill with whatever he/she
+wants, however it's read-only for the user - it's impossible to select it
+using object switching keys (eg. cursor keys), to pass input to it etc.
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_DIRECTSURFACE_SCREENMEM                                           --G
+
+  Returns a pointer to a buffer consisted of object_width*object_height
+  items of type tgt_cell (currently 16 bits). The MSB is the attribute
+  memory (such as fg&bg color, bold, etc.), and the LSB holds ASCII character
+  code.
+
+CONFIGURATION
+
+none

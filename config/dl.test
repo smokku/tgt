@@ -1,0 +1,10 @@
+echo -n "checking for dynamic linker... "
+if [ "$dl" = "disabled" ]; then
+	libs="-ltermcap $libs"
+else
+	dl="yes"
+	defines="-DTGT_DLCLASSES -DTGT_DLTERMCAP $defines"
+	libs="-ldl -lutil $libs"
+fi
+echo $dl
+echo "dl: $dl" >> ./config.log

@@ -19,12 +19,12 @@ M => must be specified when creating an object
 S => may be set by tgt_set();
 G => may be read by tgt_get();
 
-TGTT_CHECKBOX_CAPTION                                                  CS-
+TGTT_CHECKBOX_CAPTION                                                  CSG
 
   Requires char * as an argument : this tag specifies the text
   that will be placed near the box.
 
-TGTT_CHECKBOX_ACTIVEBG                                                 CS-
+TGTT_CHECKBOX_ACTIVEBG                                                 CSG
 
   Requires an integer containing ANSI color code (preferably specified by
   using constants : TGT_COLOR_...) which will specify the background color
@@ -35,7 +35,7 @@ TGTT_CHECKBOX_ACTIVE                                                   CSG
   This name does not suit, I know. This tag contains the information whether
   the checkbox is 'checked' (1) or not (0). 
   
-TGTT_CALLBACK                                                          C--
+TGTT_CALLBACK                                                          CSG
 
   Requires a pointer to a function taking struct tgt_object * and integer 
   specyfing the object state (1/0). This function is called when checkbox
