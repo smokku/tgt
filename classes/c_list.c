@@ -6,6 +6,7 @@ struct tgt_int_list
 {
     int current;
     int top;
+    int realys;
     void *data;
     int (*dataf)(void*,int,int,void*,int,int);
     char *outbuffer;
@@ -34,7 +35,7 @@ int tgt_int_listdataf(char **data,int c,int n,char *buffer,int k,int a)
 
 int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 {
-    int i,act,n,k,t;
+    int i,act,n,k,t,yp,xp,maxx,j;
     struct tgt_int_list *iw;
     char *rd;
     
@@ -47,7 +48,11 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	    iw->current=0; iw->top=0;
 	    iw->data=(void*) tgt_gettag(b,TGTT_LIST_ITEMS,(long) NULL);
 	    iw->dataf=(int(*)(void*,int,int,void*,int,int)) tgt_gettag(b,TGTT_LIST_DATACALLBACK,(long) tgt_int_listdataf);
-	    iw->framecolor=tgt_gettag(b,TGTT_LIST_FRAMECOLOR,0);
+	    if(iw->framecolor=tgt_gettag(b,TGTT_LIST_FRAMECOLOR,0))
+		iw->realys=obj->ys-2;
+	    else
+		iw->realys=obj->ys;
+		
 	    iw->activebg=tgt_gettag(b,TGTT_LIST_ACTIVEBG,6);
 	    iw->activefg=tgt_gettag(b,TGTT_LIST_ACTIVEFG,obj->fg);
 
@@ -61,51 +66,68 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	case TGT_OBJECT_REFRESH:
 	    iw=obj->class_data;
 	    act=tgt_hasfocus(obj);
-	    tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b);
 	    tgt_chattr(obj->term,TGT_TA_BGCOLOR,obj->bg,0);
 	    if(act==1) tgt_chattr(obj->term,TGT_TA_BOLD,0,0);
 	    
 	    tgt_chattr(obj->term,TGT_TA_FGCOLOR,obj->fg);
 	    if(iw->framecolor) 
 	    {
+		tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b);
 		tgt_chattr(obj->term,TGT_TA_FGCOLOR,iw->framecolor,0);
 		tgt_chattr(obj->term,TGT_TA_GFX,0,0);
 		n=obj->xs-2; 
 		putchar(obj->term->gfx_set[TGT_TC_UL]);
 		for(k=obj->term->gfx_set[TGT_TC_HL],i=0;i<n;i++) putchar(k);
 		putchar(obj->term->gfx_set[TGT_TC_UR]);
-		t=obj->ys-2;
 		tgt_chattr(obj->term,TGT_TA_TXT,0,0);
+		yp=(int) b+obj->y+1;
+		maxx=obj->xs-2;
 	    }
 	    else
-		t=obj->ys;
-	    n=iw->dataf(iw->data,TGT_LISTREQ_GETMAX,0,NULL,0,0);
-	    for(i=0;i<t;i++)
 	    {
-		k=i+iw->top;
-		tgt_chattr(obj->term,TGT_TA_CURSOR,a+obj->x,i+b+obj->y);
+		yp=(int) b+obj->y;
+		maxx=obj->xs;
+	    }
+	    t=iw->realys;
+	    n=iw->dataf(iw->data,TGT_LISTREQ_GETMAX,0,NULL,0,0);
+	    xp=a+obj->x; k=iw->top;
+	    for(i=0;i<t;i++,k++)
+	    {
+		tgt_chattr(obj->term,TGT_TA_CURSOR,xp,yp++);
+		if(iw->framecolor) { tgt_chattr(obj->term,TGT_TA_COLORS,iw->framecolor,obj->bg);tgt_chattr(obj->term,TGT_TA_GFX,0,0); putchar(obj->term->gfx_set[TGT_TC_VL]); tgt_chattr(obj->term,TGT_TA_TXT,0,0); }
 		if(k<n)
 		{
 		    if(k==iw->current)
 		    {
-			tgt_chattr(obj->term,TGT_TA_BGCOLOR,iw->activebg);
-			tgt_chattr(obj->term,TGT_TA_FGCOLOR,iw->activefg);
-			iw->dataf(iw->data,TGT_LISTREQ_GETITEM,k,iw->outbuffer,obj->xs,1);
+			tgt_chattr(obj->term,TGT_TA_COLORS,iw->activefg,iw->activebg);
+			iw->dataf(iw->data,TGT_LISTREQ_GETITEM,k,iw->outbuffer,maxx,1);
 		    }
 		    else
 		    {
-			tgt_chattr(obj->term,TGT_TA_BGCOLOR,obj->bg);
-		        tgt_chattr(obj->term,TGT_TA_FGCOLOR,obj->fg);
-			iw->dataf(iw->data,TGT_LISTREQ_GETITEM,k,iw->outbuffer,obj->xs,0);
+		        tgt_chattr(obj->term,TGT_TA_COLORS,obj->fg,obj->bg);
+			iw->dataf(iw->data,TGT_LISTREQ_GETITEM,k,iw->outbuffer,maxx,0);
 		    }
 		    printf("%s",iw->outbuffer);
 		}
 		else
 		{
 		    tgt_chattr(obj->term,TGT_TA_BGCOLOR,obj->bg);
-		    for(i=0;i<obj->xs;i++) putchar(' ');
+		    for(j=0;j<maxx;j++) putchar(' ');
 		}
+		if(iw->framecolor) { tgt_chattr(obj->term,TGT_TA_COLORS,iw->framecolor,obj->bg);tgt_chattr(obj->term,TGT_TA_GFX,0,0); putchar(obj->term->gfx_set[TGT_TC_VL]); tgt_chattr(obj->term,TGT_TA_TXT,0,0); }
 	    }
+	    if(iw->framecolor) 
+	    {
+		tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a,obj->y+(int) b+obj->ys-1);
+		tgt_chattr(obj->term,TGT_TA_COLORS,iw->framecolor,obj->bg);
+		tgt_chattr(obj->term,TGT_TA_GFX,0,0);
+		n=obj->xs-2; 
+		putchar(obj->term->gfx_set[TGT_TC_LL]);
+		for(k=obj->term->gfx_set[TGT_TC_HL],i=0;i<n;i++) putchar(k);
+		putchar(obj->term->gfx_set[TGT_TC_LR]);
+		tgt_chattr(obj->term,TGT_TA_TXT,0,0);
+	    }
+
 	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
 	    fflush(stdout);
 	    return(1);
@@ -117,9 +139,9 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 		    iw->current++;
 		    n=iw->dataf(iw->data,TGT_LISTREQ_GETMAX,0,NULL,0,0)-1;
 		    if(iw->current>n) iw->current=n;
-		    if(iw->current-iw->top >= obj->ys)
+		    if(iw->current-iw->top >= iw->realys)
 		    {
-			iw->top=iw->current-obj->ys+1;
+			iw->top=iw->current-iw->realys+1;
 			if(iw->top<0) iw->top=0;
 		    }
 		    tgt_refresh(obj);
@@ -138,7 +160,7 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 		    return(1);
 		case TGT_KEY_END: 
 		    iw->current=iw->dataf(iw->data,TGT_LISTREQ_GETMAX,0,NULL,0,0)-1;
-		    iw->top=iw->current-obj->ys+1;
+		    iw->top=iw->current-iw->realys+1;
 		    if(iw->top<0) iw->top=0;
 		    tgt_refresh(obj);
 		    return(1);
@@ -152,6 +174,20 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 		    return(0);
 	    }
 	    return(0);
-	default: return(0);
+	case TGT_OBJECT_GETTAG:
+	    iw=obj->class_data;
+	    switch(a)
+	    {
+		case TGTT_LIST_SELECTED: *((int*) b)=iw->current; return(1);
+	    }
+	    return(0);
+	case TGT_OBJECT_SETTAG:
+	    iw=obj->class_data;
+	    switch(a)
+	    {
+		case TGTT_LIST_SELECTED: iw->current=(int) b; return(1);
+		case TGTT_LIST_ITEMS: iw->data=b; return(1);
+	    }
+	    default: return(0);
     }
 }

@@ -10,6 +10,7 @@
 #define TGT_TA_DNBORDER 8
 #define TGT_TA_TITLEBORDER 9
 #define TGT_TA_VBORDER 10
+#define TGT_TA_COLORS 11
 /* operacje mozliwe do wykonania przez funkcje z lowlevel (tgt_chattr())
    na terminalu */
 
@@ -42,5 +43,6 @@ struct tgt_terminal
     char *c_graphics;
     char *c_text;
     char *c_move;   /* stringi do wykonywania operacji na terminalu. na WYLACZNY uzytek tgt_chattr() */
+    char fg,bg;
     struct tgt_keynode * lookup_root;
 };

@@ -33,6 +33,7 @@ int tgt_builtin_string(struct tgt_object *obj,int type,int a,void *b)
 	    iw->accept=(char*) tgt_gettag(b,TGTT_STRING_ACCEPT,(long) NULL);
 	    iw->curpos=0; iw->cursor=0; iw->insmode=1;
 	    iw->buffer=(char*) malloc(iw->maxsize+1);
+	    bzero(iw->buffer,iw->maxsize+1);
 	    rd=(char*) tgt_gettag(b,TGTT_STRING_STRING,0);
 	    if(rd) snprintf(iw->buffer,iw->maxsize,"%s",rd);
 	    obj->class_data=iw;

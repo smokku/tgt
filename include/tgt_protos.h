@@ -58,3 +58,4 @@ struct tgt_keynode * tgt_initroottable(void);
 void tgt_addkeyseq(struct tgt_keynode *l_main_table,char *seq,int c);
 
 struct tgt_terminal * tgt_setscreen(char *name);
+struct tgt_object * tgt_haschild(struct tgt_object *parent,int id);

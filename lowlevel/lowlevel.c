@@ -71,14 +71,18 @@ void tgt_chattr(struct tgt_terminal *term,int request,int a,char *b)
        tgt_terminal */
     switch(request)
     {
-	case TGT_TA_BGCOLOR: printf(term->c_bgcolor,a); return;
-	case TGT_TA_FGCOLOR: printf(term->c_fgcolor,a); return;
+	case TGT_TA_BGCOLOR: if(term->bg!=a) { printf(term->c_bgcolor,a); term->bg=a; } return;
+	case TGT_TA_FGCOLOR: if(term->fg!=a) { printf(term->c_fgcolor,a); term->fg=a; } return;
 	case TGT_TA_CLEAR: printf(term->c_clear); return;
 	case TGT_TA_BOLD: printf(term->c_active); return;
-	case TGT_TA_NORMAL: printf(term->c_inactive); return;
+	case TGT_TA_NORMAL: printf(term->c_inactive); term->fg=-1; term->bg=-1; return;
 	case TGT_TA_GFX: printf(term->c_graphics); return;
 	case TGT_TA_TXT: printf(term->c_text); return;
 	case TGT_TA_CURSOR: printf(term->c_move,0,(int)b,(int)a); return;
+	case TGT_TA_COLORS: 
+	    if(term->bg!=(int) b) { printf(term->c_bgcolor,(int) b); term->bg=(char)(int) b; }
+	    if(term->fg!=a) { printf(term->c_fgcolor,a); term->fg=a; }
+	    return;
     }
 }
 void tgt_destroyterminal(struct tgt_terminal *tterm)
@@ -126,6 +130,14 @@ char *tgt_tgetstr(char *name)
    nam pusty string, zeby sie nie wykraszowalo tgt_chattr */
     ret=tgetstr(name,NULL);
     if(ret==NULL) ret=strdup("");
+    return(ret);
+}
+char *tgt_tgetstrd(char *name,char *def)
+{
+    char *ret;
+/* tgt_tgetstr() pobiera atrybut z termcapa , lub def (default) */
+    ret=tgetstr(name,NULL);
+    if(ret==NULL) ret=strdup(def);
     return(ret);
 }
 
@@ -179,14 +191,14 @@ i zwraca wskaznik na stworzona strukture aplikacji
 /* tgt_tgetstr() w razie braku atrybutu klonuje nam pusty string, zeby
    sie nie wykraszowalo tgt_chattr */
 
-    ret->c_graphics=tgt_tgetstr("as");
-    ret->c_text=tgt_tgetstr("ae");
+    ret->c_graphics=tgt_tgetstrd("as","\x0e");
+    ret->c_text=tgt_tgetstrd("ae","\x0f");
 
 /* zmiana kolorow napisu i tla, BOLD-jasniejsze kolory (active) i NORMAL (inactive)*/
-    ret->c_fgcolor=tgt_tgetstr("AF");
-    ret->c_bgcolor=tgt_tgetstr("AB");
-    ret->c_active=tgt_tgetstr("md");
-    ret->c_inactive=tgt_tgetstr("me");
+    ret->c_fgcolor=tgt_tgetstrd("AF","\033[3%dm");
+    ret->c_bgcolor=tgt_tgetstrd("AB","\033[4%dm");
+    ret->c_active=tgt_tgetstrd("md","\033[1m");
+    ret->c_inactive=tgt_tgetstrd("me","\033[0m");
 
 /* Stworzenie tablic (struktury drzewa) przeszukujacych klawiature...
    W sumie dosc kosztowna pamieciowo zabawa... Jedna taka tablica
@@ -208,6 +220,6 @@ i zwraca wskaznik na stworzona strukture aplikacji
     /* Odpowiedniki znakow semigraficznych. W trybie graficznym napisanie
      'q' powoduje wyswietlenie linii poziomej, 'j' to dolny prawy naroznik
      ramki etc. Patrz stale w tgt_terminal.h */
-
+    ret->fg=-1; ret->bg=-1;
     return(ret);
 }
