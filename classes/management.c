@@ -69,6 +69,8 @@ void tgt_init_intclasses(void)
     tgt_addclass(TGT_CLASS_SLIDER,tgt_builtin_slider);
     tgt_addclass(TGT_CLASS_PROGRESS,tgt_builtin_progress);
     tgt_addclass(TGT_CLASS_STATUS,tgt_builtin_status);
+    tgt_addclass(TGT_CLASS_TEXTBUFFER,tgt_builtin_buffer);
+
     int_initialized=1;    
 }
 

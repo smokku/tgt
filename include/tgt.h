@@ -12,3 +12,4 @@
 #include "tgt_progress.h"
 #include "tgt_slider.h"
 #include "tgt_status.h"
+#include "tgt_buffer.h"

@@ -10,6 +10,8 @@
 #define TGT_KEY_INSERT -7
 #define TGT_KEY_HOME -8
 #define TGT_KEY_END -9
+#define TGT_KEY_PGUP -10
+#define TGT_KEY_PGDN -11
 
 
 /* hihi magiczna liczba ;)) */

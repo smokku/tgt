@@ -248,6 +248,8 @@ i zwraca wskaznik na stworzona strukture aplikacji
     tgt_term_addkey_int(te,ret,"kI","\x1b\x5b\x32\x7e","insert",TGT_KEY_INSERT);
     tgt_term_addkey_int(te,ret,"kh","\x1b\x5b\x31\x7e","home",TGT_KEY_HOME);
     tgt_term_addkey_int(te,ret,"@7","\x1b\x5b\x34\x7e","end",TGT_KEY_END);
+    tgt_term_addkey_int(te,ret,"kP","\x1b\x5b\x35\x7e","pgup",TGT_KEY_PGUP);
+    tgt_term_addkey_int(te,ret,"kN","\x1b\x5b\x36\x7e","pgdn",TGT_KEY_PGDN);
 
     memcpy(ret->gfx_set,tgt_getprefs(g_prefs,TERMSECTIONNAME,"gfx","qxutlkmj"),8);
     /* Odpowiedniki znakow semigraficznych. W trybie graficznym napisanie

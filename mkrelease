@@ -1,4 +1,14 @@
 #!/bin/bash
 
+TGTNAME="tgt-`cat VERSION`"
+OLDDIR="`pwd`"
+
 make clean
-tar -zcvf ../tgt-`cat VERSION`.tar.gz ./
+
+cd ..
+
+tar -zcvf $TGTNAME.tar.gz tgt/
+
+cd $OLDDIR
+
+
