@@ -9,6 +9,8 @@
 #define TGT_KEY_DELETE -6
 #define TGT_KEY_NEXTL 9
 #define TGT_KEY_NEXTH '`'
+/* hihi magiczna liczba ;)) */
+#define TGT_KEY_NONE -65536
 
 struct tgt_keynode
 {

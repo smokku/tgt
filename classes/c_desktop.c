@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "tgt.h"
+int switches_next[]={'`',TGT_KEY_DOWN,TGT_KEY_RIGHT,0};
+int switches_prev[]={TGT_KEY_NONE,TGT_KEY_UP,TGT_KEY_LEFT,0};
 
 int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void* b)
 {
@@ -8,6 +10,8 @@ int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void* b)
     {
 	case TGT_OBJECT_CREATE:
 	    tgt_initconswitch();
+	    if(!(obj->next_keys)) obj->next_keys=switches_next;
+	    if(!(obj->prev_keys)) obj->prev_keys=switches_prev;
 	    return(1);
 	case TGT_OBJECT_DESTROY:
 	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
@@ -21,9 +25,7 @@ int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void* b)
 	    tgt_chattr(obj->term,TGT_TA_CLEAR,0,0);
 	    return(1);
 	case TGT_OBJECT_HANDLE:
-	    if(a=='`') { tgt_activatenext_child(obj); return(1); }
 	    return(0);
-//	    if(a==-1) printf("back\n");
 	default: return(0);
 	
     }

@@ -23,6 +23,12 @@ jesli klasa uzywa callbackow musi SAMA wywolac odpowiednie tgt_gettag() */
 #define TTGT_ID 8
 /* parsowane przez createobject, pelna swoboda klasy, patrz tgt_classes.h*/
 
+#define TTGT_NEXT_KEYS 9
+#define TTGT_PREV_KEYS 10
+
+/* tabele klawiszy przelaczania do poprzedniego/nastepnego dziecka */
+
+
 /* Wlasne tagi klasy window .. nazwy chyba mowia same za siebie ...
    oczywiscie nie ma obowiazku podawania */
 #define TTGT_WINDOW_TITLE 1000

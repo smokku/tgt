@@ -2,6 +2,9 @@
 #include "tgt.h"
 
     static char defaulttitle[]="Window";
+    int wswitches_next[]={'\t',TGT_KEY_DOWN,TGT_KEY_RIGHT,0};
+    int wswitches_prev[]={TGT_KEY_NONE,TGT_KEY_UP,TGT_KEY_LEFT,0};
+
 struct tgt_int_window
 {
     int borderfg;
@@ -11,7 +14,7 @@ struct tgt_int_window
 
 int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 {
-    int i;
+    int i,n;
     int act;
     struct tgt_int_window *iw;
     switch(type)
@@ -22,6 +25,8 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 	    iw->title=(char*) tgt_gettag(b,TTGT_WINDOW_TITLE,(long) defaulttitle);
 	    iw->borderfg=tgt_gettag(b,TTGT_WINDOW_BORDERCOLOR,6);
 	    iw->titlefg=tgt_gettag(b,TTGT_WINDOW_TITLECOLOR,7);
+            if(!(obj->next_keys)) obj->next_keys=wswitches_next;
+	    if(!(obj->prev_keys)) obj->prev_keys=wswitches_prev;		
 	    return(1);
 	case TGT_OBJECT_DESTROY:
 	    free(obj->class_data);
@@ -41,7 +46,9 @@ int tgt_builtin_window(struct tgt_object *obj,int type,int a,void *b)
 
 	    return(1);
 	case TGT_OBJECT_HANDLE:
-	    if(a==9) { tgt_activatenext_child(obj); return(1); }
+	    n=tgt_shalliswitch(obj,a,0);
+	    if(n<0) { tgt_activateprev(obj); return(1); }
+	    if(n>0) { tgt_activatenext(obj); return(1); }
 // in future eventually window moving (for instance) functions by keys
 // like alt + -> 
 	    return(0);

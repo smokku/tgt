@@ -42,7 +42,8 @@ struct tgt_object
 /* Nie istnieje od v 0.07 */
     unsigned char objflags;
 /* Pole bitowe... patrz nizej... */
-
+    int *prev_keys;	/* Tablica klawiszy przelaczajacych do nastepnego dziecka */
+    int *next_keys;	/* Tablica klawiszy przelaczajacych do poprzedniego dziecka */
 };
 
 

@@ -44,24 +44,29 @@ void tgt_link(struct tgt_object *obj,struct tgt_object *parent)
     
     parent->ln.last_child=obj; /* no i wpisujemy sie na hamca jako koniec listy */
     if(parent->ln.first_child==NULL) parent->ln.first_child=obj;
+    if(parent->ln.active_child==NULL && !(obj->objflags & TGT_OBJFLAGS_NONSELECTABLE)) parent->ln.active_child=obj;
 }
 void tgt_unlink(struct tgt_object *obj)
 {
     struct tgt_object *next;
     struct tgt_object *parent;
     /* odlacza obiekt obj */
+    parent=obj->ln.parent;
+    if(parent!=NULL)
+    {
+	if(parent->ln.active_child==obj) tgt_activatenext(obj);
+	/* a moze jestesmy ostatnim mozliwym do zaktywizowania obiektem ?? */
+	if(parent->ln.active_child==obj) parent->ln.active_child=NULL;
+    }
     next=obj->ln.next;
     if(next!=NULL) next->ln.prev=obj->ln.prev;
     if(obj->ln.prev!=NULL) obj->ln.prev->ln.next=obj->ln.next;
-    parent=obj->ln.parent;
     if(parent!=NULL)
     {
 	if(parent->ln.first_child==obj) /* czy aby nie bylismy poczatkiem listy ?? */
 	    parent->ln.first_child=next;
 	if(parent->ln.last_child==obj)	/* albo koncem ??*/
 	    parent->ln.last_child=obj->ln.prev;
-	if(parent->ln.active_child==obj)
-	    parent->ln.active_child=obj->ln.next;
     }
 }
 
@@ -83,7 +88,11 @@ struct tgt_object * tgt_createobject(struct tgt_terminal *term,
     ret->x=tgt_gettag(taglist,TTGT_X,0); ret->y=tgt_gettag(taglist,TTGT_Y,0);
     ret->xs=tgt_gettag(taglist,TTGT_XS,0); ret->ys=tgt_gettag(taglist,TTGT_YS,0);
     ret->fg=tgt_gettag(taglist,TTGT_FG,term->color_fg); ret->bg=tgt_gettag(taglist,TTGT_BG,term->color_bg);
-    ret->id=tgt_gettag(taglist,TTGT_ID,0);
+    ret->id=tgt_gettag(taglist,TTGT_ID,0); 
+    ret->next_keys=(int*) tgt_gettag(taglist,TTGT_NEXT_KEYS,0);
+    ret->prev_keys=(int*) tgt_gettag(taglist,TTGT_PREV_KEYS,0);
+/* W sumie to moglaby sobie to zalatwic klasa sama ale ze dazymy do maksymalnej
+  idiotoodpornosci... ;)) */
 
     ret->ln.parent=NULL; ret->ln.first_child=NULL; ret->ln.last_child=NULL;
     ret->ln.next=NULL; ret->ln.prev=NULL; ret->ln.active_child=NULL;

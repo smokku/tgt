@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tar -zcvf ../tgt-`cat VERSION`.tar.gz ./

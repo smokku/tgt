@@ -35,7 +35,9 @@ void newwindow(int a)
     cwindow=tgt_createandlink_int(desktop,myterm,TGT_CLASS_WINDOW,
 	(long[]) { TTGT_X,6,TTGT_Y,8,
 		    TTGT_XS,20,TTGT_YS,7,
-		    TTGT_WINDOW_TITLE,"New window",TTGT_END,0});
+		    TTGT_WINDOW_TITLE,"New window",
+		    TTGT_PREV_KEYS,(int[]) {'w',0},
+		    TTGT_END,0});
     tgt_createandlink_int(cwindow,myterm,TGT_CLASS_LABEL,
 	(long[]) {TTGT_X,2,TTGT_Y,2,TTGT_LABEL_TEXT,"Strange color:",TTGT_END,0});
 

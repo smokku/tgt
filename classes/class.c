@@ -1,6 +1,30 @@
 #include <stdio.h>
 #include "tgt.h"
 
+int tgt_shalliswitch(struct tgt_object *obj,int key,int pri)
+{
+    struct tgt_object *parent;
+    int *nk;
+    int *pk;
+    int i;
+    /* Czy klawisz key nie zawiera sie aby w jednej z tablic klawiszy
+      przelaczajacych dzieci rodzica obiektu obj (lub w pierwszych ich
+      elementach jesli pri == 1) ? -1 : tak, w prev_keys,
+      1: tak, w next_keys 0 : nie
+    */
+    if(!(parent=obj->ln.parent)) return(0);
+    if(pri)
+    {
+	if(nk=parent->next_keys) if(nk[0]==key) return(1);
+	if(pk=parent->next_keys) if(pk[0]==key) return(-1);
+    }
+    else
+    {
+	if(nk=parent->next_keys) for(i=0;nk[i]!=0;i++) if(nk[i]==key) return(1);
+	if(pk=parent->prev_keys) for(i=0;pk[i]!=0;i++) if(pk[i]==key) return(-1);
+    }
+    return(0);
+}
 
 int tgt_intrefresh(struct tgt_object *obj,int a,int b)
 {
@@ -58,10 +82,10 @@ struct tgt_object * tgt_findnext_selectable(struct tgt_object * obj)
     next=obj;
     for(;;)
     {
-	if((next->objflags & TGT_OBJFLAGS_NONSELECTABLE) == 0) return(next);
 	next=next->ln.next;
 	if(next==NULL) next=obj->ln.parent->ln.first_child;
-	if(next==obj) return(NULL);
+	if(next==obj) return(obj);
+	if(!(next->objflags & TGT_OBJFLAGS_NONSELECTABLE)) return(next);
     }
 }
 struct tgt_object * tgt_findprev_selectable(struct tgt_object * obj)
@@ -71,13 +95,32 @@ struct tgt_object * tgt_findprev_selectable(struct tgt_object * obj)
     next=obj;
     for(;;)
     {
-	if((next->objflags & TGT_OBJFLAGS_NONSELECTABLE) == 0) return(next);
 	next=next->ln.prev;
 	if(next==NULL) next=obj->ln.parent->ln.last_child;
 	if(next==obj) return(NULL);
-
+	if(!(next->objflags & TGT_OBJFLAGS_NONSELECTABLE)) return(next);
     }
 }
+
+void tgt_activatenext(struct tgt_object *obj)
+{
+    struct tgt_object *parent;
+    /* Aktywuj nastepny obiekt po obj...*/
+    if(!(parent=obj->ln.parent)) return;
+    parent->ln.active_child=tgt_findnext_selectable(obj);
+    tgt_refresh(obj);
+    tgt_refresh(parent->ln.active_child);
+}
+void tgt_activateprev(struct tgt_object *obj)
+{
+    struct tgt_object *parent;
+    /* Aktywuj poprzedni obiekt, przed obj...*/
+    if(!(parent=obj->ln.parent)) return;
+    parent->ln.active_child=tgt_findprev_selectable(obj);
+    tgt_refresh(obj);
+    tgt_refresh(parent->ln.active_child);
+}
+
 
 void tgt_activatenext_child(struct tgt_object *obj)
 {
@@ -89,12 +132,7 @@ void tgt_activatenext_child(struct tgt_object *obj)
 	obj->ln.active_child=tgt_findnext_selectable(obj->ln.first_child);
     else
     {
-	active=old_active->ln.next;
-	if(active!=NULL)
-	    obj->ln.active_child=tgt_findnext_selectable(active);
-	else
-	    obj->ln.active_child=tgt_findnext_selectable(obj->ln.first_child);
-	
+	obj->ln.active_child=tgt_findnext_selectable(obj->ln.active_child);
 	tgt_refresh(old_active);
     }
     if(obj->ln.active_child) tgt_refresh(obj->ln.active_child);
@@ -109,12 +147,7 @@ void tgt_activateprev_child(struct tgt_object *obj)
 	obj->ln.active_child=tgt_findprev_selectable(obj->ln.last_child);
     else
     {
-	active=old_active->ln.prev;
-	if(active!=NULL)
-	    obj->ln.active_child=tgt_findprev_selectable(active);
-	else
-	    obj->ln.active_child=tgt_findprev_selectable(obj->ln.last_child);
-
+	obj->ln.active_child=tgt_findprev_selectable(obj->ln.active_child);
 	tgt_refresh(old_active);
     }
     if(obj->ln.active_child) tgt_refresh(obj->ln.active_child);
@@ -122,35 +155,18 @@ void tgt_activateprev_child(struct tgt_object *obj)
 
 int tgt_is_active(struct tgt_object *obj)
 {
-    struct tgt_object *parent;
-    parent=obj->ln.parent;
-    if(parent==NULL) return(0);
-    if(parent->ln.active_child==obj) return(1); else return(0);
+    if( ! obj->ln.parent) return(0);
+    if(obj->ln.parent->ln.active_child == obj) return(1); else return(0);
 }
 int tgt_deliver_msg(struct tgt_object *obj,int type,int param,char* param2)
 {
     struct tgt_object *active;
     /* dostarcz wiadomosc (type (w 99% bedzie to MSG_KEYHANDLE),param,param2)
-       do obiektu obj. Jesli obiekt nie jest w stanie jej zrozumiec, dostarcz
-       ja jego aktywnemu dziecku (wywolujac sama siebie) */
-#ifdef TGT_POSSIBLE_INFORMFIRST
-/* Zobacz czy obiekt koncowy nie ma ustawionej flagi inform_first ... jesli tak
-poinformuj go jako pierwszy */
+       do ostatniego aktywnego dziecka obiektu obj. Jesli nie jest w stanie
+       jej zrozumiec, dostarcz ja jego rodzicowi (wywolujac sama siebie) */
     for(active=obj;active->ln.active_child!=NULL;active=active->ln.active_child);
-    if(active->objflags & TGT_OBJFLAGS_INFORMFIRST) if(active->classf(active,type,param,param2)==1) return(1);
-#endif
-    for(active=obj;active!=NULL;active=active->ln.active_child)
-	if(active->classf(active,type,param,param2)==1) return(1);
-
+    while(active->classf(active,type,param,param2) != 1) {
+	if((active=active->ln.parent)==NULL) return(1);
+    }
 }
 
-/*int tgt_waitkeys(struct tgt_object *obj)
-{
-    int c;
-    tgt_rawcon();
-    for(;;)
-    {
-	c=tgt_get_key(obj->term);
-	tgt_deliver_msg(obj,TGT_OBJECT_HANDLE,c,NULL);
-    }
-}*/

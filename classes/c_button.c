@@ -9,7 +9,7 @@ struct tgt_int_button
 
 int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
 {
-    int i,act;
+    int i,act,n;
     struct tgt_int_button *iw;
     char *title;
     switch(type)
@@ -43,14 +43,15 @@ int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
 	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
 	    return(1);
 	case TGT_OBJECT_HANDLE:
-	    if(a==13 || a==10) 
+	    n=tgt_shalliswitch(obj,a,0);
+	    if(n<0) { tgt_activateprev(obj); return(1); }
+	    if(n>0) { tgt_activatenext(obj); return(1); }
+	    if(a==13 || a==10 || a==32) 
 	    {
 		if(obj->objectf!=NULL) obj->objectf(obj->id);
 		return(1);
 	    }
-	    else
-		return(0);
-	    break;
+	    return(0);
 	default: return(0);
     }
 }
