@@ -15,6 +15,7 @@ int tgt_builtin_slider(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_progress(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_status(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_buffer(struct tgt_object *obj,int type,int a,void * b);
+int tgt_builtin_direct(struct tgt_object *obj,int type,int a,void * b);
 
 
 // class.c

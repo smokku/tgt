@@ -9,6 +9,7 @@
 static struct termios ourtermios;
 static struct termios oldtermios;
 static int conswitch_active=0;
+int async_semaphore=0;
 
 void tgt_initconswitch(void)
 {
@@ -65,37 +66,38 @@ int tgt_fgetc(int s,int us)
     return(fgetc(stdin));
 }
 #endif
-int tgt_waitkeys(struct tgt_object *obj)
+void tgt_getkey(struct tgt_object *obj)
 {
     int c,t,k,i;
     char lastkeys[TGT_MAX_SEQ];
     struct tgt_terminal *term;
     struct tgt_keynode *lt;
+    k=0;
     tgt_rawcon(1);
     term=obj->term;
-    for(;;)
+    for(lt=term->lookup_root;;)
     {
-	k=0;
-	for(lt=term->lookup_root;;)
-	{
-	    c=tgt_fgetc(d_seconds,d_micros);
-	    if(c==-1) break;
-	    lastkeys[k++]=c;
-	    t=lt[c].type;
-	    if(t==TGT_KEYN_LOOKUPTABLE) 
-		lt=(struct tgt_keynode*) lt[c].value;
-	    else
-		break;
-	}
-#ifdef TIMEOUT_KEYBOARD
-	if(k==0) continue;
-#endif
-	if(t==TGT_KEYN_KEY)
-	    tgt_deliver_msg(obj,TGT_OBJECT_HANDLE,(int) lt[c].value,NULL);
+        c=tgt_fgetc(d_seconds,d_micros);
+        if(c==-1) break;
+        lastkeys[k++]=c;
+        t=lt[c].type;
+        if(t==TGT_KEYN_LOOKUPTABLE) 
+    	    lt=(struct tgt_keynode*) lt[c].value;
 	else
-	{
-	    for(i=0;i<k;i++)
-		tgt_deliver_msg(obj,TGT_OBJECT_HANDLE,lastkeys[i],NULL);
-	}
+    	    break;
     }
+#ifdef TIMEOUT_KEYBOARD
+    if(k==0) return;
+#endif
+    if(t==TGT_KEYN_KEY)
+        tgt_deliver_msg(obj,TGT_OBJECT_HANDLE,(int) lt[c].value,NULL);
+    else
+    {
+        for(i=0;i<k;i++)
+    	tgt_deliver_msg(obj,TGT_OBJECT_HANDLE,lastkeys[i],NULL);
+    }
+}
+int tgt_waitkeys(struct tgt_object *obj)
+{
+    while(1) if(async_semaphore) tgt_getkey(obj); else usleep(d_micros);
 }

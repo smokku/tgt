@@ -70,7 +70,7 @@ void tgt_init_intclasses(void)
     tgt_addclass(TGT_CLASS_PROGRESS,tgt_builtin_progress);
     tgt_addclass(TGT_CLASS_STATUS,tgt_builtin_status);
     tgt_addclass(TGT_CLASS_TEXTBUFFER,tgt_builtin_buffer);
-
+    tgt_addclass(TGT_CLASS_DIRECTSURFACE,tgt_builtin_direct);
     int_initialized=1;    
 }
 

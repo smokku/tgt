@@ -33,6 +33,8 @@ void tgt_chattr(struct tgt_terminal *term,int request,int a,char *b)
 	case TGT_TA_NORMAL: printf(term->c_inactive); term->fg=-1; term->bg=-1; return;
 	case TGT_TA_GFX: printf(term->c_graphics); return;
 	case TGT_TA_TXT: printf(term->c_text); return;
+	case TGT_TA_VISIBLECURSOR: printf(term->c_enablecurs); return;
+	case TGT_TA_INVISIBLECURSOR: printf(term->c_disablecurs); return;
 	case TGT_TA_CURSOR: printf(term->c_move,0,(int)b,(int)a); return;
 	case TGT_TA_COLORS: 
 	    if(term->bg!=(int) b) { printf(term->c_bgcolor,(int) b); term->bg=(char)(int) b; }
@@ -232,6 +234,9 @@ i zwraca wskaznik na stworzona strukture aplikacji
     ret->c_bgcolor=tgt_tgetstrd(te,"AB","\033[4%dm","ch_bg");
     ret->c_active=tgt_tgetstrd(te,"md","\033[1m","bold");
     ret->c_inactive=tgt_tgetstrd(te,"me","\033[0m","normal");
+    ret->c_enablecurs=tgt_tgetstrd(te,"ve","\033[?25h","cursenable");
+    ret->c_disablecurs=tgt_tgetstrd(te,"vi","\033[?25l","cursdisable");
+
 
 /* Stworzenie tablic (struktury drzewa) przeszukujacych klawiature...
    W sumie dosc kosztowna pamieciowo zabawa... Jedna taka tablica

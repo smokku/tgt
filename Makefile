@@ -5,7 +5,8 @@ SOURCES= lowlevel/lowlevel.c classes/keyboard.c classes/class.c classes/manageme
 	 classes/c_label.c classes/c_string.c classes/c_list.c\
 	 lowlevel/menu.c classes/c_menu.c classes/c_cycle.c\
 	 classes/c_checkbox.c classes/c_slider.c classes/c_progress.c\
-	 classes/c_status.c classes/c_textbuffer.c app/config.c
+	 classes/c_status.c classes/c_textbuffer.c classes/c_direct.c app/config.c\
+	 app/util.c
 OBJECTS = ${SOURCES:.c=.o}
 
 SUBDIRS=examples
