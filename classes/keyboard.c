@@ -46,7 +46,7 @@ void tgt_chtimes(int a,int b)
 int tgt_fgetc(int s,int us)
 {
     struct timeval tv;
-    char c;
+    unsigned char c;
     fd_set fds;
     FD_ZERO(&fds);
     FD_SET(0,&fds);
@@ -69,7 +69,7 @@ int tgt_fgetc(int s,int us)
 void tgt_getkey(struct tgt_object *obj)
 {
     int c,t,k,i;
-    char lastkeys[TGT_MAX_SEQ];
+    unsigned char lastkeys[TGT_MAX_SEQ];
     struct tgt_terminal *term;
     struct tgt_keynode *lt;
     k=0;

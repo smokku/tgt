@@ -16,3 +16,4 @@
 #include "tgt_buffer.h"
 #include "tgt_fbpic.h"
 #include "tgt_direct.h"
+#include "tgt_prefs.h"

@@ -208,7 +208,10 @@ int tgt_deliver_msg(struct tgt_object *obj,int type,int param,char* param2)
     for(active=obj;active->ln.child!=NULL;active=active->ln.child);
 
     while(active->classf(active,type,param,param2) != 1)
-	if((active=active->ln.parent)==NULL) return(0);
+    {
+	if(active==obj) return(0);
+	if(!(active=active->ln.parent)) return(0);
+    }
     return(1);
 }
 

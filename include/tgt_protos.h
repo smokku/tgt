@@ -69,7 +69,11 @@ struct tgt_terminal * tgt_setscreen(char *name);
 struct tgt_object * tgt_haschild(struct tgt_object *parent,int id);
 
 #ifndef PREFS_FILE
-char * tgt_getprefs(void* prfs, char *section, char *key,char *def);
+void * tgt_load_conf(char *);
+char * tgt_get_conf(void *,char *,char *,char*);
+int tgt_set_conf(void *,char *,char *,char *);
+void tgt_unload_conf(void *);
+int tgt_save_conf(void *,char *);
 #endif
 
 void tgt_addclass(int id,int (*)(struct tgt_object *,int,int,void*));

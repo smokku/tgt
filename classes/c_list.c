@@ -177,6 +177,22 @@ int tgt_builtin_list(struct tgt_object *obj,int type,int a,void *b)
 	    switch(a)
 	    {
 		case TGTT_LIST_SELECTED: iw->current=(int) b; return(1);
+		case TGTT_LIST_ZERO: 
+		    iw->current=0;
+		    iw->top=0;
+		    return(1);
+		case TGTT_LIST_ADJUST:
+		    n=iw->dataf(iw->data,TGT_LISTREQ_GETMAX,0,NULL,0,0)-1;
+		    if(iw->current>n) iw->current=n;
+		    if(iw->current<0) iw->current=0;
+		    if(iw->current-iw->top >= iw->realys)
+		    {
+			iw->top=iw->current-iw->realys+1;
+			if(iw->top<0) iw->top=0;
+		    }
+		    if(iw->current<iw->top) iw->top=iw->current;
+		    if(iw->top<0) iw->top=0;
+		    return(1);
 		case TGTT_LIST_ITEMS: iw->data=b; return(1);
 		case TGTT_LIST_FRAMECOLOR:
 		    if(iw->framecolor=(int) b)
