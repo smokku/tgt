@@ -27,8 +27,11 @@ void newwindow(int a)
 	(long[]) { TTGT_X,6,TTGT_Y,7,
 		    TTGT_XS,20,TTGT_YS,5,
 		    TTGT_WINDOW_TITLE,"New window",TTGT_END,0});
+    tgt_createandlink_int(cwindow,myterm,TGT_CLASS_LABEL,
+	(long[]) {TTGT_X,2,TTGT_Y,2,TTGT_LABEL_TEXT,"Strange color:",TTGT_END,0});
+
     tgt_createandlink_int(cwindow,myterm,TGT_CLASS_BUTTON,
-	(long[]) { TTGT_X,2,TTGT_Y,2,TTGT_BUTTON_CAPTION,"Close",
+	(long[]) { TTGT_X,2,TTGT_Y,3,TTGT_BUTTON_CAPTION,"Close",
 		    TTGT_ID,101,TTGT_CALLBACK,mkexit,TTGT_BG,1,TTGT_END,0});
     tgt_activate(cwindow);
 }

@@ -10,6 +10,7 @@ void tgt_init_intclasses()
     internal_classes[TGT_CLASS_DESKTOP]=tgt_builtin_desktop;
     internal_classes[TGT_CLASS_WINDOW]=tgt_builtin_window;
     internal_classes[TGT_CLASS_BUTTON]=tgt_builtin_button;
+    internal_classes[TGT_CLASS_LABEL]=tgt_builtin_label;
     int_initialized=1;    
 }
 

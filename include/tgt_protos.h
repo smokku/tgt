@@ -5,12 +5,14 @@ tych glupch warningow jak za malo argumentow dalismy ;)))) */
 int tgt_builtin_desktop(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_window(struct tgt_object *obj,int type,int a,void * b);
 int tgt_builtin_button(struct tgt_object *obj,int type,int a,void * b);
+int tgt_builtin_label(struct tgt_object *obj,int type,int a,void * b);
+
 
 // class.c
 
 int tgt_refresh(struct tgt_object *obj);
-void tgt_activatenext(struct tgt_object *obj);
-void tgt_activateprev(struct tgt_object *obj);
+void tgt_activatenext_child(struct tgt_object *obj);
+void tgt_activateprev_child(struct tgt_object *obj);
 int tgt_deliver_msg(struct tgt_object *obj,int type,int param,char* param2);
 int tgt_waitkeys(struct tgt_object *obj);
 

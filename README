@@ -19,3 +19,23 @@ struktury, jak cos to mozna zrobic rewrite poszczegolnych procedur, nie
 zmieniajac filozofii dzialania (czyli np. trzymajac sie prototypow i 
 definicji z inkludkow)
 
+ZMIANY OD 0.05 i 0.075:
+- NOWY POMYSL: dwie flagi boolowe (zawarte w specjalnym nowym polu objflags-
+   flagi na uzytek _klasy_ (a nie jak sugerowales wczesniej flagi obiektu-
+   - te klasa sobie moze upchnac do class_data, chociaz mozna zawsze stworzyc
+   dodatkowe pole flag obiektu, zobaczy sie): TGT_OBJFLAG_UNSELECTABLE -
+   -przewidziane np. dla etykiet, ikonek, progress barow etc, wszystko
+   co _nie_ moze zostac zaznaczone... i  TGT_OBJFLAG_INFORMFIRST (obsluga
+   dziala tylko jesli zostalo to wlaczone odpowiednim #define albo -D w makefile)
+   -jesli obiekt jest koncowym adresatem jakies wiadomosci, to zostanie o niej
+   poinformowany _najpierw_ , przed wyzszymi klasami.. przewidziane np. dla
+   context-menow, menow, pol dialogowych z menu etc- gdzie nie mozemy sobie
+   pozwolic np. na przelaczanie okien (przechwytywane przez klase desktop)
+   kiedy user kopie w menu...
+
+- NOWA KLASA: label (TGT_CLASS_LABEL). banal. przyjmuje jedynie tagi TTGT_X, TTGT_Y,
+   TTGT_FG, TTGT_BG i TTGT_LABEL_TEXT... plik: classes/c_plaintext.c
+
+- totalny rewrite kodu/struktur odpowiadajacych za liste dzieci obiektu
+  i szukanie aktywnych obiektow
+

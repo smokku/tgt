@@ -92,3 +92,4 @@ jest _po_ odpytaniu rodzicow o to czy rozumieja
 #define TGT_CLASS_DESKTOP 0
 #define TGT_CLASS_WINDOW 1
 #define TGT_CLASS_BUTTON 2
+#define TGT_CLASS_LABEL 3

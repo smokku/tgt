@@ -51,5 +51,6 @@ int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
 	    else
 		return(0);
 	    break;
+	default: return(0);
     }
 }
