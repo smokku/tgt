@@ -1,3 +1,23 @@
+smoku:
+zrobilem 3 nowe klasy: c_checkbox.c c_slider.c i c_progress.c
+tgt_menu_context() powinno sie nazywac tgt_menu()...
+a w ogole to dlaczego lowlevel/menu.c ???
+zauwaz, ze mamy wiele rownoznacznych tag'ow.. np.
+TGTT_SLIDER_CAPTION, TGTT_PROGRESS_CAPTION, TGTT_BUTTON_CAPTION
+czy TGTT_LABEL_TEXT, TGTT_STATUS_TEXT.. itp.. moze by je zuniformizowac?
+np. TGTT_CAPTION czy TGT_STATUS i jednak wrocic do pliku tgt_tags.h
+albo tgt_class_tags.h ?
+korekta management.c : tgt_createobject_int() (XS i YS domyslnie 1)
+oraz tgt_getdesktop() (ustawianie XS i YS dla desktopu)
+dla potrzeb kolejnej zrobionej klasy c_status.c..
+(oczywiscie do status'a mozna podczepiac inne obiekty, wiec jak sie chce
+miec na nim np. 3 pola to nic prostszego jak przyczepic do niego 3 label'e
+moga miec nawet inne atrybuty wtedy)
+zmienilem c_plaintext.c na c_label.c i dodalem mozliwosc rownania prawo/lewo
+oraz wydzielilem tgt_label.h...
+przydalyby sie #define TGT_COLOR_RED x, TGT_COLOR_BRIGHTGREEN y itp..
+
+
 
 
 

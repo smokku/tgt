@@ -3,6 +3,7 @@
 #include "tgt_keyboard.h"
 #include "tgt_tags.h"
 #include "tgt_protos.h"
+#include "tgt_label.h"
 #include "tgt_string.h"
 #include "tgt_list.h"
 #include "tgt_menuc.h"
@@ -10,3 +11,4 @@
 #include "tgt_checkbox.h"
 #include "tgt_progress.h"
 #include "tgt_slider.h"
+#include "tgt_status.h"

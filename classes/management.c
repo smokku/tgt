@@ -68,6 +68,7 @@ void tgt_init_intclasses(void)
     tgt_addclass(TGT_CLASS_CHECKBOX,tgt_builtin_checkbox);
     tgt_addclass(TGT_CLASS_SLIDER,tgt_builtin_slider);
     tgt_addclass(TGT_CLASS_PROGRESS,tgt_builtin_progress);
+    tgt_addclass(TGT_CLASS_STATUS,tgt_builtin_status);
     int_initialized=1;    
 }
 
@@ -146,7 +147,7 @@ struct tgt_object * tgt_createobject_int(struct tgt_terminal *term,
     /* Ustawiamy sobie pare najczesciej uzywanych i majacych wlasne pola w 
        strukturze tagow */
     ret->x=tgt_gettag(taglist,TGTT_X,0); ret->y=tgt_gettag(taglist,TGTT_Y,0);
-    ret->xs=tgt_gettag(taglist,TGTT_XS,0); ret->ys=tgt_gettag(taglist,TGTT_YS,0);
+    ret->xs=tgt_gettag(taglist,TGTT_XS,1); ret->ys=tgt_gettag(taglist,TGTT_YS,1);
     ret->fg=tgt_gettag(taglist,TGTT_FG,term->color_fg); ret->bg=tgt_gettag(taglist,TGTT_BG,term->color_bg);
     ret->id=tgt_gettag(taglist,TGTT_ID,0); 
     ret->next_keys=(int*) tgt_gettag(taglist,TGTT_NEXT_KEYS,0);
@@ -168,9 +169,13 @@ struct tgt_object * tgt_createobject_int(struct tgt_terminal *term,
 
 struct tgt_object * tgt_getdesktop(struct tgt_terminal * term)
 {
+    struct tgt_object *desk;
     /* Front-end dla tgt_createobject() tworzacy nadrzedny obiekt desktopu dla terminala term */
-    return(tgt_createobject_int(term,tgt_builtin_desktop,(long[]) { TGTT_X,1, TGTT_Y,1, TGTT_END,0} ));
+    desk=tgt_createobject_int(term,tgt_builtin_desktop,(long[]) { TGTT_X,1, TGTT_Y,1, TGTT_END,0} );
     //! a tu z kolei powinno byc TGTT_X,0, TGTT_Y,0   bo wspolzedne ekranowe liczymy od zera..
+    desk->xs = term->x_size;
+    desk->ys = term->y_size;
+    return(desk);
 }
 void tgt_destroyobject(struct tgt_object *obj)
 {
@@ -201,6 +206,7 @@ struct tgt_object * tgt_createobject(struct tgt_terminal *term,
     /* jw, front-end, tworzy obiekt wykorzystujac jako handler klasy
        jedna z wbudowanych w system klas */
     if(int_initialized==0) tgt_init_intclasses();
+
     return(tgt_createobject_int(term,internal_classes[classid],taglist));
 }
 

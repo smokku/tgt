@@ -48,12 +48,12 @@ int tgt_builtin_progress(struct tgt_object *obj,int type,int a,void *b)
 	    tgt_chattr(obj->term,TGT_TA_FGCOLOR,obj->fg);
 	    printf("%s[", idata->title);
 	    for(i=0,n=(int)m;i<n;i++) putchar('#');
-	    for(i=0,n=obj->xs-(int)m;i<n;i++) putchar('.');
-            if(idata->type & TGT_PROGRESST_SHOWVALUE)
-                if(idata->type & TGT_PROGRESST_PERCENT)
-                    printf("] %d%%", idata->value / idata->endvalue * 100);
+	    for(i=0,n=obj->xs-(int)m-2;i<n;i++) putchar('.');
+            if(idata->type & TGT_PROGRESSF_SHOWVALUE)
+                if(idata->type & TGT_PROGRESSF_PERCENT)
+                    printf("]%3d%%", idata->value / idata->endvalue * 100);
                 else
-                    printf("] %d", idata->value);
+                    printf("] %d ", idata->value);
             else
                 putchar(']');
 	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
@@ -65,9 +65,12 @@ int tgt_builtin_progress(struct tgt_object *obj,int type,int a,void *b)
 	    {
 		case TGTT_PROGRESS_VALUE:
 		    idata->value=(int) b;
+		    if(idata->value > idata->endvalue) idata->value=idata->endvalue;
+		    if(idata->value < 0) idata->value=0;
 		    return(1);
 		case TGTT_PROGRESS_ENDVALUE:
 		    idata->endvalue=(int) b;
+		    if(idata->endvalue < 1) idata->endvalue=1;
 		    return(1);
 	    }
 	    return(0);

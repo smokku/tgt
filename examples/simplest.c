@@ -13,6 +13,7 @@ main()
 {
     struct tgt_terminal *term;
     struct tgt_object *window;
+
     desktop=tgt_start(NULL,&term); /* Get root object */
     
     window=tgt_createobject(term,TGT_CLASS_WINDOW, /* Create a window object */

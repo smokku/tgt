@@ -2,10 +2,10 @@
 SOURCES= lowlevel/lowlevel.c classes/keyboard.c classes/class.c classes/management.c\
 	 app/async.c app/queue.c lowlevel/keytree.c classes/tags.c\
 	 classes/c_desktop.c classes/c_window.c classes/c_button.c\
-	 classes/c_plaintext.c classes/c_string.c classes/c_list.c\
+	 classes/c_label.c classes/c_string.c classes/c_list.c\
 	 lowlevel/menu.c classes/c_menu.c classes/c_cycle.c\
 	 classes/c_checkbox.c classes/c_slider.c classes/c_progress.c\
-	 app/config.c
+	 classes/c_status.c app/config.c
 OBJECTS = ${SOURCES:.c=.o}
 
 SUBDIRS=examples
@@ -17,7 +17,7 @@ LDFLAGS =
 LIBS = 
 
 #default target: compile
-all: shared test 
+all: shared 
 	for i in $(SUBDIRS); \
 	do $(MAKE) -C $$i; done
 
@@ -29,15 +29,12 @@ all: shared test
 shared: ${OBJECTS}
 	gcc -shared $(OBJECTS) -o libtgt.so -ldl -lpthread
 
-test: shared
-	gcc test.c -o test -L./ -Iinclude/ -ltgt
-
 # make a clean source tree again
 clean: 
 	for i in $(SUBDIRS); \
 	do $(MAKE) -C $$i clean; done
 		
-	rm -rf libtgt.so *.o *~ core test >/dev/null 2>/dev/null
+	rm -rf libtgt.so *.o *~ core >/dev/null 2>/dev/null
 	rm -rf $(OBJECTS) >/dev/null 2>/dev/null
 
 install: cp ./libtgt.so /usr/lib

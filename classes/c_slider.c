@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "tgt.h"
 
 struct tgt_int_slider
@@ -46,19 +47,19 @@ int tgt_builtin_slider(struct tgt_object *obj,int type,int a,void *b)
 	    else
 		tgt_chattr(obj->term,TGT_TA_BGCOLOR,obj->bg);
 
-	    m=(obj->xs - 3) * (idata->value - idata->minvalue) / (idata->maxvalue - idata->minvalue);
+	    m=(obj->xs - 2) * (idata->value - idata->minvalue -1) / (idata->maxvalue - idata->minvalue);
 	    tgt_chattr(obj->term,TGT_TA_FGCOLOR,obj->fg);
 	    printf("%s[", idata->title);
-	    for(i=0,n=(int)m-1;i<n;i++) putchar('-');
-	    putchar('V');
-	    for(i=0,n=obj->xs-(int)m-1;i<n;i++) putchar('-');
-	    if(idata->type & TGT_SLIDERT_SHOWVALUE)
-		if(idata->type & TGT_SLIDERT_PERCENT)
-		    printf("] %d%%", idata->value / (idata->maxvalue - idata->minvalue) * 100);
+	    for(i=0;i<obj->xs-2;i++) putchar('-');
+	    if(idata->type & TGT_SLIDERF_SHOWVALUE)
+		if(idata->type & TGT_SLIDERF_PERCENT)
+		    printf("]%3d%%", 100 * (idata->value - idata->minvalue) / (idata->maxvalue - idata->minvalue));
 		else
-		    printf("] %d", idata->value);
+		    printf("] %d ", idata->value);
 	    else
 		putchar(']');
+	    tgt_chattr(obj->term,TGT_TA_CURSOR,obj->x+a+strlen(idata->title)+(int)m+1,obj->y+(int) b);
+	    putchar('V');
 	    tgt_chattr(obj->term,TGT_TA_NORMAL,0,0);
 	    fflush(stdout);
 	    return(1);
@@ -70,21 +71,22 @@ int tgt_builtin_slider(struct tgt_object *obj,int type,int a,void *b)
 		    idata->value++;
 		    if(idata->value > idata->maxvalue) idata->value=idata->maxvalue;
 		    tgt_refresh(obj);
+		    if(obj->objectf) obj->objectf(obj, idata->value);
 		    return(1);
 		case TGT_KEY_LEFT:
 		    idata->value--;
 		    if(idata->value < idata->minvalue) idata->value=idata->minvalue;
 		    tgt_refresh(obj);
+		    if(obj->objectf) obj->objectf(obj, idata->value);
 		    return(1);
 		case TGT_KEY_HOME:
 		    idata->value=idata->minvalue;
 		    tgt_refresh(obj);
+		    if(obj->objectf) obj->objectf(obj, idata->value);
 		    return(1);
 		case TGT_KEY_END: 
 		    idata->value=idata->maxvalue;
 		    tgt_refresh(obj);
-		    return(1);
-		case 13: case 10:
 		    if(obj->objectf) obj->objectf(obj, idata->value);
 		    return(1);
 		default:
@@ -100,12 +102,16 @@ int tgt_builtin_slider(struct tgt_object *obj,int type,int a,void *b)
             {
                 case TGTT_SLIDER_VALUE:
 		    idata->value=(int) b;
+		    if(idata->value > idata->maxvalue) idata->value=idata->maxvalue;
+		    if(idata->value < idata->minvalue) idata->value=idata->minvalue;
                     return(1);
 		case TGTT_SLIDER_MINVALUE:
 		    idata->minvalue=(int) b;
+		    if(idata->minvalue > idata->maxvalue-1) idata->minvalue=idata->maxvalue-1;
 		    return(1);
 		case TGTT_SLIDER_MAXVALUE:
 		    idata->maxvalue=(int) b;
+		    if(idata->maxvalue < idata->minvalue+1) idata->maxvalue=idata->minvalue+1;
 		    return(1);
             }
 	    return(0);

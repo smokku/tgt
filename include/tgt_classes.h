@@ -99,6 +99,7 @@ jest _po_ odpytaniu rodzicow o to czy rozumieja
 #define TGT_CLASS_CHECKBOX 6
 #define TGT_CLASS_SLIDER 7
 #define TGT_CLASS_PROGRESS 8
+#define TGT_CLASS_STATUS 9
 
 #define TGT_CLASS_MENU 29
 #define TGT_CLASS_CYCLE 30

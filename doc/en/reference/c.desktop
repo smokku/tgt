@@ -1,0 +1,27 @@
+
+NAME
+
+TGT_CLASS_DESKTOP - root class
+
+DESCRIPTION
+
+Desktop class objects are the root objects for all TGT terminals (ie applications),
+
+There are special functions in TGT to obtain a desktop object: see f.tgt_getdesktop
+and f.tgt_start
+
+TAGS
+
+C => may be specified when creating an object
+M => must be specified when creating an object
+S => may be set by tgt_set();
+G => may be read by tgt_get();
+
+TGTT_CALLBACK                                                         C--
+
+Requires a (int (*) (struct tgt_object *,int)) ( pointer to a function, 
+which prototype is int func(struct tgt_object * desktop,int keycode); ) pointer,
+which will be called when a key code can not be understood by
+underlaying objects. This could be used in applications to provide global
+function keys.
+
