@@ -1,0 +1,30 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_addclass - Add a class handler function to class tables and initializes
+               that class
+
+SYNOPSIS
+
+void tgt_addclass(int id,int (*classf)(struct tgt_object*,int,int,void*));
+
+DESCRIPTION
+
+tgt_addclass might be used to add application's own classes into TGT class
+tables. The class handler 'classf' is assigned an identifier 'id'. This
+identifier might then be used in tgt_createobject() and tgt_createandlink().
+
+tgt_addclass() calls also the TGT_OBJECT_SETDEFAULTS class method if
+the config file was loaded before.
+
+EXAMPLE
+
+(from internal tgt initializations)
+    tgt_addclass(TGT_CLASS_DESKTOP,tgt_builtin_desktop);
+    tgt_addclass(TGT_CLASS_WINDOW,tgt_builtin_window);
+    tgt_addclass(TGT_CLASS_BUTTON,tgt_builtin_button);
+    tgt_addclass(TGT_CLASS_LABEL,tgt_builtin_label);
+    tgt_addclass(TGT_CLASS_STRING,tgt_builtin_string);
+
+		    

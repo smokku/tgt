@@ -64,3 +64,13 @@ void tgt_addkeyseq(struct tgt_keynode *l_main_table,char *seq,int c);
 
 struct tgt_terminal * tgt_setscreen(char *name);
 struct tgt_object * tgt_haschild(struct tgt_object *parent,int id);
+
+#ifndef PREFS_FILE
+char * tgt_getprefs(void* prfs, char *section, char *key,char *def);
+#endif
+
+void tgt_addclass(int id,int (*)(struct tgt_object *,int,int,void*));
+void * tgt_loadclass(int id,char *name);
+void tgt_unloadclass(void *dlh);
+
+struct tgt_object * tgt_start(char *tname,struct tgt_terminal **ptr);

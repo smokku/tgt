@@ -73,6 +73,7 @@ to jesli parametr req to odpowiednio:
 #define TGT_OBJECT_SETTAG 5
 #define TGT_OBJECT_GETTAG 6
 
+#define TGT_OBJECT_SETDEFAULTS 7
 
 /* Pole objflags */
 #define TGT_OBJFLAGS_NONSELECTABLE 1

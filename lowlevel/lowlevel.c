@@ -1,8 +1,18 @@
 #include <stdio.h>
+#ifndef TGT_DLTERMCAP
 #include <termcap.h>
+#else
+#include <dlfcn.h>
+#endif
 #include <memory.h>
 #include <string.h>
 #include "tgt.h"
+#define TERMSECTIONNAME "terminal"
+#ifdef TGT_DLTERMCAP
+    char* (*tgetstr)(char *,char*);
+    int (*tgetnum)(char *);
+    int (*tgetent)(char *,char*);
+#endif
 
 
 void tgt_chattr(struct tgt_terminal *term,int request,int a,char *b)
@@ -93,27 +103,51 @@ void tgt_term_addkey(struct tgt_terminal *term,char *capability,char *def,int ke
     }
     tgt_addkeyseq(term->lookup_root,kbbuffer,key);
 }
-char *tgt_tgetstr(char *name)
+    extern void * g_prefs;
+
+void tgt_term_addkey_int(int te,struct tgt_terminal *term,char *capability,char *def,char *conf_name,int key)
 {
-    char *ret;
-/* tgt_tgetstr() pobiera atrybut z termcapa , a w razie braku atrybutu klonuje
-   nam pusty string, zeby sie nie wykraszowalo tgt_chattr */
-    ret=tgetstr(name,NULL);
-    if(ret==NULL) ret=strdup("");
-    return(ret);
+    char *str;
+    char *pstr;
+    char kbbuffer[TGT_MAX_SEQ];
+/* Dodaje sekwencje zawarta w atrybucie terminala term capability do tablic
+   znajdowania znakow wprowadzanych z klawiatury .. Jesli sekwencji nie uda
+   sie odczytac, przyjmowana jest domyslna sekwencja def. Wyjscie
+   z termcapa moze zawierac jakies niepozadane znaki typu "\","E"
+   niwelujemy je (tzn przeksztalcamy w naszym przykladzie do 0x1b)
+   za pomoca snprintf() */
+    str=NULL;
+    if(pstr=tgt_getprefs(g_prefs,TERMSECTIONNAME,conf_name,NULL))
+	def=pstr;
+    else
+	if(te) str=tgetstr(capability,NULL);
+
+    if(!str)
+    	snprintf(kbbuffer,TGT_MAX_SEQ-1,def);
+    else
+    {
+	snprintf(kbbuffer,TGT_MAX_SEQ-1,str);
+	free(str);
+    }
+    tgt_addkeyseq(term->lookup_root,kbbuffer,key);
 }
-char *tgt_tgetstrd(char *name,char *def)
+
+char *tgt_tgetstrd(int te,char *name,char *def,char *conf_name)
 {
     char *ret;
-/* tgt_tgetstr() pobiera atrybut z termcapa , lub def (default) */
-    ret=tgetstr(name,NULL);
-    if(ret==NULL) ret=strdup(def);
+/* tgt_tgetstr() pobiera atrybut z config-file, jesli nie to termcapa , a jesli
+   i to sie nie powiedzie, przyjmuje def (default) */
+    if(ret=tgt_getprefs(g_prefs,TERMSECTIONNAME,conf_name,NULL)) return(strdup(ret));
+    if(te && !ret) ret=tgetstr(name,NULL);
+    if(!ret) ret=strdup(def);
     return(ret);
 }
 
+
+
 struct tgt_terminal * tgt_setscreen(char *name)
 {
-    int te;
+    int te,n;
     char *str;
     char *buffer;
     struct tgt_terminal *ret;
@@ -126,19 +160,44 @@ Funkcja pobiera z termcapa parametry terminala podanego jako argument name
 i zwraca wskaznik na stworzona strukture aplikacji
 
 */    
+#ifdef TGT_DLTERMCAP
+    void *dlh;
+    dlh=dlopen("libtermcap.so",RTLD_LAZY);
+    if(dlh)
+    {
+	tgetent=(int(*)(char *,char*)) dlsym(dlh,"tgetent");
+	tgetnum=(int(*)(char *)) dlsym(dlh,"tgetnum");
+	tgetstr=(char*(*)(char *,char*)) dlsym(dlh,"tgetstr");
+	if(!tgetent || !tgetnum || !tgetstr)
+	{
+	    dlclose(dlh);
+	    dlh=NULL;
+	}
+    }
+#endif
 
 
 /* Ewentualny odczyt zmiennej srodowiskowej */
 
     if(name==NULL) name=(char*) getenv("TERM");
-    if(name==NULL) return(NULL);
 
 /* Otwarcie wpisu dla naszego terminala */
-    
     buffer=(char*) malloc(2048);  /* wymagane przez POSIX */
-    te=tgetent(buffer,name);
-    if(te!=1) { free(buffer); return(NULL); }
+    te=0;
+#ifdef TGT_DLTERMCAP
+    if(dlh) if(name) te=tgetent(buffer,name);
+#else
+    if(name) te=tgetent(buffer,name);
+#endif
 
+    if(te!=1)
+    {
+	free(buffer);
+	printf("Termcap library or termcap entry NOT FOUND\n");
+	printf("Attempting to use config file directives or defaults\n");
+	usleep(2000000);
+	te=0;
+    }
 /* Przydzielamy pamiec... */
     ret=(struct tgt_terminal *) malloc(sizeof(struct tgt_terminal));
 
@@ -146,29 +205,33 @@ i zwraca wskaznik na stworzona strukture aplikacji
     ret->color_bg=4; ret->color_fg=7;
 
 /* ilosc kolumn i linii*/
-    ret->x_size=tgetnum("co");
-    ret->y_size=tgetnum("li");
+    if(te)
+    {
+	ret->x_size=tgetnum("co");
+	ret->y_size=tgetnum("li");
+    }
+    else
+    {
+	ret->x_size=80; ret->y_size=25;
+    }
 
-/*
-    Kody dla kasowania ekranu i przenoszenia kursora. Bez nich sie NIE OBEJDZIEMY,
-    bez kolorkow, bez grafiki to bedzie jeszcze jakos wygladac (krzaki ale bedzie
-    dalo sie *cos* chociaz zrobic), natomiast nie bedac w stanie przenosic
-    kursora nie jestesmy w stanie rysowac wszystkiego tam gdzie trzeba...
-*/    
-    if((ret->c_clear=tgetstr("cl",NULL))==NULL) { free(ret); return(NULL); }
-    if((ret->c_move=tgetstr("cm",NULL))==NULL) { free(ret->c_clear); free(ret); return(NULL); }
+    if(n=atoi(tgt_getprefs(g_prefs,TERMSECTIONNAME,"columns","0"))) ret->x_size=n;
+    if(n=atoi(tgt_getprefs(g_prefs,TERMSECTIONNAME,"lines","0"))) ret->y_size=n;
+    
+    ret->c_clear=tgt_tgetstrd(te,"cl","\033[H\033[J","clear");
+    ret->c_move=tgt_tgetstrd(te,"cm","\033[%i%d;%dH","move");
 
 /* tgt_tgetstr() w razie braku atrybutu klonuje nam pusty string, zeby
    sie nie wykraszowalo tgt_chattr */
 
-    ret->c_graphics=tgt_tgetstrd("as","\x0e");
-    ret->c_text=tgt_tgetstrd("ae","\x0f");
+    ret->c_graphics=tgt_tgetstrd(te,"as","\x0e","gfx_start");
+    ret->c_text=tgt_tgetstrd(te,"ae","\x0f","gfx_end");
 
 /* zmiana kolorow napisu i tla, BOLD-jasniejsze kolory (active) i NORMAL (inactive)*/
-    ret->c_fgcolor=tgt_tgetstrd("AF","\033[3%dm");
-    ret->c_bgcolor=tgt_tgetstrd("AB","\033[4%dm");
-    ret->c_active=tgt_tgetstrd("md","\033[1m");
-    ret->c_inactive=tgt_tgetstrd("me","\033[0m");
+    ret->c_fgcolor=tgt_tgetstrd(te,"AF","\033[3%dm","ch_fg");
+    ret->c_bgcolor=tgt_tgetstrd(te,"AB","\033[4%dm","ch_bg");
+    ret->c_active=tgt_tgetstrd(te,"md","\033[1m","bold");
+    ret->c_inactive=tgt_tgetstrd(te,"me","\033[0m","normal");
 
 /* Stworzenie tablic (struktury drzewa) przeszukujacych klawiature...
    W sumie dosc kosztowna pamieciowo zabawa... Jedna taka tablica
@@ -176,20 +239,23 @@ i zwraca wskaznik na stworzona strukture aplikacji
    linux-t tworzone jest ok. :) 3 tablic czyli 6 kB */
    
     ret->lookup_root=tgt_initroottable();
-    tgt_term_addkey(ret,"ku","\033[A",TGT_KEY_UP);
-    tgt_term_addkey(ret,"kd","\033[B",TGT_KEY_DOWN);
-    tgt_term_addkey(ret,"kl","\033[D",TGT_KEY_LEFT);
-    tgt_term_addkey(ret,"kr","\033[C",TGT_KEY_RIGHT);
-    tgt_term_addkey(ret,"kD","\x1b\x5b\x33\x7e",TGT_KEY_DELETE);
-    tgt_term_addkey(ret,"kb","\x7f",TGT_KEY_BKSPC);
-    tgt_term_addkey(ret,"kI","\x1b\x5b\x32\x7e",TGT_KEY_INSERT);
-    tgt_term_addkey(ret,"kh","\x1b\x5b\x31\x7e",TGT_KEY_HOME);
-    tgt_term_addkey(ret,"@7","\x1b\x5b\x34\x7e",TGT_KEY_END);
+    tgt_term_addkey_int(te,ret,"ku","\033[A","c_up",TGT_KEY_UP);
+    tgt_term_addkey_int(te,ret,"kd","\033[B","c_down",TGT_KEY_DOWN);
+    tgt_term_addkey_int(te,ret,"kl","\033[D","c_left",TGT_KEY_LEFT);
+    tgt_term_addkey_int(te,ret,"kr","\033[C","c_right",TGT_KEY_RIGHT);
+    tgt_term_addkey_int(te,ret,"kD","\x1b\x5b\x33\x7e","delete",TGT_KEY_DELETE);
+    tgt_term_addkey_int(te,ret,"kb","\x7f","backspace",TGT_KEY_BKSPC);
+    tgt_term_addkey_int(te,ret,"kI","\x1b\x5b\x32\x7e","insert",TGT_KEY_INSERT);
+    tgt_term_addkey_int(te,ret,"kh","\x1b\x5b\x31\x7e","home",TGT_KEY_HOME);
+    tgt_term_addkey_int(te,ret,"@7","\x1b\x5b\x34\x7e","end",TGT_KEY_END);
 
-    memcpy(ret->gfx_set,"qxutlkmj",8);
+    memcpy(ret->gfx_set,tgt_getprefs(g_prefs,TERMSECTIONNAME,"gfx","qxutlkmj"),8);
     /* Odpowiedniki znakow semigraficznych. W trybie graficznym napisanie
      'q' powoduje wyswietlenie linii poziomej, 'j' to dolny prawy naroznik
      ramki etc. Patrz stale w tgt_terminal.h */
     ret->fg=-1; ret->bg=-1;
+#ifdef TGT_DLTERMCAP
+    if(dlh) dlclose(dlh);
+#endif
     return(ret);
 }

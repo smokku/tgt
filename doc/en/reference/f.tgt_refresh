@@ -1,0 +1,13 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_refresh - refresh an object
+
+SYNOPSIS
+
+void tgt_refresh(struct tgt_object *obj);
+
+DESCRIPTION
+
+tgt_refresh redraws 'obj' and all its children.

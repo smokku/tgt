@@ -1,0 +1,43 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_set - set an object attribute
+
+SYNOPSIS
+
+int tgt_set(struct tgt_object *obj,long tag,long value);
+int tgt_get(struct tgt_object *obj,long tag,void *ptr);
+
+DESCRIPTION
+
+tgt_set sets in object 'obj' the attribute 'tag' to new value 'value'
+Not all tags might be set by this function, for exact specifications
+have a look at c.* files.
+
+Similarly, tgt_get saves the attribute 'tag' of object 'obj' into
+variable pointed by ptr. 
+
+Both functions return 1 if the attribute was sucessfully set or saved and
+0 when something went wrong.
+
+EXAMPLE
+
+struct tgt_object *str;
+struct tgt_object *lab;
+
+str=tgt_createandlink(window,term,TGT_CLASS_STRING,(long[]) {TGTT_X,3,TGTT_Y,2,TGTT_CALLBACK,(long) cb,TGTT_END,0});
+lab=tgt_createandlink(window,term,TGT_CLASS_LABEL,(long[]) {TGTT_X,3,TGTT_Y,3,TGTT_LABEL_TEXT,(long) "",TGTT_END,0});
+
+(...)
+
+char ltxt[100];
+
+void cb()
+{
+char *s;
+tgt_get(str,TGT_STRING_STRING,&s);
+snprintf(ltxt,99,"%s",s);
+tgt_set(lab,TGT_LABEL_TEXT,ltxt);
+tgt_refresh(lab);
+}

@@ -63,9 +63,7 @@ main()
     struct tgt_queue_msg msg;
     char sstring[256];
     int i;
-
-    myterm=tgt_setscreen((void*)0);
-    desktop=tgt_getdesktop(myterm);
+    desktop=tgt_start(NULL,&myterm);
 
 /* mozna linkowac od razu... */
     window=tgt_createandlink(desktop,myterm,TGT_CLASS_WINDOW,(long[]) {TGTT_XS,20,TGTT_YS,10,TGTT_WINDOW_TITLE,"Test",TGTT_END,0});

@@ -1,0 +1,413 @@
+smoku:
+dlaczego c_plaintext.c nie ma tgt_refresh(obj); w case TGT_OBJECT_SETTAG: ?
+zrobilem 3 nowe klasy: c_checkbox.c c_slider.c i c_progress.c
+
+
+
+mteg: Nowe klawisze: TGT_KEY_HOME, TGT_KEY_INSERT, TGT_HOME_END
+      Nowa klasa: string, przyklad w examples/string.c , make string...
+    UWAGA !!! Zmiana konwencji nazwowych, teraz tgt_createobject_int() to
+    tgt_createobject() a tgt_createandlink_int to tgt_createandlink      
+
+
+smoku: dorzucilem "troche" do TODO.. ;]
+dlaczego: tgt_createobject_int(...); i tgt_createandlink_int(...); ?
+a konkretnie _int?  nie mogloby byc bez tego?
+moze 'make install' i 'make uninstall'?
+zajrzyj tez do katalogu _other.. wrzucilem tam kilka plikow, ktore
+moga sie przydac, badz warto by je przejrzec..
+ a'propos ngtk - zauwaz, ze wiekszosc funkcjonalnosci, ktora ten gosc
+oznaczyl jako najpilniejsza do zrobienia nam wyszla przy okazji na
+etapie designu... =]]]]]
+ to jest ciekawe:
+- config script, either ~/.ngtkrc or/and /etc/ngtkrc, to define the default
+behaviors of the lib (like the escape timeout in SLang version) (N)
+	   
+
+
+
+mteg: Ok ... No to nadal czekam na sugestie... _Szczegolnie_ dotyczace
+szkieletu... Jesli nie masz juz zadnych pomyslow (chwilowo) to prosze,
+popatrz na TODO klas, sprobuj dorzucic wlasne sugestie (tak jakos
+chaotycznie tam od myslnikow) ew wlasne pomysly... No i zastanow
+sie co chcialbys zrobic :)
+  
+
+
+mteg: 0.082 od 0.08s i 0.081 ZMIANY
+
+- bugfixy: classes/class.c dodane sprawdzanie czy obiekt ma dzieci
+  przed ich odswiezaniem (powodowalo SIGSEGV przy jakimkolwiek wywolaniu
+  tgt_intrefresh()) classes/desktop.c dodane do TGT_OBJECT_CREATE:
+  obj->objectf=tgt_gettag(b,TTGT_CALLBACK,NULL); (bije sie w piersi...
+  SIGSEGV dla kazdego nierozpoznanego klawisza)
+
+- Zmiana konwencji nazwowych.. TTGT_ zmienia sie na TGTT_,
+  libtgui.so na libtgt.so
+
+
+
+
+mteg: OK. Przeczytalem. Przemyslalem. Zastosowalem sie do uwag :)
+
+//!     ^ a tu nie powinno byc czasem TTGT_END  ????   !!!!!!!!!!
+//!       w koncu kiedys mozemy dojsc do wniosku ze to wcale != 0
+racja poprawione :)
+
+//! a tu z kolei powinno byc TTGT_X,0, TTGT_Y,0   bo wspolzedne ekranowe liczymy od zera...
+tu juz mniej racja... tzn liczymy i CHCEMY liczyc w obiektach sobie
+wspolrzedne od zera... ale ekran dla termcapa i sekwencji ansi zaczyna sie
+od 1,1 ... Tak wiec aby uniknac sobie klopotow przy refreshu ustawiamy
+sobie wspolrzedne desktopa na 1,1 ... Te wartosci sa dodawane przy tgt_refresh()
+wiec nie musimy sie tym przejmowac i wlasnie dzieki temu mozemy liczyc od 0,0 :)
+
+
+
+
+
+
+smoku: zajrzyj do management.c, class.c i tgt_classes.h
+ jest tam kilka uwag w komentarzach "//!" (grep "//!" *.c)
+ co do ktorych wolalem sie upewnic..
+tagi powinny chyba zaczynac sie od TGTT - TGT-Tag, prawda?
+moze tez jednak libtgt.so zamiast libtgui.so
+(wiem, to detale, ale pozniej bedzie trzeba wiecej zmieniac)
+
+zmiana nazw funkcji:
+tgt_activate -> tgt_setfocus (poprawka test.c)
+tgt_is_active -> tgt_isactive
+nowa funkcja: tgt_hasfocus
+
+to funkcja realizujaca TGT_OBJECT_REFRESH powinna wywolac tgt_hasfocus(obj)
+aby sprawdzic, czy obiekt ma sie narysowac z focusem czy bez..
+ZOSTAWIAM TO TOBIE, bo to twoje klasy..
+w tej chwili uzywaja tgt_isactive, a to nie jest dokladne..
+tzn. dla klasy window jest akurat, ale dla button juz nie - trzeba sie zastanowic
+czy klasa ma uzywac isactive czy hasfocus..
+trzeba tez przekodowac handlery klas wg. nowego umiejscowienia shalliswitch()
+
+ale jak widac dobrze przemyslelismy szkielet, bo mimo zaimplementowania list
+cyrkulacyjnych nie robilem zadnej rewolucji w strukturach..
+czyli: JEST DOBRZE - oby tak dalej.. =]]]]
+
+pomysl z lookup-tables mi sie podoba...  bardzo..
+mozna zaimplementowac wlasciwie kazda kombinacje klawiszkow.. =]
+
+godz. 00:34  ./test rzuca: 1..2...3... StartNaruszenie ochrony pamieci
+ale o tej porze nie mam juz sily na debugging...
+spakuje to jeszcze, podesle ci i ide w kime, bo rano trzeba do pracy..
+
+
+
+
+
+
+
+
+
+
+mteg: 0.081 od 0.08 ZMIANY:
+- classes/keyboard.c : fgetc() zastapione nowa procedura tgt_fgetc(int sec,int usec),
+  w efekcie teraz jesli przy czekaniu na nacisniecie klawisza przekroczony zostanie
+  timeout (domyslnie 0.5 s ale mozne zmienic go aplikacja wywolujac
+  tgt_chtimes(int seconds,int microseconds)), natychmiast przekazywane sa
+  warstwom nizszym kody wcisnietych klawiszy... Powoduje to zniwelowanie
+  efektow typu 'podwojne esc' znanych z np. Midnight Commandera
+- classes/c_*.c zmiana kolejnosci analizowania klawiszy w metodzie TGT_OBJECT_ 
+  _HANDLE w klasach ktore zawieraja kod przelaczajacy... aktualna kolejnosc
+  to: 1) Analiza kodow wlasnych klasy 2) Analiza kodow zmiany fokusu 3)
+  Analiza hotkeyow (w przypadku desktop i window) - analizatory klawiszy
+  dostarczone przez TGT_CALLBACK...
+- classes/c_*.c dodane fflush(stdout) w wszystkich metodach TGT_REFRESH
+ 
+-----
+hmm ze tak powiem troche nie w tej kolejnosci napisalem :)
+w sumie to prawidlowa kolejnosc czytania to fragmentami od konca pliku :)
+tzn od Twojego komentarza w gore..
+
+mteg: No i teraz tak... Do zrobienia zostal jeszcze ten Twoj pomysl
+z tylko jednym pointerem na dzieci obiektu...
+wiaze sie to z:
+-zmiana struktury tgt_listnode w include/tgt_classes.h
+-rewritem nastepujacych procedur:
+
+    void tgt_activate(struct tgt_object *obj)
+
+    struct tgt_object * tgt_findnext_selectable(struct tgt_object * obj)
+    struct tgt_object * tgt_findprev_selectable(struct tgt_object * obj)
+      W zasadzie te dwie mozna zlikwidowac (tzn przeniesc do kolejnych dwoch 
+      ktore w zasadzie jako jedyne korzystaja z nich)
+
+    void tgt_activatenext(struct tgt_object *obj)
+    void tgt_activateprev(struct tgt_object *obj)
+
+    void tgt_activatenext_child(struct tgt_object *obj)
+    void tgt_activateprev_child(struct tgt_object *obj)
+      Te dwie sa juz nieaktualne, chyba mozna je wywalic... (albo zrobic
+      z nich frontendy do tgt_activatenext() i tgt_activateprev())
+     
+    int tgt_is_active(struct tgt_object *obj)
+      Tutaj jeszcze dodatkowo trzeba zakodowac pomysl z tym zeby
+      obiekt byl uznawany za aktywny przez ta funkcje
+      (czyli za taki ktory ma fokus) tylko jesli jego rodzic,
+      rodzic jego rodzica, rodzic rodzica jego rodzica itd sa aktywne.
+    
+    void tgt_link(struct tgt_object *obj,struct tgt_object *parent)
+    void tgt_unlink(struct tgt_object *obj)
+    
+    No i minimalne zmiany w
+    void tgt_destroyobject(struct tgt_object *obj)
+    int tgt_intrefresh(struct tgt_object *obj,int a,int b);
+       (uwaga: jak cos to obiekty powinne byc odswiezane 'wstecz' listy,
+        tak aby ostatni zostal odswiezony obiekt aktywny)
+   czy tam innych funkcjach ktore korzystaja z ln.first_child aby
+   sobie poznajdowac wszystkie dzieci obiektu.
+
+Mam nadzieje ze uda sie to zrobic bez zmian prototypow i zasad dzialania
+tych funkcji (tzn ideologicznie to samo tylko sposob przechowania danych,
+(scislej listy i aktywnych obiektow) sie zmienia, co handlery klas czy tam
+program korzystajacy z libtgui.so zupelnie nie interesuje)
+ 
+
+Po co to tak wymieniam? yy eee no wiec zajmiesz sie tym? Moja wymowka ;)))) :
+Spodziewam sie ze masz wieksze doswiadczenie w tym temacie (ja jestem raczej 
+praktykiem, slabo znam algorytmy, listy cyrkulacyjne etc :) Brak odpowiedzi
+traktuje jako zgode ;))))))))))))))))))))))))))))))))
+
+
+
+
+
+
+
+
+
+ZMIANY OD 0.078:
+
+- dodatkowe pola w strukturze tgt_object: next_keys i prev_keys, zawierajace
+  tablice intow (zakonczone zerem) bedacych kodami klawiszy (ascii lub
+  kody specjalne typu TGT_KEY_UP) zmieniajacych aktywne dziecko obiektu;
+  zmiana w tgt_createobject() uwzgledniajaca analize tych tagow 
+  (tak aby kazdy obiekt mial tam chociaz NULL) , zmiany w plikach klas
+  ktorych obiekty moga byc rodzicami jakichs innych (Desktop,Window),
+  tak aby w przypadku braku tagu inicjowane byly domyslne klawisze...
+- zmiany w tgt_link() i tgt_unlink() : przy linkowaniu jesli obiekt nadrzedny
+  ma pole active_object rowne NULL to o ile obiekt linkowany nie ma
+  TGT_OBJFLAGS_NONSELECTABLE to jest ustawiany jako aktywny..
+  przy rozlinkowywaniu jesli rozlinkowywany obiekt jest aktywny to
+  aktywowany jest nastepny obiekt. Dlaczego? ano jako przykladowe
+  uzasadnienie: do tej pory, po zlinkowaniu
+  normalnie nic nie bylo aktywne, informacje o klawiszach otrzymywala
+  jedynie klasa desktop, ktora leje na nie z gory (bo przelaczaniem
+  okien zajmuja sie teraz same okna... patrz nastepna zmiana) wiec
+  w efekcie nawet nie mozna bylo zaktywizowac jakiegos okna zeby cos zrobic
+  Oczywiscie to samo tyczylo sie przelaczen wewnatrz okna...
+- zmiany w plikach c_*, tak aby zmiana fokusa odbywala sie na poziomie
+  tych klas wsrod ktorych wymieniany jest fokus (np za zmiane okien
+  odpowiada teraz Window a nie Desktop, za zmiane aktywnych obiektow
+  w oknie odpowiadaja same klasy obiektu etc)
+- na uzytek poprzednio wymienionej zmiany: stworzone funkcje: tgt_activatenext()
+  i tgt_activateprev() ktore maja docelowo wyprzec tgt_activatenext_child() i
+  tgt_activateprev_child() (ktore wymagaja jako argumentu rodzica obiektow wsrod ktorych
+   wymieniany jest focus, podczas gdy nowe funkcje przyjmuja jako argument
+   'stary' aktywny obiekt i same szukaja sobie jego rodzica)
+- stworzona funkcja tgt_shalliswitch(struct tgt_object *o,int k,int p):
+  sprawdza czy klawisz k nie pokrywa sie aby z tablicami (lub ich
+  pierwszymi elementami o ile p!=0) klawiszow zmiany fokusa rodzica obiektu
+  o
+
+
+
+
+
+
+
+
+mteg: Jasne!! Wczesniej o tym nie pomyslalem... masz racje...:
+te trzy wskazniki
+    struct tgt_object *first_child;
+    struct tgt_object *last_child;
+    struct tgt_object *active_child;
+moznaby zastapic tylko jednym:
+    struct tgt_object *children;
+ktory wskazywalby na pierwsze i zarazem aktywne dziecko w liscie hmmm..
+cyrkulacyjnej... a aktywizacja nastepnego obiektu to wtedy zaledwie
+obj->ln.parent->children=obj->ln.next;
+(no naturalnie obudowane kodem ktory nie pozwala na aktywizacje tego co 
+ma TGT_OBJFLAG_NONSELECTABLE)... Jedna mala rzecz mi sie skojarzyla
+w tym temacie: bedziemy musieli ale w takim wypadku konsekwentnie
+stosowac default: return(0); w klasach ktore nie obsluguja TGT_OBJECT_HANDLE
+(cczyli sa TGT_OBJFLAG_NONSELECTABLE), bo mozna sie spodziewac
+wywolywania funkcji klasy przy dostarczaniu msg-a o klawiszu w momencie
+kiedy w oknie sa same takie obiekty..
+
+mysle ze tab powinien przelaczac tylko pomiedzy podobiektami klasy window,
+do klasy desktop (przelaczanie miedzy samymi oknami) inny klawisz
+(u mnie '`')... Blokujemy tym sposobem wprawdzie niektore mozliwosci typu
+podokna (okno bedace dzieckiem okna) ale... ALBO WIEM !! zrobi sie dodatkowy
+tag (no i pole w strukturach wewnetrznych klas typu desktop czy window)
+w ktorym bedzie klawisz przelaczajacy (w przod/w tyl) dzieci... oczywiscie domyslnie (przy nie
+podaniu taga) bedzie to dla klasy window tab dla desktop ten `... albo
+jeszcze lepiej... zamiast 1 znaku, caly string (tablica) klawiszy zmieniajacych,
+jako pole w strukturze klasy od razu (NULL jesli nie dotyczy) ...
+np. dla window domyslnie:
+w->next_keys={ '\t', TGT_KEY_DOWN, TGT_KEY_RIGHT ,0};
+(ustawiane ew tagiem dajmy nato TTGT_NEXTKEYS)
+w->prev_keys={ TGT_KEY_NONE , TGT_KEY_UP, TGT_KEY_LEFT ,0};
+(tag TTGT_PREVKEYS)
+no i dodatkowa funkcja powiedzmy tgt_shalliswitch(struct tgt_object * obj,int key,int pri)
+wywolywana przez klase przy odbiorze wiadomosci o klawiszach,
+sprawdzajaca jak wprowadzony klawisz ma sie do tablic zmian obiektu
+rodzica i zwracajaca -1 : aktywuj poprzedniego  0 : nic sie nie dzieje, analizuj
+key normalnie , 1: aktywuj nastepnego...
+Dlaczego zastosowalem ten wybieg z parametrem pri i TGT_KEY_NONE ? Otoz
+mysle ze ta funkcja, w przypadku pri rownego jeden moze sprawdzac
+tylko pierwszy element tablic klawiszy zmieniajacych rodzica... Tym sposobem
+ze tak powiem klasy 'uprzywilejowane' , wlasnie podajace jako ten parametr
+jedynke (np. lista, string) beda mogly przechwytywac 99% klawiszy *oprocz*
+tych dwoch (lub jednego w moim przykladzie) najwazniejszego... w szczegolnych
+przypadkach (np. string vel pole dialogowe (chyba)), majac fokus na obiektach
+takich klas nie bedzie mozna zmieniac aktywnego okna (bo zajmuje sie tym klasa
+window (odwolujac sie do tablic klasy desktop via tgt_shalliswitch()) ktora
+otrzymuje wiadomosc tylko jesli handler klawiszy stringa zwroci zero, 
+co nigdy sie nie zdarza jako ze string powinien przyjmowac wszystko :)
+
+Okej zakoduje to , najwyzej sie wywali potem jak uznasz ze to slaby pomysl :)
+
+O, btw, wlasnie, jeszcze tak mi na mysl przyszlo ze w przyszlosci klasy
+moglyby miec wlasne tagi typu TTGT_BUTTON_CLICKKEY i niekoniecznie
+( w tym przypadku) reagowac tylko na '\n' , '\r' i ' '... Ale
+o tym pomysli sie przy pisaniu handlerow klas (a licze na to ,ze zabierzemy
+sie za to na koncu, kiedy zarzadzanie klasami bedzie (ideologicznie) gotowe)
+
+ujednolicenie klawiszologii (o ile dobrze Cie zrozumialem) chyba wtedy odpada ..
+jak userowi (naczy sie programowi ktory korzysta z funkcji liba) nie pasuje 
+takie oblozenie to zawsze ma te 2 tagi, TGT_NEXTKEYS i TGT_PREVKEYS
+W przyszlosci mozemy dodac np w jakies funkcji tgt_initgui() odczyt
+pliku konfiguracyjnego w ktorym sa wlasnie ustawione m.in.jakie klawisze domyslnie
+maja byc ustawiane przy nie podaniu tych tagow-wtedy nawet uzytkownik
+programu korzystajacego z funkcji libtgui bedzie sobie mogl zmienic oblozenie..
+
+Nie zrozumialem jedynie tego:
+"(ew. dodatkowe pole w obiektach "selectable" - taborder - wypelniane podczas tworzenia
+automatycznie)" ... jasniej? =)
+
+co do renderowania : racja, w aktualnie stworzonych klasach juz tak jest zrobione
+(inne tlo niz nieaktywny obiekt np. cyjan zamiast niebieskiego, oczywiscie
+jak zabierzemy sie za handlery klas to mozemy pomyslec (ale tu juz chyba
+kazdy osobno, jak bedziemy klasy pisac to mysle ze nie bedziemy sie
+musieli konsultowac, tylko ustalimy kto co) o innych sposobach wyrozniania),
+chociaz w sumie prawda tez jest to ze wyrenderowany jako aktywny powinien
+byc tylko obiekt ktory 1) sam jest aktywny 2) rodzic obiektu jest aktywny
+3) rodzic rodzica obiektu jest aktywny (....) .. wiaze sie to jedynie
+z przerobka tgt_is_active(); (z ktorego korzystaja handlery klas do 
+orzekania czy obiekt jest aktywny)
+
+
+
+
+
+
+
+
+
+
+
+ZMIANY OD 0.077:
+- Mysle ze nie musisz sie tak przejmowac tymi zmianami gdyz dotycza one
+  kodu ktorym sie wczesniej nie zajmowales az tak bardzo...
+
+- DRASTYCZNIE zmieniony lowlevel/lowlevel.c , nowy plik lowlevel/keytree.c,
+  classes/keyboard.c -> procedura tgt_waitkeys
+  +zmiany w test.c, zmiany w include/tgt_terminal.h i include/tgt_keyboard.h
+  drobne zmiany w include/tgt_tags.h... O nowej (drzewowej) strukturze przechowywania
+  danych dotyczacych klawiszy generujacych >1 znak mozna znalezc w LOOKUP-
+  -TABLES...
+
+  wykomentowana tgt_waitkeys() z classes/class.c...
+  classes/c_plaintext.c:
+  dodana nowa metoda wlasna klasy:
+     case TGTM_LABEL_CHANGETEXT:
+          obj->class_data=b;
+          return(1);
+  czyli zmiana tekstu w etykiecie
+  w metodzie TGT_OBJECT_REFRESH dodane na koncu:
+	  fflush(stdout);
+
+  ponadto w classes/keyboard.c zamiast dotychczasowych dwoch funkcji
+  tgt_rawcon() i tgt_normcon() teraz jest tylko jedna: tgt_rawcon(int a);
+  jesli a==0 to ustawiany jest termios jaki program zastal na starcie,
+  w przeciwnym wypadku termios opisujacy konsole 'raw'
+
+
+
+
+
+
+
+
+
+smoku: tak sobie mysle, ze lista dzieci obiektu moglaby byc lista cyrkulacyjna.
+wtedy odpadaja wskazniki first i last.. wystarczy tylko wskaznik na jeden z dzieci
+(zeby ich nie zgubic) i wskaznik na aktywne dziecko (czy da sie zrobic, zeby to byl
+jeden wskaznik?). zapewnienie petelki byloby na poziomie dzieci (wskazniki next/prev)
+chociaz wskaznik first by sie przydal, aby umozliwic przeskoczenie TABem do innego
+podokna w przypadku przebiegniecia nim wszystkich dzieci.
+(ew. dodatkowe pole w obiektach "selectable" - taborder - wypelniane podczas tworzenia
+automatycznie) czy to ma w ogole sens? co o tym sadzisz?
+
+trzebaby sie tez zastanowic nad ujednoliceniem klawiszologii
+(sa na to zdaje sie jakies normy ANSI)
+
+i jeszcze taki pomysl.. obiekty ktore maja focus powinny byc jakos inaczej renderowane
+np.
+ guzik zwykly:     [  OK  ]
+ guzik z focusem:  [> OK <]
+sprawdzac to powinna juz sama funkcja rysujaca (zeby sie nie rozdrabniac na wyzszych
+poziomach) - po prostu wstepujac po kolejnych poziomach i sprawdzaj czy na kazdym
+testowany obiekt jest aktywnym dzieckiem rodzica.. jesli na wszystkich poziomach jest
+to znaczy, ze ma focus..
+
+---
+UWAAGA: Jakbys mial odpalac test: pamietaj o Trzech Magicznych Klawiszach:
+przelaczanie w obrebie klasy desktop (np. pomiedzy okienkami) : `
+przelaczanie w obrebie okna (np. pomiedzy zawartoscia okna)   : tab
+klawisze na ktore reaguja obiekty klasy button                : spacja,enter
+
+uff.. 0:57, skonczylem... mam nadzieje ze komentarze nie zaciemnia
+jeszcze bardziej kodu :)
+
+btw, jak cos to radze czytac od inkludkow...
+
+swoja droga, jak juz przejrzysz kod, zastanow sie nad tym czy nie sensowniej
+byloby gdyby lista dzieci obiektu byla lista linkowana? i czy moze w
+samym obiekcie dac pointer do jego aktywnego dziecka ? ... o 0:59 nie mysli 
+sie latwo, moze Ty wpadniesz na to czy to wogole sie oplaca :)
+
+Wiele funkcji to istna prowizorka-napisane zeby dzialaly... Zalezalo mi jednak
+na szkielecie, wlasnie na czyms co by dzialalo.. Chodzi o sama koncepcje,
+struktury, jak cos to mozna zrobic rewrite poszczegolnych procedur, nie
+zmieniajac filozofii dzialania (czyli np. trzymajac sie prototypow i 
+definicji z inkludkow)
+
+ZMIANY OD 0.05 i 0.075:
+- NOWY POMYSL: dwie flagi boolowe (zawarte w specjalnym nowym polu objflags-
+   flagi na uzytek _klasy_ (a nie jak sugerowales wczesniej flagi obiektu-
+   - te klasa sobie moze upchnac do class_data, chociaz mozna zawsze stworzyc
+   dodatkowe pole flag obiektu, zobaczy sie): TGT_OBJFLAG_UNSELECTABLE -
+   -przewidziane np. dla etykiet, ikonek, progress barow etc, wszystko
+   co _nie_ moze zostac zaznaczone... i  TGT_OBJFLAG_INFORMFIRST (obsluga
+   dziala tylko jesli zostalo to wlaczone odpowiednim #define albo -D w makefile)
+   -jesli obiekt jest koncowym adresatem jakies wiadomosci, to zostanie o niej
+   poinformowany _najpierw_ , przed wyzszymi klasami.. przewidziane np. dla
+   context-menow, menow, pol dialogowych z menu etc- gdzie nie mozemy sobie
+   pozwolic np. na przelaczanie okien (przechwytywane przez klase desktop)
+   kiedy user kopie w menu...
+
+- NOWA KLASA: label (TGT_CLASS_LABEL). banal. przyjmuje jedynie tagi TTGT_X, TTGT_Y,
+   TTGT_FG, TTGT_BG i TTGT_LABEL_TEXT... plik: classes/c_plaintext.c
+
+- totalny rewrite kodu/struktur odpowiadajacych za liste dzieci obiektu
+  i szukanie aktywnych obiektow
+  
+  

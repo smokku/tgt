@@ -1,0 +1,21 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_waitkeys - Start keyboard input
+
+SYNOPSIS
+
+void tgt_waitkeys(struct tgt_object *obj);
+
+DESCRIPTION
+
+tgt_waitkeys function starts catching keyboard events for object 'obj'
+and its children. This function never returns, all further program code
+is executed only from callbacks (functions which pointers are specified
+by appropiate tags for classes, see c_*). For function handling keys
+asynchronously , have a look at tgt_async_waitkeys();
+
+EXAMPLE
+
+see f.tgt_createobject

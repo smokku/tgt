@@ -1,0 +1,30 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_destroyobject - free all memory associated with specified object and its
+                    children
+
+SYNOPSIS
+
+void tgt_destroyobject(struct tgt_object *obj);
+
+DESCRIPTION
+
+tgt_destroyobject frees all memory which was allocated when the object
+'obj' was created and then calls itself recursively  for that object's
+children.
+
+Warning: this function DOES NOT unlink the object from (for instance)
+its parent. If _any_ existing object is reffering to 'obj', you MUST
+call tgt_unlink(obj); before destroying it, otherwise you will
+propably get SIGSEGV.
+
+EXAMPLE
+
+window=tgt_createandlink(term,TGT_CLASS_WINDOW,{...});
+tgt_link(window,desk);
+tgt_refresh(desk);
+(...) we got bored with that window and don't want to see it again :)
+tgt_unlink(window);
+tgt_destroyobject(window);

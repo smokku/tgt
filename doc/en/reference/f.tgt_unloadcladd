@@ -1,0 +1,15 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_unloadclass - free memory allocated by tgt_loadclass
+
+SYNOPSIS
+
+void tgt_unloadclass(void *ptr);
+
+DESCRIPTION
+
+tgt_unloadclass could be called when a class which was loaded by tgt_loadclass
+is no longer used by the application. It is (as for TGT v 0.091) currently
+equivalent to dlclose(ptr);

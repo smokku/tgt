@@ -1,26 +1,77 @@
 #include <stdio.h>
 #include "tgt.h"
-
+#ifdef TGT_DLCLASSES
+#include <dlfcn.h>
+#endif
     static int int_initialized=0; /*Inicjowalismy juz tablice wewnetrznych klas?*/
     void *internal_classes[100]; /* owa tablica... */
+    extern void *g_prefs;
 
-void tgt_init_intclasses()
+struct tgt_object * tgt_start(char *tname,struct tgt_terminal **ptr)
+{
+    struct tgt_desktop *desktop;
+    struct tgt_terminal *terminal;
+    tgt_init();
+    if(!(terminal=tgt_setscreen(NULL))) return(NULL);
+    if(!(desktop=tgt_getdesktop(terminal)))
+    {
+	tgt_destroyterminal(terminal);
+	return(NULL);
+    }
+    if(ptr) *ptr=terminal;
+    return(desktop);
+}
+
+void tgt_addclass(int id,int (*classf)(struct tgt_object *,int,int,void*))
+{
+    if(g_prefs) classf(NULL,TGT_OBJECT_SETDEFAULTS,0,g_prefs);
+    internal_classes[id]=(void*) classf;
+}
+#ifdef TGT_DLCLASSES
+void * tgt_loadclass(int id,char *name)
+{
+    void *dlh;
+    int (*classf)(struct tgt_object *,int,int,void*);
+    if(dlh=dlopen(name,RTLD_LAZY))
+    {
+	classf=dlsym(dlh,"classmain");
+	if(classf)
+	{
+	    tgt_addclass(id,classf);
+	    return(dlh);
+	}
+	else
+	{
+	    dlclose(dlh);
+	    return(NULL);
+	}
+    }
+    else
+	return(NULL);
+}
+void tgt_unloadclass(void *dlh)
+{
+    dlclose(dlh);
+}
+#endif
+void tgt_init_intclasses(void)
 {
     /* ehh.. narazie cosik malo ... ;) */
-    internal_classes[TGT_CLASS_DESKTOP]=tgt_builtin_desktop;
-    internal_classes[TGT_CLASS_WINDOW]=tgt_builtin_window;
-    internal_classes[TGT_CLASS_BUTTON]=tgt_builtin_button;
-    internal_classes[TGT_CLASS_LABEL]=tgt_builtin_label;
-    internal_classes[TGT_CLASS_STRING]=tgt_builtin_string;
-    internal_classes[TGT_CLASS_LIST]=tgt_builtin_list;
-    internal_classes[TGT_CLASS_MENU]=tgt_builtin_menu;
-    internal_classes[TGT_CLASS_CYCLE]=tgt_builtin_cycle;
-    internal_classes[TGT_CLASS_CHECKBOX]=tgt_builtin_checkbox;
-    internal_classes[TGT_CLASS_SLIDER]=tgt_builtin_slider;
-    internal_classes[TGT_CLASS_PROGRESS]=tgt_builtin_progress;
-	    
+    tgt_addclass(TGT_CLASS_DESKTOP,tgt_builtin_desktop);
+    tgt_addclass(TGT_CLASS_WINDOW,tgt_builtin_window);
+    tgt_addclass(TGT_CLASS_BUTTON,tgt_builtin_button);
+    tgt_addclass(TGT_CLASS_LABEL,tgt_builtin_label);
+    tgt_addclass(TGT_CLASS_STRING,tgt_builtin_string);
+    tgt_addclass(TGT_CLASS_LIST,tgt_builtin_list);
+    tgt_addclass(TGT_CLASS_MENU,tgt_builtin_menu);
+    tgt_addclass(TGT_CLASS_CYCLE,tgt_builtin_cycle);
+    tgt_addclass(TGT_CLASS_CHECKBOX,tgt_builtin_checkbox);
+    tgt_addclass(TGT_CLASS_SLIDER,tgt_builtin_slider);
+    tgt_addclass(TGT_CLASS_PROGRESS,tgt_builtin_progress);
     int_initialized=1;    
 }
+
+	    
 
 long tgt_gettag(long *taglist,long stag,long defaultvalue)
 {

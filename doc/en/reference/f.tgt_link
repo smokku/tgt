@@ -1,0 +1,25 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_link - Make an object a parent for another object
+
+SYNOPSIS
+
+void tgt_link(struct tgt_object * obj, struct tgt_object * parent);
+
+DESCRIPTION
+
+tgt_link adds 'obj' to the list of 'parent' children. 
+
+EXAMPLE
+
+struct tgt_terminal *term;
+struct tgt_object *desk;
+struct tgt_object *window;
+
+if(!desk=tgt_start(NULL,&term)) return;
+window=tgt_createobject(term,TGT_CLASS_WINDOW,{...});
+tgt_link(window,desk);
+tgt_refresh(desk);
+

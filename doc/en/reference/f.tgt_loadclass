@@ -1,0 +1,31 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_loadclass - Load a class handler from shared object file and assign
+                it an identifier in internal class tables
+
+SYNOPSIS
+
+void * tgt_loadclass(int id, char *filename)
+
+DESCRIPTION
+
+tgt_loadclass behaves just like tgt_addclass() with the exception the
+class handler function is loaded from an object file, which has
+to be compiled with -shared option and to consist a classmain function
+accepting four parameters, just like a normal class handler.
+
+The function returns a void pointer which is needed if the application
+wants to free memory allocated for that class before exiting or NULL
+if the class cannot be loaded.
+
+For paths that the function looks filename in , see man dlopen.
+
+EXAMPLE
+
+void *classptr;
+classptr=tgt_loadclass(CLASS_DUMMY,"tclass_dummy.so");
+tgt_unloadclass(classptr);
+
+[mteg]

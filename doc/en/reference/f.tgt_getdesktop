@@ -1,0 +1,30 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_getdesktop - create a desktop object
+
+SYNOPSIS
+
+struct tgt_object * tgt_getdesktop(struct tgt_terminal * term);
+
+DESCRIPTION
+
+tgt_getdesktop creates a desktop object with parameters situable for
+terminal which description structure was given as an argument.
+
+This function is currently (as for TGT 0.091) equivalent to:
+tgt_createobject(term,TGT_CLASS_DESKTOP,(long[]) { TGTT_X,1, TGTT_Y,1, TGTT_END,0});
+
+tgt_getdesktop returns NULL if it was unable to create the desktop object.
+
+EXAMPLE:
+(this is a sequence which could be used in the application instead of tgt_start())
+
+struct tgt_object *desk;
+struct tgt_terminal *term;
+
+tgt_init();
+term=tgt_setterminal(NULL);
+desk=tgt_getdesktop(term);
+

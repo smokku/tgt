@@ -6,6 +6,7 @@ struct tgt_int_button
     int activebg;
     char *title;
 };
+static int d_actbg=6;
 
 int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
 {
@@ -20,7 +21,7 @@ int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
 	    iw=(struct tgt_int_button*) malloc(sizeof(struct tgt_int_button));
 	    obj->class_data=iw;
 	    iw->title=title;
-	    iw->activebg=tgt_gettag(b,TGTT_BUTTON_ACTIVEBG,6);
+	    iw->activebg=tgt_gettag(b,TGTT_BUTTON_ACTIVEBG,d_actbg);
 	    obj->objectf=(int (*)()) tgt_gettag(b,TGTT_CALLBACK,0);
 	    return(1);
 	case TGT_OBJECT_DESTROY:
@@ -53,6 +54,9 @@ int tgt_builtin_button(struct tgt_object *obj,int type,int a,void *b)
 	    if(n<0) { tgt_activateprev(obj); return(1); }
 	    if(n>0) { tgt_activatenext(obj); return(1); }
 	    return(0);
+	case TGT_OBJECT_SETDEFAULTS:
+	    d_actbg=atoi(tgt_getprefs(b,"button","activebg","6"));
+	    return(1);
 	default: return(0);
     }
 }

@@ -1,0 +1,48 @@
+TGT Reference Manual: Functions
+
+NAME
+
+tgt_start - Initialize TGT library, create a terminal description and return
+            a desktop object
+
+SYNOPSIS
+
+struct tgt_object * tgt_start(char * terminal, struct tgt_terminal ** t);
+
+
+DESCRIPTION
+
+tgt_start reads config files (/etc/tgtrc, ~/.tgtrc or ./.tgtrc), fetches
+terminal descriptions for terminal type which name was given as 
+'terminal' argument (which may also be NULL if the application doesn't want
+to care about terminal types) and then allocates the root object in TGT
+classes hierachy (the desktop object) and returns a pointer to it or NULL
+if something went wrong.
+
+  The application can also get a pointer to the terminal data structure (for
+instance necessary for creating new objects) by specyfing t-a pointer to 
+a pointer variable which will be filled with the terminal description
+object pointer. t might be also NULL (the applicaton might then
+get that pointer from appropiate field in tgt_terminal structure) 
+
+tgt_start is equivalent to:
+
+tgt_init();
+*t=tgt_setterminal(terminal);
+obj=tgt_getdesktop(terminal);
+
+EXAMPLE
+
+int main(int argc,char **argv);
+{
+    struct tgt_object *desktop;
+    struct tgt_terminal *myterm;
+    (...) /* own initialisation commands */
+    desktop=tgt_start(NULL,&myterm);
+    
+    (...) /* the application code itself */
+}
+
+[mteg]
+
+	     
